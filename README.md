@@ -28,6 +28,18 @@ class MyUIPlugin extends flur.UIPlugin {
 }
 ```
 
+## Details
+* Contains most of [package:flutter](https://github.com/flutter/flutter/tree/master/packages/flutter).
+* We also had to add a modified version of [dart:ui](https://github.com/flutter/engine/tree/master/lib/ui) package.
+* A short description of modifications:
+  * Nearly all Flutter SDK widgets delegate implementation to Flur.
+  * Flutter SDK methods such as _showDialog(...)_ or _HapticFeedback.vibrate()_ delegate implementation to Flur.
+  * Some methods/constructors in _dart:ui_ such as _new Canvas()_) delegate implementation to Flur or expose
+    previously unavailable fields.
+  * Removed source code dealing with things that Flur doesn't support (render objects and custom gesture recognizers).
+* We also had to remove usage of Flutter-only language features ([assertions in initializers](https://github.com/dart-lang/sdk/issues/27141) and [some
+  mixins](https://github.com/dart-lang/sdk/issues/15101)).
+
 # Getting started
 Create an empty directory for your browser app. For example, `"hello_browser"`.
 
