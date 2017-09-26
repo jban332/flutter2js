@@ -238,12 +238,12 @@ abstract class UIPlugin {
     final children = widget.children
         .map((item) {
           if (item is MaterialSlice) {
-            return item.child;
+            throw new UnimplementedError();
           }
           if (item is MaterialGap) {
-            return null;
+            throw new UnimplementedError();
           }
-          return null;
+          throw new UnimplementedError();
         })
         .where((item) => item != null)
         .toList();

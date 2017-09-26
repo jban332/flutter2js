@@ -21,6 +21,8 @@ typedef Future MethodChannelHandler(String name, List args);
 abstract class PlatformPlugin {
   static PlatformPlugin current;
 
+  String get defaultRouteName => "/";
+
   /// Invoked by implementation of Flutter's [Clipboard].
   Future<ClipboardData> clipboardGetData(String format) {
     throw new UnimplementedError();

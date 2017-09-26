@@ -24,7 +24,5 @@ dev_dependencies:
 
 transformers:
 - dart_to_js_script_rewriter
-
-#web:
-#  compiler:
-#    debug: dartdevc
+- $dart2js:
+    checked: true

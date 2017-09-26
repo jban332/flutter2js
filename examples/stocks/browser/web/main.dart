@@ -4,7 +4,8 @@ import 'package:flur_html/flur.dart';
 import 'package:flur_html/mdl.dart';
 
 void main() {
-  // Set UX engine
+  // Configure
+  PlatformPlugin.current = new BrowserPlatformPlugin();
   UIPlugin.current = new MdlUIPlugin();
   RenderTreePlugin.current = new ReactDomRenderTreePlugin();
 
