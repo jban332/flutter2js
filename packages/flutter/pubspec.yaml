@@ -1,0 +1,30 @@
+name: flutter
+description: A modified Flutter package that is needed by Flur framework.
+version: 0.0.1
+authors:
+- jban332 <jban332@gmail.com>
+homepage: https://github.com/jban332/flur_modified_flutter
+
+environment:
+  sdk: '>=1.24.0 <2.0.0'
+
+dependencies:
+  flur:
+    git:
+      url: 'git://github.com/jban332/flur.git'
+      path: 'packages/flur'
+  collection: '^1.14.3'
+  http: '^0.11.3'
+  intl:
+  js: '^0.6.1'
+  logging: '^0.11.3'
+  meta: '^1.1.1'
+  vector_math: '^2.0.5'
+
+dependency_overrides:
+  flur:
+    path: '../flur'
+
+dev_dependencies:
+  mockito: ^2.2.0
+  test: ^0.12.0

@@ -1,0 +1,24 @@
+name: flur_html
+description: Browser-based Flur plugins.
+version: 0.0.1
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+dependencies:
+  collection: '^1.14.3'
+  flur: any
+  flutter:
+    sdk: flutter
+  js: '^0.6.1'
+  logging: '^0.11.3'
+  meta: '^1.1.1'
+
+dependency_overrides:
+  flur:
+    path: '../flur'
+  flutter:
+    path: '../flutter'
+
+dev_dependencies:
+  test: ^0.12.0

@@ -1,0 +1,106 @@
+// Copyright 2014 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// Snapshot from http://www.nasdaq.com/screening/company-list.aspx
+// Fetched 2/23/2014.
+// "Symbol","Name","LastSale","MarketCap","IPOyear","Sector","industry","Summary Quote",
+// Data in stock_data.json
+
+import 'dart:convert';
+import 'dart:math' as math;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+
+final math.Random _rng = new math.Random();
+
+class Stock {
+  String symbol;
+  String name;
+  double lastSale;
+  String marketCap;
+  double percentChange;
+
+  Stock(this.symbol, this.name, this.lastSale, this.marketCap,
+      this.percentChange);
+
+  Stock.fromFields(List<String> fields) {
+    // FIXME: This class should only have static data, not lastSale, etc.
+    // "Symbol","Name","LastSale","MarketCap","IPOyear","Sector","industry","Summary Quote",
+    lastSale = 0.0;
+    try {
+      lastSale = double.parse(fields[2]);
+    } catch (_) {}
+    symbol = fields[0];
+    name = fields[1];
+    marketCap = fields[4];
+    percentChange = (_rng.nextDouble() * 20) - 10;
+  }
+}
+
+class StockData extends ChangeNotifier {
+  static const int _kChunkCount = 30;
+
+  static bool actuallyFetchData = true;
+  final List<String> _symbols = <String>[];
+
+  final Map<String, Stock> _stocks = <String, Stock>{};
+
+  int _nextChunk = 0;
+
+  http.Client _httpClient;
+
+  StockData() {
+    if (actuallyFetchData) {
+      _httpClient = createHttpClient();
+      _fetchNextChunk();
+    }
+  }
+
+  Iterable<String> get allSymbols => _symbols;
+
+  bool get loading => _httpClient != null;
+
+  Stock operator [](String symbol) => _stocks[symbol];
+
+  void add(List<List<String>> data) {
+    for (List<String> fields in data) {
+      final Stock stock = new Stock.fromFields(fields);
+      _symbols.add(stock.symbol);
+      _stocks[stock.symbol] = stock;
+    }
+    _symbols.sort();
+    notifyListeners();
+  }
+
+  void _end() {
+    _httpClient?.close();
+    _httpClient = null;
+  }
+
+  void _fetchNextChunk() {
+    _httpClient
+        .get(_urlToFetch(_nextChunk++))
+        .then<Null>((http.Response response) {
+      final String json = response.body;
+      if (json == null) {
+        debugPrint('Failed to load stock data chunk ${_nextChunk - 1}');
+        _end();
+        return;
+      }
+      final JsonDecoder decoder = const JsonDecoder();
+      add(decoder.convert(json));
+      if (_nextChunk < _kChunkCount) {
+        _fetchNextChunk();
+      } else {
+        _end();
+      }
+    });
+  }
+
+  String _urlToFetch(int chunk) {
+    return 'https://domokit.github.io/examples/stocks/data/stock_data_$chunk.json';
+  }
+}
