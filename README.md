@@ -7,7 +7,6 @@ Flur (_Flutter + React_) is an __experiment__ to make [Flutter](https://flutter.
 
 # How it works?
 We modified `"package:flutter"` so that fundamental built-in widgets (`Text`, `TextInput`, `CupertinoTabBar`, etc.) delegate building to an instance of `UIPlugin`.
-This version of Flutter lives in [github.com/jban332/flur_modified_flutter](https://github.com/jban332/flur_modified_flutter).
 
 When you compile Flutter app to Javascript, you just tell package manager to use the `flur_modified_flutter.
 
@@ -66,9 +65,12 @@ dependencies:
     git:
       url: "git://github.com/jban332/flur.git"
       path: "packages/flur_html"
+
 dependency_overrides:
   flutter:
-    git: "git://github.com/jban332/flur_modified_flutter.git"
+    git:
+      url: "git://github.com/jban332/flur.git"
+      path: "packages/flutter"
 
 dev_dependencies:
   browser: ^0.10.0
