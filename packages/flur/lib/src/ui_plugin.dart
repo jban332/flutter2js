@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
@@ -141,7 +142,7 @@ abstract class UIPlugin {
   }
 
   Widget buildFractionallySizedBox(
-          BuildContext context, FractionallySizedBox widget) {
+      BuildContext context, FractionallySizedBox widget) {
     return widget.child;
   }
 
@@ -214,12 +215,14 @@ abstract class UIPlugin {
         navigatorObservers:
             new List<NavigatorObserver>.from(widget.navigatorObservers),
         initialRoute: widget.initialRoute,
-        onGenerateRoute: widget.onGenerateRoute ?? (route) {
-          print("Generating route: ${route.name}");
-        },
-        onUnknownRoute: widget.onUnknownRoute ?? (route) {
-          print("Unknown route: ${route.name}");
-        },
+        onGenerateRoute: widget.onGenerateRoute ??
+            (route) {
+              print("Generating route: ${route.name}");
+            },
+        onUnknownRoute: widget.onUnknownRoute ??
+            (route) {
+              print("Unknown route: ${route.name}");
+            },
         locale: widget.locale ?? new Locale("en", "US"),
         localizationsDelegates: widget.localizationsDelegates,
         localeResolutionCallback: widget.localeResolutionCallback,
@@ -268,7 +271,9 @@ abstract class UIPlugin {
     throw new UnimplementedError();
   }
 
-  Widget buildOverlay(BuildContext context, Overlay widget);
+  Widget buildOverlay(BuildContext context, Overlay widget) {
+    return widget.initialEntries.first.builder(context);
+  }
 
   Widget buildPadding(BuildContext context, Padding widget) {
     return widget.child;
@@ -376,6 +381,17 @@ abstract class UIPlugin {
 
   Widget buildViewport(BuildContext context, Viewport widget) {
     throw new UnimplementedError();
+  }
+
+  Widget builWidgetsApp(BuildContext context, WidgetsApp widget) {
+    final navigatorKey = new GlobalObjectKey<NavigatorState>(this);
+    return new Navigator(
+      key: navigatorKey,
+      initialRoute: widget.initialRoute ?? ui.window.defaultRouteName,
+      onGenerateRoute: widget.onGenerateRoute ?? new MaterialPageRoute<Null>(builder:(c)=>new Text("No routes defines")),
+      onUnknownRoute: widget.onUnknownRoute ?? new MaterialPageRoute<Null>(builder:(c)=>new Text("Unknown route")),
+      observers: widget.navigatorObservers,
+    );
   }
 
   Widget buildWrap(BuildContext context, Wrap widget);

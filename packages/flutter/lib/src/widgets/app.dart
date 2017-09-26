@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/ui.dart' as ui;
@@ -40,19 +41,6 @@ typedef Locale LocaleResolutionCallback(Locale locale,
 /// This function must not return null.
 typedef String GenerateAppTitle(BuildContext context);
 
-// Delegate that fetches the default (English) strings.
-class _WidgetsLocalizationsDelegate
-    extends LocalizationsDelegate<WidgetsLocalizations> {
-  const _WidgetsLocalizationsDelegate();
-
-  @override
-  Future<WidgetsLocalizations> load(Locale locale) =>
-      DefaultWidgetsLocalizations.load(locale);
-
-  @override
-  bool shouldReload(_WidgetsLocalizationsDelegate old) => false;
-}
-
 /// A convenience class that wraps a number of widgets that are commonly
 /// required for an application.
 ///
@@ -65,7 +53,7 @@ class _WidgetsLocalizationsDelegate
 ///
 /// The [onGenerateRoute] argument is required, and corresponds to
 /// [Navigator.onGenerateRoute].
-class WidgetsApp extends StatefulWidget {
+class WidgetsApp extends flur.StatelessUIPluginWidget {
   /// Creates a widget that wraps a number of widgets that are commonly
   /// required for an application.
   ///
@@ -299,154 +287,7 @@ class WidgetsApp extends StatefulWidget {
   static bool debugAllowBannerOverride = true;
 
   @override
-  _WidgetsAppState createState() => new _WidgetsAppState();
-}
-
-class _WidgetsAppState extends State<WidgetsApp>
-    implements WidgetsBindingObserver {
-  GlobalObjectKey<NavigatorState> _navigator;
-  Locale _locale;
-
-  Locale _resolveLocale(Locale newLocale, Iterable<Locale> supportedLocales) {
-    // Android devices (Java really) report 3 deprecated language codes, see
-    // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4140555
-    // and https://developer.android.com/reference/java/util/Locale.html
-    switch (newLocale.languageCode) {
-      case 'iw':
-        newLocale = new Locale('he', newLocale.countryCode); // Hebrew
-        break;
-      case 'ji':
-        newLocale = new Locale('yi', newLocale.countryCode); // Yiddish
-        break;
-      case 'in':
-        newLocale = new Locale('id', newLocale.countryCode); // Indonesian
-        break;
-    }
-
-    if (widget.localeResolutionCallback != null) {
-      final Locale locale =
-      widget.localeResolutionCallback(newLocale, widget.supportedLocales);
-      if (locale != null) return locale;
-    }
-
-    Locale matchesLanguageCode;
-    for (Locale locale in supportedLocales) {
-      if (locale == newLocale) return newLocale;
-      if (locale.languageCode == newLocale.languageCode)
-        matchesLanguageCode ??= locale;
-    }
-    return matchesLanguageCode ?? supportedLocales.first;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _navigator = new GlobalObjectKey<NavigatorState>(this);
-    _locale = _resolveLocale(ui.window.locale, widget.supportedLocales);
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  // On Android: the user has pressed the back button.
-  @override
-  Future<bool> didPopRoute() async {
-    assert(mounted);
-    final NavigatorState navigator = _navigator.currentState;
-    assert(navigator != null);
-    return await navigator.maybePop();
-  }
-
-  @override
-  Future<bool> didPushRoute(String route) async {
-    assert(mounted);
-    final NavigatorState navigator = _navigator.currentState;
-    assert(navigator != null);
-    navigator.pushNamed(route);
-    return true;
-  }
-
-  @override
-  void didChangeMetrics() {
-    setState(() {
-      // The properties of ui.window have changed. We use them in our build
-      // function, so we need setState(), but we don't cache anything locally.
-    });
-  }
-
-  @override
-  void didChangeLocale(Locale locale) {
-    if (locale == _locale) return;
-    final Locale newLocale = _resolveLocale(locale, widget.supportedLocales);
-    if (newLocale != _locale) {
-      setState(() {
-        _locale = newLocale;
-      });
-    }
-  }
-
-  // Combine the Localizations for Widgets with the ones contributed
-  // by the localizationsDelegates parameter, if any. Only the first delegate
-  // of a particular LocalizationsDelegate.type is loaded so the
-  // localizationsDelegate parameter can be used to override
-  // _WidgetsLocalizationsDelegate.
-  Iterable<LocalizationsDelegate<dynamic>> get _localizationsDelegates sync* {
-    if (widget.localizationsDelegates != null)
-      yield* widget.localizationsDelegates;
-    yield const _WidgetsLocalizationsDelegate();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {}
-
-  @override
-  void didHaveMemoryPressure() {}
-
-  @override
-  Widget build(BuildContext context) {
-    Widget result = new Navigator(
-      key: _navigator,
-      initialRoute: widget.initialRoute ?? ui.window.defaultRouteName,
-      onGenerateRoute: widget.onGenerateRoute,
-      onUnknownRoute: widget.onUnknownRoute,
-      observers: widget.navigatorObservers,
-    );
-
-    if (widget.textStyle != null) {
-      result = new DefaultTextStyle(
-        style: widget.textStyle,
-        child: result,
-      );
-    }
-
-    return new MediaQuery(
-      data: new MediaQueryData.fromWindow(ui.window),
-      child: new Localizations(
-        locale: widget.locale ?? _locale,
-        delegates: _localizationsDelegates.toList(),
-        // This Builder exists to provide a context below the Localizations widget.
-        // The onGenerateCallback() can refer to Localizations via its context
-        // parameter.
-        child: new Builder(
-          builder: (BuildContext context) {
-            String title = widget.title;
-            if (widget.onGenerateTitle != null) {
-              title = widget.onGenerateTitle(context);
-              assert(title != null,
-              'onGenerateTitle must return a non-null String');
-            }
-            return new Title(
-              title: title,
-              color: widget.color,
-              child: result,
-            );
-          },
-        ),
-      ),
-    );
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildWidgetsApp(context, this);
   }
 }

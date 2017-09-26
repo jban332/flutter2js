@@ -343,11 +343,6 @@ abstract class HtmlUIPlugin extends UIPlugin {
   }
 
   @override
-  Widget buildOverlay(BuildContext context, Overlay widget) {
-    throw new UnimplementedError();
-  }
-
-  @override
   Widget buildPadding(BuildContext context, Padding widget) {
     final padding = widget.padding;
     final horizontal = padding.horizontal ?? 0;
