@@ -1,13 +1,11 @@
-## What is this?
+# What is this?
 
-Flur is an experiment to make [Flutter](https://flutter.io) apps run in browser.
+Flur (_Flutter + React_) is an __experiment__ to make [Flutter](https://flutter.io) apps run in browser.
 
-The project is just an experiment and not usable for production.
+# Results of the experiment
+* Flutter "Stocks" example app is about ~400 kB after it's minified (~100 kB after gzipping). Does not include React or the app assets.
 
-## Results of the experiment 
-* Code size: Flutter "Stocks" application is about ~400 kB after it's minified (~100 kB after gzipping). Does not include React.
-
-## How it works?
+# How it works?
 We modified `"package:flutter"` so that fundamental built-in widgets (`Text`, `TextInput`, `CupertinoTabBar`, etc.) delegate building to an instance of `UIPlugin`.
 This version of Flutter lives in [github.com/jban332/flur_modified_flutter](https://github.com/jban332/flur_modified_flutter).
 
@@ -30,22 +28,6 @@ class MyUIPlugin extends flur.UIPlugin {
 }
 ```
 
-Lower-level Flutter APIs such as drawing and plugin communication are delegated to an instance of Flur class `Platform`.
-You can customize it too.
-
-Before invoking Flutter's `runApp`, you must set `defaultUIPlugin` you are going to use:
-
-```dart
-import 'flur_rn' as flur;
-import 'package:flutter/widgets.dart';
-
-void main() {
-    flur.UIPlugin.current = new MyUIPlugin();
-    
-    runApp(new SomeApp());
-}
-```
-
 # Getting started
 Create an empty directory for your browser app. For example, `"hello_browser"`.
 
@@ -54,6 +36,7 @@ You need to create three files:
   * /web/main.dart
   * /web/index.html
 
+## pubspec.yaml
 Create `"pubspec.yaml"`:
 
 ```yaml
@@ -88,6 +71,7 @@ Now we can ask Pub package manager to download all required packages. Open a ter
 $ pub get
 ```
 
+## main.dart
 In your project directory, create `"web/main.dart"`:
 
 ```dart
@@ -107,6 +91,7 @@ void main() {
 }
 ```
 
+## index.html
 In your project directory, create `"web/index.html"`:
 
 ```html
