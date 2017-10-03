@@ -27,7 +27,7 @@ class SemanticsAction {
   /// The equivalent of a user pressing and holding the screen with the finger
   /// for a few seconds without moving it.
   static const SemanticsAction longPress =
-  const SemanticsAction._(_kLongPressIndex);
+      const SemanticsAction._(_kLongPressIndex);
 
   /// The equivalent of a user moving their finger across the screen from right
   /// to left.
@@ -35,7 +35,7 @@ class SemanticsAction {
   /// This action should be recognized by controls that are horizontally
   /// scrollable.
   static const SemanticsAction scrollLeft =
-  const SemanticsAction._(_kScrollLeftIndex);
+      const SemanticsAction._(_kScrollLeftIndex);
 
   /// The equivalent of a user moving their finger across the screen from left
   /// to right.
@@ -43,7 +43,7 @@ class SemanticsAction {
   /// This action should be recognized by controls that are horizontally
   /// scrollable.
   static const SemanticsAction scrollRight =
-  const SemanticsAction._(_kScrollRightIndex);
+      const SemanticsAction._(_kScrollRightIndex);
 
   /// The equivalent of a user moving their finger across the screen from
   /// bottom to top.
@@ -51,7 +51,7 @@ class SemanticsAction {
   /// This action should be recognized by controls that are vertically
   /// scrollable.
   static const SemanticsAction scrollUp =
-  const SemanticsAction._(_kScrollUpIndex);
+      const SemanticsAction._(_kScrollUpIndex);
 
   /// The equivalent of a user moving their finger across the screen from top
   /// to bottom.
@@ -59,26 +59,26 @@ class SemanticsAction {
   /// This action should be recognized by controls that are vertically
   /// scrollable.
   static const SemanticsAction scrollDown =
-  const SemanticsAction._(_kScrollDownIndex);
+      const SemanticsAction._(_kScrollDownIndex);
 
   /// A request to increase the value represented by the semantics node.
   ///
   /// For example, this action might be recognized by a slider control.
   static const SemanticsAction increase =
-  const SemanticsAction._(_kIncreaseIndex);
+      const SemanticsAction._(_kIncreaseIndex);
 
   /// A request to decrease the value represented by the semantics node.
   ///
   /// For example, this action might be recognized by a slider control.
   static const SemanticsAction decrease =
-  const SemanticsAction._(_kDecreaseIndex);
+      const SemanticsAction._(_kDecreaseIndex);
 
   /// A request to fully show the semantics node on screen.
   ///
   /// For example, this action might be send to a node in a scrollable list that
   /// is partially off screen to bring it on screen.
   static const SemanticsAction showOnScreen =
-  const SemanticsAction._(_kShowOnScreen);
+      const SemanticsAction._(_kShowOnScreen);
 
   /// The possible semantics actions.
   ///
@@ -139,7 +139,7 @@ class SemanticsFlags {
   ///
   /// For example, a checkbox or a radio button widget has checked state.
   static const SemanticsFlags hasCheckedState =
-  const SemanticsFlags._(_kHasCheckedStateIndex);
+      const SemanticsFlags._(_kHasCheckedStateIndex);
 
   /// Whether a semantics node that [hasCheckedState] is checked.
   ///
@@ -148,7 +148,7 @@ class SemanticsFlags {
   ///
   /// For example, if a checkbox has a visible checkmark, [isChecked] is true.
   static const SemanticsFlags isChecked =
-  const SemanticsFlags._(_kIsCheckedIndex);
+      const SemanticsFlags._(_kIsCheckedIndex);
 
   /// Whether a semantics node is selected.
   ///
@@ -157,7 +157,7 @@ class SemanticsFlags {
   ///
   /// For example, the active tab in a tab bar has [isSelected] set to true.
   static const SemanticsFlags isSelected =
-  const SemanticsFlags._(_kIsSelectedIndex);
+      const SemanticsFlags._(_kIsSelectedIndex);
 
   /// The possible semantics flags.
   ///
@@ -216,14 +216,15 @@ abstract class SemanticsUpdateBuilder {
   ///
   /// The `transform` is a matrix that maps this node's coodinate system into
   /// its parent's coordinate system.
-  void updateNode({int id,
-    int flags,
-    int actions,
-    Rect rect,
-    String label,
-    TextDirection textDirection,
-    Float64List transform,
-    Int32List children});
+  void updateNode(
+      {int id,
+      int flags,
+      int actions,
+      Rect rect,
+      String label,
+      TextDirection textDirection,
+      Float64List transform,
+      Int32List children});
 
   /// Creates a [SemanticsUpdate] object that encapsulates the updates recorded
   /// by this object.

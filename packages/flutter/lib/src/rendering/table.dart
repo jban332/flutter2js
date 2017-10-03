@@ -21,8 +21,7 @@ class TableCellParentData extends BoxParentData {
   int y;
 
   @override
-  String toString() =>
-      '${super.toString()}; ${verticalAlignment == null
+  String toString() => '${super.toString()}; ${verticalAlignment == null
           ? "default vertical alignment"
           : "$verticalAlignment"}';
 }

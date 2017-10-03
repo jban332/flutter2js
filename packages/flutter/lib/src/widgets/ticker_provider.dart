@@ -74,12 +74,7 @@ class TickerMode extends InheritedWidget {
 /// [AnimationController] objects over the lifetime of the [State], use a full
 /// [TickerProviderStateMixin] instead.
 abstract class SingleTickerProviderStateMixin<T extends StatefulWidget>
-    implements State<T>, TickerProvider {
-  // ignore: TYPE_ARGUMENT_NOT_MATCHING_BOUNDS, https://github.com/dart-lang/sdk/issues/25232
-  // This class is intended to be used as a mixin, and should not be
-  // extended directly.
-  factory SingleTickerProviderStateMixin._() => null;
-
+    extends State<T> implements TickerProvider {
   Ticker _ticker;
 
   @override
@@ -88,10 +83,10 @@ abstract class SingleTickerProviderStateMixin<T extends StatefulWidget>
       if (_ticker == null) return true;
       throw new FlutterError(
           '$runtimeType is a SingleTickerProviderStateMixin but multiple tickers were created.\n'
-              'A SingleTickerProviderStateMixin can only be used as a TickerProvider once. If a '
-              'State is used for multiple AnimationController objects, or if it is passed to other '
-              'objects and those objects might use it more than one time in total, then instead of '
-              'mixing in a SingleTickerProviderStateMixin, use a regular TickerProviderStateMixin.');
+          'A SingleTickerProviderStateMixin can only be used as a TickerProvider once. If a '
+          'State is used for multiple AnimationController objects, or if it is passed to other '
+          'objects and those objects might use it more than one time in total, then instead of '
+          'mixing in a SingleTickerProviderStateMixin, use a regular TickerProviderStateMixin.');
     });
     _ticker = new Ticker(onTick, debugLabel: 'created by $this');
     // We assume that this is called from initState, build, or some sort of
@@ -114,18 +109,18 @@ abstract class SingleTickerProviderStateMixin<T extends StatefulWidget>
           'The offending ticker was: ${_ticker.toString(
           debugIncludeStack: true)}');
     });
-    // super.dispose();
+    super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     if (_ticker != null) _ticker.muted = !TickerMode.of(context);
-    // super.didChangeDependencies();
+    super.didChangeDependencies();
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    // super.debugFillProperties(description);
+    super.debugFillProperties(description);
     String tickerDescription;
     if (_ticker != null) {
       if (_ticker.isActive && _ticker.muted)
@@ -154,19 +149,15 @@ abstract class SingleTickerProviderStateMixin<T extends StatefulWidget>
 /// If you only have a single [Ticker] (for example only a single
 /// [AnimationController]) for the lifetime of your [State], then using a
 /// [SingleTickerProviderStateMixin] is more efficient. This is the common case.
-abstract class TickerProviderStateMixin<T extends StatefulWidget> implements State<T>, TickerProvider {
-  // ignore: TYPE_ARGUMENT_NOT_MATCHING_BOUNDS, https://github.com/dart-lang/sdk/issues/25232
-  // This class is intended to be used as a mixin, and should not be
-  // extended directly.
-  factory TickerProviderStateMixin._() => null;
-
+abstract class TickerProviderStateMixin<T extends StatefulWidget>
+    extends State<T> implements TickerProvider {
   Set<Ticker> _tickers;
 
   @override
   Ticker createTicker(TickerCallback onTick) {
     _tickers ??= new Set<_WidgetTicker>();
     final _WidgetTicker result =
-    new _WidgetTicker(onTick, this, debugLabel: 'created by $this');
+        new _WidgetTicker(onTick, this, debugLabel: 'created by $this');
     _tickers.add(result);
     return result;
   }
@@ -196,22 +187,21 @@ abstract class TickerProviderStateMixin<T extends StatefulWidget> implements Sta
       }
       return true;
     });
-    // super.dispose();
+    super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     final bool muted = !TickerMode.of(context);
     if (_tickers != null) {
-      for (Ticker ticker in _tickers)
-        ticker.muted = muted;
+      for (Ticker ticker in _tickers) ticker.muted = muted;
     }
-    // super.didChangeDependencies();
+    super.didChangeDependencies();
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    // super.debugFillProperties(description);
+    super.debugFillProperties(description);
     description.add(new DiagnosticsProperty<Set<Ticker>>(
       'tickers',
       _tickers,
@@ -238,6 +228,6 @@ class _WidgetTicker extends Ticker {
   @override
   void dispose() {
     _creator._removeTicker(this);
-    // super.dispose();
+    super.dispose();
   }
 }

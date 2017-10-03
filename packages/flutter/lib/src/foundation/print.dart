@@ -120,9 +120,7 @@ Iterable<String> debugWordWrap(String message, int width,
     return;
   }
   final Match prefixMatch = _indentPattern.matchAsPrefix(message);
-  final String prefix = wrapIndent + ' ' * prefixMatch
-      .group(0)
-      .length;
+  final String prefix = wrapIndent + ' ' * prefixMatch.group(0).length;
   int start = 0;
   int startForLengthCalculations = 0;
   bool addPrefix = false;

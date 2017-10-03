@@ -159,9 +159,9 @@ class FadeInImage extends StatefulWidget {
     this.repeat: ImageRepeat.noRepeat,
   })
       : placeholder = placeholderScale != null
-      ? new ExactAssetImage(placeholder,
-      bundle: bundle, scale: placeholderScale)
-      : new AssetImage(placeholder, bundle: bundle),
+            ? new ExactAssetImage(placeholder,
+                bundle: bundle, scale: placeholderScale)
+            : new AssetImage(placeholder, bundle: bundle),
         image = new NetworkImage(image, scale: imageScale),
         super(key: key);
 
@@ -210,7 +210,7 @@ class FadeInImage extends StatefulWidget {
   /// An alignment of (0.0, 0.0) aligns the image to the top-left corner of its
   /// layout bounds.  An alignment of (1.0, 0.5) aligns the image to the middle
   /// of the right edge of its layout bounds.
-  final FractionalOffset alignment;
+  final Alignment alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -282,8 +282,7 @@ class _ImageProviderResolver {
   }
 }
 
-class _FadeInImageState extends State<FadeInImage>
-    with TickerProviderStateMixin {
+class _FadeInImageState extends TickerProviderStateMixin<FadeInImage> {
   _ImageProviderResolver _imageResolver;
   _ImageProviderResolver _placeholderResolver;
 
@@ -297,7 +296,7 @@ class _FadeInImageState extends State<FadeInImage>
   @override
   void initState() {
     _imageResolver =
-    new _ImageProviderResolver(state: this, listener: _updatePhase);
+        new _ImageProviderResolver(state: this, listener: _updatePhase);
     _placeholderResolver = new _ImageProviderResolver(
         state: this,
         listener: () {
@@ -389,7 +388,7 @@ class _FadeInImageState extends State<FadeInImage>
           }
           break;
         case FadeInImagePhase.completed:
-        // Nothing to do.
+          // Nothing to do.
           break;
       }
     });

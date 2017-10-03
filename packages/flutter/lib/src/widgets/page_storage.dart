@@ -71,8 +71,8 @@ class _StorageEntryIdentifier {
 /// Useful for storing per-page state that persists across navigations from one
 /// page to another.
 class PageStorageBucket {
-  static bool _maybeAddKey(BuildContext context,
-      List<PageStorageKey<dynamic>> keys) {
+  static bool _maybeAddKey(
+      BuildContext context, List<PageStorageKey<dynamic>> keys) {
     final Widget widget = context.widget;
     final Key key = widget.key;
     if (key is PageStorageKey) keys.add(key);
@@ -109,7 +109,7 @@ class PageStorageBucket {
       _storage[identifier] = data;
     } else {
       final _StorageEntryIdentifier contextIdentifier =
-      _computeIdentifier(context);
+          _computeIdentifier(context);
       if (contextIdentifier.isNotEmpty) _storage[contextIdentifier] = data;
     }
   }
@@ -126,7 +126,7 @@ class PageStorageBucket {
     if (_storage == null) return null;
     if (identifier != null) return _storage[identifier];
     final _StorageEntryIdentifier contextIdentifier =
-    _computeIdentifier(context);
+        _computeIdentifier(context);
     return contextIdentifier.isNotEmpty ? _storage[contextIdentifier] : null;
   }
 }

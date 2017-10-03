@@ -4,10 +4,9 @@ import 'package:flur_html/flur.dart';
 import 'package:flur_html/mdl.dart';
 
 void main() {
-  // Configure
+  RenderTreePlugin.current = new HtmlRenderTreePlugin();
   PlatformPlugin.current = new BrowserPlatformPlugin();
   UIPlugin.current = new MdlUIPlugin();
-  RenderTreePlugin.current = new ReactDomRenderTreePlugin();
 
   // Run Flutter app
   app.main();

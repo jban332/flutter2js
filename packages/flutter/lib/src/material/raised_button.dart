@@ -40,17 +40,18 @@ class RaisedButton extends flur.StatelessUIPluginWidget {
   ///
   /// The [child] argument is required and is typically a [Text] widget in all
   /// caps.
-  const RaisedButton({Key key,
-    @required this.onPressed,
-    this.color,
-    this.highlightColor,
-    this.splashColor,
-    this.disabledColor,
-    this.elevation: 2.0,
-    this.highlightElevation: 8.0,
-    this.disabledElevation: 0.0,
-    this.colorBrightness,
-    this.child})
+  const RaisedButton(
+      {Key key,
+      @required this.onPressed,
+      this.color,
+      this.highlightColor,
+      this.splashColor,
+      this.disabledColor,
+      this.elevation: 2.0,
+      this.highlightElevation: 8.0,
+      this.disabledElevation: 0.0,
+      this.colorBrightness,
+      this.child})
       : super(key: key);
 
   /// The callback that is called when the button is tapped or otherwise activated.

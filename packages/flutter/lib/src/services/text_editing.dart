@@ -87,13 +87,14 @@ class TextSelection extends TextRange {
   /// Creates a text selection.
   ///
   /// The [baseOffset] and [extentOffset] arguments must not be null.
-  const TextSelection({@required this.baseOffset,
-    @required this.extentOffset,
-    this.affinity: TextAffinity.downstream,
-    this.isDirectional: false})
+  const TextSelection(
+      {@required this.baseOffset,
+      @required this.extentOffset,
+      this.affinity: TextAffinity.downstream,
+      this.isDirectional: false})
       : super(
-      start: baseOffset < extentOffset ? baseOffset : extentOffset,
-      end: baseOffset < extentOffset ? extentOffset : baseOffset);
+            start: baseOffset < extentOffset ? baseOffset : extentOffset,
+            end: baseOffset < extentOffset ? extentOffset : baseOffset);
 
   /// Creates a collapsed selection at the given offset.
   ///
@@ -181,9 +182,8 @@ class TextSelection extends TextRange {
   }
 
   @override
-  int get hashCode =>
-      hashValues(baseOffset.hashCode, extentOffset.hashCode,
-          affinity.hashCode, isDirectional.hashCode);
+  int get hashCode => hashValues(baseOffset.hashCode, extentOffset.hashCode,
+      affinity.hashCode, isDirectional.hashCode);
 
   /// Creates a new [TextSelection] based on the current selection, with the
   /// provided parameters overridden.

@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'colors.dart';
-import 'debug.dart';
 import 'icon_button.dart';
 import 'icons.dart';
-import 'theme.dart';
 
 /// A widget representing a rotating expand/collapse button. The icon rotates
 /// 180 deg when pressed, then reverts the animation on a second press.
@@ -17,14 +15,15 @@ import 'theme.dart';
 ///
 /// See [IconButton] for a more general implementation of a pressable button
 /// with an icon.
-class ExpandIcon extends StatefulWidget {
+class ExpandIcon extends flur.StatelessUIPluginWidget {
   /// Creates an [ExpandIcon] with the given padding, and a callback that is
   /// triggered when the icon is pressed.
-  const ExpandIcon({Key key,
-    this.isExpanded: false,
-    this.size: 24.0,
-    @required this.onPressed,
-    this.padding: const EdgeInsets.all(8.0)})
+  const ExpandIcon(
+      {Key key,
+      this.isExpanded: false,
+      this.size: 24.0,
+      @required this.onPressed,
+      this.padding: const EdgeInsets.all(8.0)})
       : super(key: key);
 
   /// Whether the icon is in an expanded state.
@@ -51,53 +50,7 @@ class ExpandIcon extends StatefulWidget {
   final EdgeInsetsGeometry padding;
 
   @override
-  _ExpandIconState createState() => new _ExpandIconState();
-}
-
-class _ExpandIconState extends State<ExpandIcon>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _iconTurns;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller =
-    new AnimationController(duration: kThemeAnimationDuration, vsync: this);
-    _iconTurns = new Tween<double>(begin: 0.0, end: 0.5).animate(
-        new CurvedAnimation(parent: _controller, curve: Curves.fastOutSlowIn));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(ExpandIcon oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isExpanded != oldWidget.isExpanded) {
-      if (widget.isExpanded) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
-    }
-  }
-
-  void _handlePressed() {
-    if (widget.onPressed != null) widget.onPressed(widget.isExpanded);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    assert(debugCheckHasMaterial(context));
-    return new IconButton(
-        padding: widget.padding,
-        color: Colors.black38,
-        onPressed: widget.onPressed == null ? null : _handlePressed,
-        icon: new RotationTransition(
-            turns: _iconTurns, child: const Icon(Icons.expand_more)));
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildExpandIcon(context, this);
   }
 }

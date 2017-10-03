@@ -29,14 +29,14 @@ class BinaryMessages {
 
   // Handlers for incoming messages from platform plugins.
   static final Map<String, _MessageHandler> _handlers =
-  <String, _MessageHandler>{};
+      <String, _MessageHandler>{};
 
   // Mock handlers that intercept and respond to outgoing messages.
   static final Map<String, _MessageHandler> _mockHandlers =
-  <String, _MessageHandler>{};
+      <String, _MessageHandler>{};
 
-  static Future<ByteData> _sendPlatformMessage(String channel,
-      ByteData message) {
+  static Future<ByteData> _sendPlatformMessage(
+      String channel, ByteData message) {
     final Completer<ByteData> completer = new Completer<ByteData>();
     ui.window.sendPlatformMessage(channel, message, (ByteData reply) {
       try {
@@ -95,8 +95,8 @@ class BinaryMessages {
   /// argument.
   ///
   /// The handler's return value, if non-null, is sent as a response, unencoded.
-  static void setMessageHandler(String channel,
-      Future<ByteData> handler(ByteData message)) {
+  static void setMessageHandler(
+      String channel, Future<ByteData> handler(ByteData message)) {
     if (handler == null)
       _handlers.remove(channel);
     else
@@ -114,8 +114,8 @@ class BinaryMessages {
   ///
   /// This is intended for testing. Messages intercepted in this manner are not
   /// sent to platform plugins.
-  static void setMockMessageHandler(String channel,
-      Future<ByteData> handler(ByteData message)) {
+  static void setMockMessageHandler(
+      String channel, Future<ByteData> handler(ByteData message)) {
     if (handler == null)
       _mockHandlers.remove(channel);
     else

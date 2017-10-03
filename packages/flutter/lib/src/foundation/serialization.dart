@@ -89,8 +89,7 @@ class WriteBuffer {
   void _alignTo(int alignment) {
     final int mod = _buffer.length % alignment;
     if (mod != 0) {
-      for (int i = 0; i < alignment - mod; i++)
-        _buffer.add(0);
+      for (int i = 0; i < alignment - mod; i++) _buffer.add(0);
     }
   }
 
@@ -162,7 +161,7 @@ class ReadBuffer {
   /// Reads the given number of Uint8s from the buffer.
   Uint8List getUint8List(int length) {
     final Uint8List list =
-    data.buffer.asUint8List(data.offsetInBytes + _position, length);
+        data.buffer.asUint8List(data.offsetInBytes + _position, length);
     _position += length;
     return list;
   }
@@ -171,7 +170,7 @@ class ReadBuffer {
   Int32List getInt32List(int length) {
     _alignTo(4);
     final Int32List list =
-    data.buffer.asInt32List(data.offsetInBytes + _position, length);
+        data.buffer.asInt32List(data.offsetInBytes + _position, length);
     _position += 4 * length;
     return list;
   }
@@ -180,7 +179,7 @@ class ReadBuffer {
   Int64List getInt64List(int length) {
     _alignTo(8);
     final Int64List list =
-    data.buffer.asInt64List(data.offsetInBytes + _position, length);
+        data.buffer.asInt64List(data.offsetInBytes + _position, length);
     _position += 8 * length;
     return list;
   }
@@ -189,7 +188,7 @@ class ReadBuffer {
   Float64List getFloat64List(int length) {
     _alignTo(8);
     final Float64List list =
-    data.buffer.asFloat64List(data.offsetInBytes + _position, length);
+        data.buffer.asFloat64List(data.offsetInBytes + _position, length);
     _position += 8 * length;
     return list;
   }

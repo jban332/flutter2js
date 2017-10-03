@@ -27,9 +27,9 @@ class ModalBarrier extends StatelessWidget {
   Widget build(BuildContext context) {
     return new BlockSemantics(
         child: new ExcludeSemantics(
-          // On Android, the back button is used to dismiss a modal.
+            // On Android, the back button is used to dismiss a modal.
             excluding:
-            !dismissible || defaultTargetPlatform == TargetPlatform.android,
+                !dismissible || defaultTargetPlatform == TargetPlatform.android,
             child: new Semantics(
                 container: true,
                 child: new GestureDetector(
@@ -42,8 +42,8 @@ class ModalBarrier extends StatelessWidget {
                         child: color == null
                             ? null
                             : new DecoratedBox(
-                            decoration:
-                            new BoxDecoration(color: color)))))));
+                                decoration:
+                                    new BoxDecoration(color: color)))))));
   }
 }
 

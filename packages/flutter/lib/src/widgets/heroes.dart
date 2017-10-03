@@ -16,7 +16,7 @@ import 'pages.dart';
 /// This is typically used with a [HeroController] to provide an animation for
 /// [Hero] positions that looks nicer than a linear movement. For example, see
 /// [MaterialRectArcTween].
-typedef RectTween CreateRectTween(Rect begin, Rect end);
+typedef Tween<Rect> CreateRectTween(Rect begin, Rect end);
 
 /// A widget that marks its child as being a candidate for hero animations.
 ///
@@ -57,13 +57,14 @@ typedef RectTween CreateRectTween(Rect begin, Rect end);
 /// the widget is inserted into route B. When going back from B to A, route A's
 /// hero's widget is placed over where route B's hero's widget was, and then the
 /// animation goes the other way.
-class Hero extends flur.StatelessUIPluginWidget {
+class Hero extends flur.SingleChildUIPluginWidget {
   /// Create a hero.
   ///
   /// The [tag] and [child] parameters must not be null.
   const Hero({
     Key key,
     @required this.tag,
+    this.createRectTween,
     @required this.child,
   })
       : super(key: key);
@@ -72,6 +73,19 @@ class Hero extends flur.StatelessUIPluginWidget {
   /// the tag of a hero on a [PageRoute] that we're navigating to or from, then
   /// a hero animation will be triggered.
   final Object tag;
+
+  /// Defines how the destination hero's bounds change as it flies from the starting
+  /// route to the destination route.
+  ///
+  /// A hero flight begins with the destination hero's [child] aligned with the
+  /// starting hero's child. The [Tween<Rect>] returned by this callback is used
+  /// to compute the hero's bounds as the flight animation's value goes from 0.0
+  /// to 1.0.
+  ///
+  /// If this property is null, the default, then the value of
+  /// [HeroController.createRectTween] is used. The [HeroController] created by
+  /// [MaterialApp] creates a [MaterialRectAreTween].
+  final CreateRectTween createRectTween;
 
   /// The widget subtree that will "fly" from one route to another during a
   /// [Navigator] push or pop transition.
@@ -98,11 +112,11 @@ class Hero extends flur.StatelessUIPluginWidget {
 ///
 /// An instance of [HeroController] should be used in [Navigator.observers].
 /// This is done automatically by [MaterialApp].
-abstract class HeroController extends NavigatorObserver {
+class HeroController extends NavigatorObserver {
   /// Creates a hero controller with the given [RectTween] constructor if any.
   ///
   /// The [createRectTween] argument is optional. If null, the controller uses a
-  /// linear [RectTween].
+  /// linear [Tween<Rect>].
   HeroController({this.createRectTween});
 
   /// Used to create [RectTween]s that interpolate the position of heros in flight.
@@ -111,14 +125,20 @@ abstract class HeroController extends NavigatorObserver {
   final CreateRectTween createRectTween;
 
   @override
-  void didPush(Route<dynamic> to, Route<dynamic> from);
+  void didPush(Route<dynamic> to, Route<dynamic> from) {
+    assert(navigator != null);
+    assert(to != null);
+  }
 
   @override
-  void didPop(Route<dynamic> from, Route<dynamic> to);
+  void didPop(Route<dynamic> from, Route<dynamic> to) {
+    assert(navigator != null);
+    assert(from != null);
+  }
 
   @override
-  void didStartUserGesture();
+  void didStartUserGesture() {}
 
   @override
-  void didStopUserGesture();
+  void didStopUserGesture() {}
 }

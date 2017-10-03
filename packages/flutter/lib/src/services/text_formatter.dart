@@ -34,8 +34,8 @@ abstract class TextInputFormatter {
   ///
   /// When formatters are chained, `oldValue` reflects the initial value of
   /// [TextEditingValue] at the beginning of the chain.
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
-      TextEditingValue newValue);
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue);
 
   /// A shorthand to creating a custom [TextInputFormatter] which formats
   /// incoming text input changes with the given function.
@@ -47,8 +47,10 @@ abstract class TextInputFormatter {
 
 /// Function signature expected for creating custom [TextInputFormatter]
 /// shorthands via [TextInputFormatter.withFunction];
-typedef TextEditingValue TextInputFormatFunction(TextEditingValue oldValue,
-    TextEditingValue newValue,);
+typedef TextEditingValue TextInputFormatFunction(
+  TextEditingValue oldValue,
+  TextEditingValue newValue,
+);
 
 /// Wiring for [TextInputFormatter.withFunction].
 class _SimpleTextInputFormatter extends TextInputFormatter {
@@ -57,8 +59,8 @@ class _SimpleTextInputFormatter extends TextInputFormatter {
   final TextInputFormatFunction formatFunction;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
-      TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
     return formatFunction(oldValue, newValue);
   }
 }
@@ -82,7 +84,8 @@ class BlacklistingTextInputFormatter extends TextInputFormatter {
   /// Creates a formatter that prevents the insertion of blacklisted characters patterns.
   ///
   /// The [blacklistedPattern] must not be null.
-  BlacklistingTextInputFormatter(this.blacklistedPattern, {
+  BlacklistingTextInputFormatter(
+    this.blacklistedPattern, {
     this.replacementString: '',
   });
 
@@ -93,11 +96,13 @@ class BlacklistingTextInputFormatter extends TextInputFormatter {
   final String replacementString;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, // unused.
-      TextEditingValue newValue,) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue, // unused.
+    TextEditingValue newValue,
+  ) {
     return _selectionAwareTextManipulation(
       newValue,
-          (String substring) {
+      (String substring) {
         return substring.replaceAll(blacklistedPattern, replacementString);
       },
     );
@@ -105,7 +110,7 @@ class BlacklistingTextInputFormatter extends TextInputFormatter {
 
   /// A [BlacklistingTextInputFormatter] that forces input to be a single line.
   static final BlacklistingTextInputFormatter singleLineFormatter =
-  new BlacklistingTextInputFormatter(new RegExp(r'\n'));
+      new BlacklistingTextInputFormatter(new RegExp(r'\n'));
 }
 
 /// A [TextInputFormatter] that allows only the insertion of whitelisted
@@ -131,11 +136,13 @@ class WhitelistingTextInputFormatter extends TextInputFormatter {
   final Pattern whitelistedPattern;
 
   @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, // unused.
-      TextEditingValue newValue,) {
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue, // unused.
+    TextEditingValue newValue,
+  ) {
     return _selectionAwareTextManipulation(
       newValue,
-          (String substring) {
+      (String substring) {
         return whitelistedPattern
             .allMatches(substring)
             .map((Match match) => match.group(0))
@@ -146,11 +153,13 @@ class WhitelistingTextInputFormatter extends TextInputFormatter {
 
   /// A [WhitelistingTextInputFormatter] that takes in digits `[0-9]` only.
   static final WhitelistingTextInputFormatter digitsOnly =
-  new WhitelistingTextInputFormatter(new RegExp(r'\d+'));
+      new WhitelistingTextInputFormatter(new RegExp(r'\d+'));
 }
 
-TextEditingValue _selectionAwareTextManipulation(TextEditingValue value,
-    String substringManipulation(String substring),) {
+TextEditingValue _selectionAwareTextManipulation(
+  TextEditingValue value,
+  String substringManipulation(String substring),
+) {
   final int selectionStartIndex = value.selection.start;
   final int selectionEndIndex = value.selection.end;
   String manipulatedText;
@@ -159,11 +168,11 @@ TextEditingValue _selectionAwareTextManipulation(TextEditingValue value,
     manipulatedText = substringManipulation(value.text);
   } else {
     final String beforeSelection =
-    substringManipulation(value.text.substring(0, selectionStartIndex));
+        substringManipulation(value.text.substring(0, selectionStartIndex));
     final String inSelection = substringManipulation(
         value.text.substring(selectionStartIndex, selectionEndIndex));
     final String afterSelection =
-    substringManipulation(value.text.substring(selectionEndIndex));
+        substringManipulation(value.text.substring(selectionEndIndex));
     manipulatedText = beforeSelection + inSelection + afterSelection;
     manipulatedSelection = value.selection.copyWith(
       baseOffset: beforeSelection.length,
@@ -173,8 +182,8 @@ TextEditingValue _selectionAwareTextManipulation(TextEditingValue value,
   return new TextEditingValue(
     text: manipulatedText,
     selection:
-    manipulatedSelection ?? const TextSelection.collapsed(offset: -1),
+        manipulatedSelection ?? const TextSelection.collapsed(offset: -1),
     composing:
-    manipulatedText == value.text ? value.composing : TextRange.empty,
+        manipulatedText == value.text ? value.composing : TextRange.empty,
   );
 }

@@ -22,9 +22,9 @@ class ClampedSimulation extends Simulation {
   /// applied to [x] and [dx].
   ClampedSimulation(this.simulation,
       {this.xMin: double.NEGATIVE_INFINITY,
-        this.xMax: double.INFINITY,
-        this.dxMin: double.NEGATIVE_INFINITY,
-        this.dxMax: double.INFINITY});
+      this.xMax: double.INFINITY,
+      this.dxMin: double.NEGATIVE_INFINITY,
+      this.dxMax: double.INFINITY});
 
   /// The simulation being clamped. Calls to [x], [dx], and [isDone] are
   /// forwarded to the simulation.

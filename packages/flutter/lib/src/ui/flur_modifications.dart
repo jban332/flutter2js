@@ -100,12 +100,13 @@ class Vertices {
   final List<Color> colors;
   final List<int> indices;
 
-  Vertices(this.mode,
-      this.positions, {
-        this.textureCoordinates,
-        this.colors,
-        this.indices,
-      }) {
+  Vertices(
+    this.mode,
+    this.positions, {
+    this.textureCoordinates,
+    this.colors,
+    this.indices,
+  }) {
     assert(mode != null);
     assert(positions != null);
     if (textureCoordinates != null &&
@@ -120,12 +121,13 @@ class Vertices {
           '"indices" values must be valid indices in the positions list.');
   }
 
-  Vertices.raw(this.mode,
-      this.positions, {
-        this.textureCoordinates,
-        this.colors,
-        this.indices,
-      }) {
+  Vertices.raw(
+    this.mode,
+    this.positions, {
+    this.textureCoordinates,
+    this.colors,
+    this.indices,
+  }) {
     assert(mode != null);
     assert(positions != null);
     if (textureCoordinates != null &&
@@ -165,12 +167,13 @@ class Gradient extends Shader {
   /// If `from`, `to`, `colors`, or `tileMode` are null, or if `colors` or
   /// `colorStops` contain null values, this constructor will throw a
   /// [NoSuchMethodError].
-  factory Gradient.linear(Offset from,
-      Offset to,
-      List<Color> colors, [
-        List<double> colorStops,
-        TileMode tileMode,
-      ]) = LinearGradient;
+  factory Gradient.linear(
+    Offset from,
+    Offset to,
+    List<Color> colors, [
+    List<double> colorStops,
+    TileMode tileMode,
+  ]) = LinearGradient;
 
   /// Creates a radial gradient centered at `center` that ends at `radius`
   /// distance from the center.
@@ -190,12 +193,13 @@ class Gradient extends Shader {
   /// If `center`, `radius`, `colors`, or `tileMode` are null, or if `colors` or
   /// `colorStops` contain null values, this constructor will throw a
   /// [NoSuchMethodError].
-  factory Gradient.radial(Offset center,
-      double radius,
-      List<Color> colors, [
-        List<double> colorStops,
-        TileMode tileMode,
-      ]) = RadialGradient;
+  factory Gradient.radial(
+    Offset center,
+    double radius,
+    List<Color> colors, [
+    List<double> colorStops,
+    TileMode tileMode,
+  ]) = RadialGradient;
 
   void _validateColorStops(List<Color> colors, List<double> colorStops) {
     if (colorStops == null) {
@@ -218,12 +222,13 @@ class LinearGradient extends Gradient {
   final List<double> colorStops;
   final TileMode tileMode;
 
-  LinearGradient(this.from,
-      this.to,
-      this.colors, [
-        this.colorStops = null,
-        this.tileMode = TileMode.clamp,
-      ]) {
+  LinearGradient(
+    this.from,
+    this.to,
+    this.colors, [
+    this.colorStops = null,
+    this.tileMode = TileMode.clamp,
+  ]) {
     assert(_offsetIsValid(from));
     assert(_offsetIsValid(to));
     assert(colors != null);
@@ -231,7 +236,6 @@ class LinearGradient extends Gradient {
     _validateColorStops(colors, colorStops);
   }
 }
-
 
 /// The following class exists only in Flur!
 class RadialGradient extends Gradient {
@@ -241,12 +245,13 @@ class RadialGradient extends Gradient {
   final List<double> colorStops;
   final TileMode tileMode;
 
-  RadialGradient(this.center,
-      this.radius,
-      this.colors, [
-        this.colorStops = null,
-        this.tileMode = TileMode.clamp,
-      ]) {
+  RadialGradient(
+    this.center,
+    this.radius,
+    this.colors, [
+    this.colorStops = null,
+    this.tileMode = TileMode.clamp,
+  ]) {
     assert(_offsetIsValid(center));
     assert(colors != null);
     assert(tileMode != null);

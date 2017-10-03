@@ -9,9 +9,10 @@ class Tolerance {
   /// tolerances are all ±0.001; the constructor arguments override this.
   ///
   /// The arguments should all be positive values.
-  const Tolerance({this.distance: _kEpsilonDefault,
-    this.time: _kEpsilonDefault,
-    this.velocity: _kEpsilonDefault});
+  const Tolerance(
+      {this.distance: _kEpsilonDefault,
+      this.time: _kEpsilonDefault,
+      this.velocity: _kEpsilonDefault});
 
   static const double _kEpsilonDefault = 1e-3;
 

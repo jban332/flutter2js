@@ -153,8 +153,8 @@ RawKeyEvent _toRawKeyEvent(Map<String, dynamic> message) {
       );
       break;
     default:
-    // We don't yet implement raw key events on iOS, but we don't hit this
-    // exception because the engine never sends us these messages.
+      // We don't yet implement raw key events on iOS, but we don't hit this
+      // exception because the engine never sends us these messages.
       throw new FlutterError('Unknown keymap for key events: $keymap');
   }
 
@@ -193,7 +193,7 @@ class RawKeyboard {
   static final RawKeyboard instance = new RawKeyboard._();
 
   final List<ValueChanged<RawKeyEvent>> _listeners =
-  <ValueChanged<RawKeyEvent>>[];
+      <ValueChanged<RawKeyEvent>>[];
 
   /// Calls the listener every time the user presses or releases a key.
   ///
@@ -214,7 +214,7 @@ class RawKeyboard {
     final RawKeyEvent event = _toRawKeyEvent(message);
     if (event == null) return;
     for (ValueChanged<RawKeyEvent> listener
-    in new List<ValueChanged<RawKeyEvent>>.from(_listeners))
+        in new List<ValueChanged<RawKeyEvent>>.from(_listeners))
       if (_listeners.contains(listener)) listener(event);
   }
 }

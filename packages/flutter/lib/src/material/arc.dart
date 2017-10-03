@@ -60,7 +60,7 @@ class MaterialPointArcTween extends Tween<Offset> {
         _radius =
             distanceFromAtoB * distanceFromAtoB / (c - begin).distance / 2.0;
         _center =
-        new Offset(end.dx + _radius * (begin.dx - end.dx).sign, end.dy);
+            new Offset(end.dx + _radius * (begin.dx - end.dx).sign, end.dy);
         if (begin.dx < end.dx) {
           _beginAngle = sweepAngle() * (begin.dy - end.dy).sign;
           _endAngle = 0.0;
@@ -72,7 +72,7 @@ class MaterialPointArcTween extends Tween<Offset> {
         _radius =
             distanceFromAtoB * distanceFromAtoB / (c - end).distance / 2.0;
         _center =
-        new Offset(begin.dx, begin.dy + (end.dy - begin.dy).sign * _radius);
+            new Offset(begin.dx, begin.dy + (end.dy - begin.dy).sign * _radius);
         if (begin.dy < end.dy) {
           _beginAngle = -math.PI / 2.0;
           _endAngle = _beginAngle + sweepAngle() * (end.dx - begin.dx).sign;

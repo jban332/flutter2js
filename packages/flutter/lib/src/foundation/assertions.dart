@@ -24,12 +24,13 @@ class FlutterErrorDetails {
   /// The [exception] must not be null; other arguments can be left to
   /// their default values. (`throw null` results in a
   /// [NullThrownError] exception.)
-  const FlutterErrorDetails({this.exception,
-    this.stack,
-    this.library: 'Flutter framework',
-    this.context,
-    this.informationCollector,
-    this.silent: false});
+  const FlutterErrorDetails(
+      {this.exception,
+      this.stack,
+      this.library: 'Flutter framework',
+      this.context,
+      this.informationCollector,
+      this.silent: false});
 
   /// The exception. Often this will be an [AssertionError], maybe specifically
   /// a [FlutterError]. However, this could be any value at all.
@@ -104,7 +105,7 @@ class FlutterErrorDetails {
               position > 2 &&
               fullMessage.substring(position - 2, position) == ': ') {
             longMessage =
-            '${message.trimRight()}\n${fullMessage.substring(0, position - 2)}';
+                '${message.trimRight()}\n${fullMessage.substring(0, position - 2)}';
           }
         }
       }
@@ -207,8 +208,8 @@ class FlutterError extends AssertionError {
     if (!reportError && !forceReport) return;
     if (_errorCount == 0 || forceReport) {
       final String header =
-      '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'
-          .toUpperCase();
+          '\u2550\u2550\u2561 EXCEPTION CAUGHT BY ${details.library} \u255E'
+              .toUpperCase();
       final String footer = '\u2550' * _kWrapWidth;
       debugPrint('$header${"\u2550" * (footer.length - header.length)}');
       final String verb =
@@ -251,15 +252,15 @@ class FlutterError extends AssertionError {
           if (stackList.length >= 2) {
             // TODO(ianh): This has bitrotted and is no longer matching. https://github.com/flutter/flutter/issues/4021
             final RegExp throwPattern =
-            new RegExp(r'^#0 +_AssertionError._throwNew \(dart:.+\)$');
+                new RegExp(r'^#0 +_AssertionError._throwNew \(dart:.+\)$');
             final RegExp assertPattern =
-            new RegExp(r'^#1 +[^(]+ \((.+?):([0-9]+)(?::[0-9]+)?\)$');
+                new RegExp(r'^#1 +[^(]+ \((.+?):([0-9]+)(?::[0-9]+)?\)$');
             if (throwPattern.hasMatch(stackList[0])) {
               final Match assertMatch = assertPattern.firstMatch(stackList[1]);
               if (assertMatch != null) {
                 assert(assertMatch.groupCount == 2);
                 final RegExp ourLibraryPattern =
-                new RegExp(r'^package:flutter/');
+                    new RegExp(r'^package:flutter/');
                 ourFault = ourLibraryPattern.hasMatch(assertMatch.group(1));
               }
             }
@@ -268,8 +269,8 @@ class FlutterError extends AssertionError {
         if (ourFault) {
           debugPrint(
               '\nEither the assertion indicates an error in the framework itself, or we should '
-                  'provide substantially more information in this error message to help you determine '
-                  'and fix the underlying cause.',
+              'provide substantially more information in this error message to help you determine '
+              'and fix the underlying cause.',
               wrapWidth: _kWrapWidth);
           debugPrint(
               'In either case, please report this assertion by filing a bug on GitHub:',
@@ -333,8 +334,7 @@ class FlutterError extends AssertionError {
         if (filteredPackages.contains(match.group(2))) {
           final Match packageMatch = packageParser.firstMatch(match.group(2));
           if (packageMatch != null && packageMatch.group(1) == 'package') {
-            skipped.add(
-                'package ${packageMatch.group(
+            skipped.add('package ${packageMatch.group(
                     2)}'); // avoid "package package:foo"
           } else {
             skipped.add('package ${match.group(2)}');
@@ -351,8 +351,7 @@ class FlutterError extends AssertionError {
     if (skipped.length == 1) {
       result.add('(elided one frame from ${skipped.single})');
     } else if (skipped.length > 1) {
-      final List<String> where = new Set<String>.from(skipped).toList()
-        ..sort();
+      final List<String> where = new Set<String>.from(skipped).toList()..sort();
       if (where.length > 1) where[where.length - 1] = 'and ${where.last}';
       if (where.length > 2) {
         result
@@ -384,7 +383,7 @@ class FlutterError extends AssertionError {
 void debugPrintStack({String label, int maxFrames}) {
   if (label != null) debugPrint(label);
   Iterable<String> lines =
-  StackTrace.current.toString().trimRight().split('\n');
+      StackTrace.current.toString().trimRight().split('\n');
   if (maxFrames != null) lines = lines.take(maxFrames);
   debugPrint(FlutterError.defaultStackFilter(lines).join('\n'));
 }

@@ -34,7 +34,7 @@ class TableBorder {
     BorderStyle style: BorderStyle.solid,
   }) {
     final BorderSide side =
-    new BorderSide(color: color, width: width, style: style);
+        new BorderSide(color: color, width: width, style: style);
     return new TableBorder(
         top: side,
         right: side,
@@ -129,9 +129,9 @@ class TableBorder {
         bottom: bottom.copyWith(width: t * bottom.width),
         left: left.copyWith(width: t * left.width),
         horizontalInside:
-        horizontalInside.copyWith(width: t * horizontalInside.width),
+            horizontalInside.copyWith(width: t * horizontalInside.width),
         verticalInside:
-        verticalInside.copyWith(width: t * verticalInside.width));
+            verticalInside.copyWith(width: t * verticalInside.width));
   }
 
   /// Linearly interpolate between two table borders.
@@ -148,7 +148,7 @@ class TableBorder {
         bottom: BorderSide.lerp(a.bottom, b.bottom, t),
         left: BorderSide.lerp(a.left, b.left, t),
         horizontalInside:
-        BorderSide.lerp(a.horizontalInside, b.horizontalInside, t),
+            BorderSide.lerp(a.horizontalInside, b.horizontalInside, t),
         verticalInside: BorderSide.lerp(a.verticalInside, b.verticalInside, t));
   }
 

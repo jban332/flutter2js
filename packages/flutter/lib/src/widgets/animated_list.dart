@@ -14,12 +14,12 @@ import 'scroll_view.dart';
 import 'ticker_provider.dart';
 
 /// Signature for the builder callback used by [AnimatedList].
-typedef Widget AnimatedListItemBuilder(BuildContext context, int index,
-    Animation<double> animation);
+typedef Widget AnimatedListItemBuilder(
+    BuildContext context, int index, Animation<double> animation);
 
 /// Signature for the builder callback used by [AnimatedListState.removeItem].
-typedef Widget AnimatedListRemovedItemBuilder(BuildContext context,
-    Animation<double> animation);
+typedef Widget AnimatedListRemovedItemBuilder(
+    BuildContext context, Animation<double> animation);
 
 // The default insert/remove animation duration.
 const Duration _kDuration = const Duration(milliseconds: 300);
@@ -29,8 +29,8 @@ class _ActiveItem implements Comparable<_ActiveItem> {
   _ActiveItem.incoming(this.controller, this.itemIndex)
       : removedItemBuilder = null;
 
-  _ActiveItem.outgoing(this.controller, this.itemIndex,
-      this.removedItemBuilder);
+  _ActiveItem.outgoing(
+      this.controller, this.itemIndex, this.removedItemBuilder);
 
   _ActiveItem.index(this.itemIndex)
       : controller = null,
@@ -170,17 +170,17 @@ class AnimatedList extends StatefulWidget {
     assert(nullOk != null);
     assert(context != null);
     final AnimatedListState result =
-    context.ancestorStateOfType(const TypeMatcher<AnimatedListState>());
+        context.ancestorStateOfType(const TypeMatcher<AnimatedListState>());
     if (nullOk || result != null) return result;
     throw new FlutterError(
         'AnimatedList.of() called with a context that does not contain a AnimatedList.\n'
-            'No AnimatedList ancestor could be found starting from the context that was passed to AnimatedList.of(). '
-            'This can happen when the context provided is from the same StatefulWidget that '
-            'built the AnimatedList. Please see the AnimatedList documentation for examples '
-            'of how to refer to an AnimatedListState object: '
-            '  https://docs.flutter.io/flutter/widgets/AnimatedState-class.html\n'
-            'The context used was:\n'
-            '  $context');
+        'No AnimatedList ancestor could be found starting from the context that was passed to AnimatedList.of(). '
+        'This can happen when the context provided is from the same StatefulWidget that '
+        'built the AnimatedList. Please see the AnimatedList documentation for examples '
+        'of how to refer to an AnimatedListState object: '
+        '  https://docs.flutter.io/flutter/widgets/AnimatedState-class.html\n'
+        'The context used was:\n'
+        '  $context');
   }
 
   @override
@@ -211,8 +211,7 @@ class AnimatedList extends StatefulWidget {
 ///
 /// [AnimatedList] item input handlers can also refer to their [AnimatedListState]
 /// with the static [AnimatedList.of] method.
-class AnimatedListState extends State<AnimatedList>
-    with TickerProviderStateMixin {
+class AnimatedListState extends TickerProviderStateMixin<AnimatedList> {
   final List<_ActiveItem> _incomingItems = <_ActiveItem>[];
   final List<_ActiveItem> _outgoingItems = <_ActiveItem>[];
   int _itemsCount = 0;
@@ -225,10 +224,8 @@ class AnimatedListState extends State<AnimatedList>
 
   @override
   void dispose() {
-    for (_ActiveItem item in _incomingItems)
-      item.controller.dispose();
-    for (_ActiveItem item in _outgoingItems)
-      item.controller.dispose();
+    for (_ActiveItem item in _incomingItems) item.controller.dispose();
+    for (_ActiveItem item in _outgoingItems) item.controller.dispose();
     super.dispose();
   }
 
@@ -294,9 +291,9 @@ class AnimatedListState extends State<AnimatedList>
     }
 
     final AnimationController controller =
-    new AnimationController(duration: duration, vsync: this);
+        new AnimationController(duration: duration, vsync: this);
     final _ActiveItem incomingItem =
-    new _ActiveItem.incoming(controller, itemIndex);
+        new _ActiveItem.incoming(controller, itemIndex);
     setState(() {
       _incomingItems
         ..add(incomingItem)
@@ -333,11 +330,11 @@ class AnimatedListState extends State<AnimatedList>
     assert(_activeItemAt(_outgoingItems, itemIndex) == null);
 
     final _ActiveItem incomingItem =
-    _removeActiveItemAt(_incomingItems, itemIndex);
+        _removeActiveItemAt(_incomingItems, itemIndex);
     final AnimationController controller = incomingItem?.controller ??
         new AnimationController(duration: duration, value: 1.0, vsync: this);
     final _ActiveItem outgoingItem =
-    new _ActiveItem.outgoing(controller, itemIndex, builder);
+        new _ActiveItem.outgoing(controller, itemIndex, builder);
     setState(() {
       _outgoingItems
         ..add(outgoingItem)

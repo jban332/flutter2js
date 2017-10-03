@@ -474,11 +474,12 @@ class Navigator extends StatefulWidget {
   /// Creates a widget that maintains a stack-based history of child widgets.
   ///
   /// The [onGenerateRoute] argument must not be null.
-  const Navigator({Key key,
-    this.initialRoute,
-    @required this.onGenerateRoute,
-    this.onUnknownRoute,
-    this.observers: const <NavigatorObserver>[]})
+  const Navigator(
+      {Key key,
+      this.initialRoute,
+      @required this.onGenerateRoute,
+      this.onUnknownRoute,
+      this.observers: const <NavigatorObserver>[]})
       : super(key: key);
 
   /// The name of the first route to show.
@@ -617,7 +618,7 @@ class Navigator extends StatefulWidget {
   /// the initial route.
   static bool canPop(BuildContext context) {
     final NavigatorState navigator =
-    context.ancestorStateOfType(const TypeMatcher<NavigatorState>());
+        context.ancestorStateOfType(const TypeMatcher<NavigatorState>());
     return navigator != null && navigator.canPop();
   }
 
@@ -660,8 +661,8 @@ class Navigator extends StatefulWidget {
   /// ```dart
   /// Navigator.of(context).pushReplacementNamed('/jouett/1781');
   /// ```
-  static Future<dynamic> pushReplacementNamed(BuildContext context,
-      String routeName,
+  static Future<dynamic> pushReplacementNamed(
+      BuildContext context, String routeName,
       {dynamic result}) {
     return Navigator
         .of(context)
@@ -681,8 +682,8 @@ class Navigator extends StatefulWidget {
   ///
   /// Returns a [Future] that completes to the `result` value passed to [pop]
   /// when the pushed route is popped off the navigator.
-  static Future<dynamic> pushReplacement(BuildContext context,
-      Route<dynamic> route,
+  static Future<dynamic> pushReplacement(
+      BuildContext context, Route<dynamic> route,
       {dynamic result}) {
     return Navigator.of(context).pushReplacement(route, result: result);
   }
@@ -715,12 +716,12 @@ class Navigator extends StatefulWidget {
   /// ```
   static NavigatorState of(BuildContext context) {
     final NavigatorState navigator =
-    context.ancestorStateOfType(const TypeMatcher<NavigatorState>());
+        context.ancestorStateOfType(const TypeMatcher<NavigatorState>());
     assert(() {
       if (navigator == null) {
         throw new FlutterError(
             'Navigator operation requested with a context that does not include a Navigator.\n'
-                'The context used to push or pop routes from the Navigator must be that of a widget that is a descendant of a Navigator widget.');
+            'The context used to push or pop routes from the Navigator must be that of a widget that is a descendant of a Navigator widget.');
       }
       return true;
     });
@@ -732,7 +733,7 @@ class Navigator extends StatefulWidget {
 }
 
 /// The state for a [Navigator] widget.
-class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navigator> {
+class NavigatorState extends TickerProviderStateMixin<Navigator> {
   final GlobalKey<OverlayState> _overlayKey = new GlobalKey<OverlayState>();
   final List<Route<dynamic>> _history = <Route<dynamic>>[];
   final Set<Route<dynamic>> _poppedRoutes = new Set<Route<dynamic>>();
@@ -772,7 +773,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
         assert(() {
           FlutterError.reportError(
             new FlutterErrorDetails(
-              // ignore: prefer_const_constructors, https://github.com/dart-lang/sdk/issues/29952
+                // ignore: prefer_const_constructors, https://github.com/dart-lang/sdk/issues/29952
                 exception: 'Could not navigate to initial route.\n'
                     'The requested route name was: "/$initialRouteName"\n'
                     'The following routes were therefore attempted:\n'
@@ -787,8 +788,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
         });
         push(_routeNamed(Navigator.defaultRouteName));
       } else {
-        for (Route<dynamic> route in plannedInitialRoutes)
-          push(route);
+        for (Route<dynamic> route in plannedInitialRoutes) push(route);
       }
     } else {
       Route<dynamic> route;
@@ -825,8 +825,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
       observer._navigator = null;
     final List<Route<dynamic>> doomed = _poppedRoutes.toList()
       ..addAll(_history);
-    for (Route<dynamic> route in doomed)
-      route.dispose();
+    for (Route<dynamic> route in doomed) route.dispose();
     _poppedRoutes.clear();
     _history.clear();
     focusScopeNode.detach();
@@ -848,7 +847,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
   }
 
   bool _debugLocked =
-  false; // used to prevent re-entrant calls to push, pop, and friends
+      false; // used to prevent re-entrant calls to push, pop, and friends
 
   Route<dynamic> _routeNamed(String name, {bool allowNull: false}) {
     assert(!_debugLocked);
@@ -863,10 +862,10 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
         if (widget.onUnknownRoute == null) {
           throw new FlutterError(
               'If a Navigator has no onUnknownRoute, then its onGenerateRoute must never return null.\n'
-                  'When trying to build the route "$name", onGenerateRoute returned null, but there was no '
-                  'onUnknownRoute callback specified.\n'
-                  'The Navigator was:\n'
-                  '  $this');
+              'When trying to build the route "$name", onGenerateRoute returned null, but there was no '
+              'onUnknownRoute callback specified.\n'
+              'The Navigator was:\n'
+              '  $this');
         }
         return true;
       });
@@ -875,10 +874,10 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
         if (route == null) {
           throw new FlutterError(
               'A Navigator\'s onUnknownRoute returned null.\n'
-                  'When trying to build the route "$name", both onGenerateRoute and onUnknownRoute returned '
-                  'null. The onUnknownRoute callback should never return null.\n'
-                  'The Navigator was:\n'
-                  '  $this');
+              'When trying to build the route "$name", both onGenerateRoute and onUnknownRoute returned '
+              'null. The onUnknownRoute callback should never return null.\n'
+              'The Navigator was:\n'
+              '  $this');
         }
         return true;
       });
@@ -925,7 +924,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
     assert(route._navigator == null);
     setState(() {
       final Route<dynamic> oldRoute =
-      _history.isNotEmpty ? _history.last : null;
+          _history.isNotEmpty ? _history.last : null;
       route._navigator = this;
       route.install(_currentOverlayEntry);
       _history.add(route);
@@ -1086,9 +1085,9 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
     setState(() {
       _history.removeAt(index);
       final Route<dynamic> nextRoute =
-      index < _history.length ? _history[index] : null;
+          index < _history.length ? _history[index] : null;
       final Route<dynamic> previousRoute =
-      index > 0 ? _history[index - 1] : null;
+          index > 0 ? _history[index - 1] : null;
       if (previousRoute != null) previousRoute.didChangeNext(nextRoute);
       if (nextRoute != null) nextRoute.didChangePrevious(previousRoute);
       targetRoute.dispose();
@@ -1110,8 +1109,8 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
   ///
   /// To remove all the routes before the pushed route, use a [RoutePredicate]
   /// that always returns false.
-  Future<dynamic> pushAndRemoveUntil(Route<dynamic> newRoute,
-      RoutePredicate predicate) {
+  Future<dynamic> pushAndRemoveUntil(
+      Route<dynamic> newRoute, RoutePredicate predicate) {
     assert(!_debugLocked);
     assert(() {
       _debugLocked = true;
@@ -1128,14 +1127,13 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
     assert(newRoute.overlayEntries.isEmpty);
     setState(() {
       final Route<dynamic> oldRoute =
-      _history.isNotEmpty ? _history.last : null;
+          _history.isNotEmpty ? _history.last : null;
       newRoute._navigator = this;
       newRoute.install(_currentOverlayEntry);
       _history.add(newRoute);
       newRoute.didPush().whenCompleteOrCancel(() {
         if (mounted) {
-          for (Route<dynamic> route in removedRoutes)
-            route.dispose();
+          for (Route<dynamic> route in removedRoutes) route.dispose();
         }
       });
       newRoute.didChangeNext(null);
@@ -1162,8 +1160,8 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
   ///
   /// To remove all the routes before the pushed route, use a [RoutePredicate]
   /// that always returns false.
-  Future<dynamic> pushNamedAndRemoveUntil(String routeName,
-      RoutePredicate predicate) {
+  Future<dynamic> pushNamedAndRemoveUntil(
+      String routeName, RoutePredicate predicate) {
     return pushAndRemoveUntil(_routeNamed(routeName), predicate);
   }
 
@@ -1272,7 +1270,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
     assert(index != -1);
     final Route<dynamic> previousRoute = index > 0 ? _history[index - 1] : null;
     final Route<dynamic> nextRoute =
-    (index + 1 < _history.length) ? _history[index + 1] : null;
+        (index + 1 < _history.length) ? _history[index + 1] : null;
     setState(() {
       _history.removeAt(index);
       previousRoute?.didChangeNext(nextRoute);
@@ -1377,7 +1375,7 @@ class NavigatorState extends State<Navigator> with TickerProviderStateMixin<Navi
       onPointerCancel: _handlePointerUpOrCancel,
       child: new AbsorbPointer(
         absorbing:
-        false, // it's mutated directly by _cancelActivePointers above
+            false, // it's mutated directly by _cancelActivePointers above
         child: new FocusScope(
           node: focusScopeNode,
           autofocus: true,

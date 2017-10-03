@@ -47,7 +47,7 @@ class HtmlFlutterCanvas implements Canvas {
 
   @override
   void drawParagraph(Paragraph paragraph, Offset offset) {
-    throw new UnimplementedError();
+
   }
 
   @override

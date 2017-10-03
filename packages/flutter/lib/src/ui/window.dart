@@ -19,8 +19,8 @@ typedef void SemanticsActionCallback(int id, SemanticsAction action);
 typedef void PlatformMessageResponseCallback(ByteData data);
 
 /// Signature for [Window.onPlatformMessage].
-typedef void PlatformMessageCallback(String name, ByteData data,
-    PlatformMessageResponseCallback callback);
+typedef void PlatformMessageCallback(
+    String name, ByteData data, PlatformMessageResponseCallback callback);
 
 /// States that an application can be in.
 ///
@@ -100,7 +100,7 @@ class WindowPadding {
 
   /// A window padding that has zeros for each edge.
   static const WindowPadding zero =
-  const WindowPadding._(left: 0.0, top: 0.0, right: 0.0, bottom: 0.0);
+      const WindowPadding._(left: 0.0, top: 0.0, right: 0.0, bottom: 0.0);
 }
 
 /// An identifier used to select a user's language and formatting preferences,
@@ -229,8 +229,7 @@ class Window {
   ///
   ///  * [WidgetsBindingObserver], for a mechanism at the widgets layer to
   ///    observe when this value changes.
-  Locale get locale => _locale;
-  Locale _locale;
+  Locale get locale => flur.PlatformPlugin.current.locale;
 
   /// A callback that is invoked whenever [locale] changes value.
   ///
@@ -376,14 +375,14 @@ class Window {
   ///
   /// The framework invokes [callback] in the same zone in which this method
   /// was called.
-  void sendPlatformMessage(String name, ByteData data,
-      PlatformMessageResponseCallback callback) {
+  void sendPlatformMessage(
+      String name, ByteData data, PlatformMessageResponseCallback callback) {
     _sendPlatformMessage(
         name, _zonedPlatformMessageResponseCallback(callback), data);
   }
 
-  void _sendPlatformMessage(String name,
-      PlatformMessageResponseCallback callback, ByteData data) {
+  void _sendPlatformMessage(
+      String name, PlatformMessageResponseCallback callback, ByteData data) {
     flur.PlatformPlugin.current.sendPlatformMessage(name, callback, data);
   }
 

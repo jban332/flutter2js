@@ -116,7 +116,7 @@ class OverlayEntry {
 
   OverlayState _overlay;
   final GlobalKey<_OverlayEntryState> _key =
-  new GlobalKey<_OverlayEntryState>();
+      new GlobalKey<_OverlayEntryState>();
 
   /// Remove this entry from the overlay.
   ///
@@ -151,8 +151,7 @@ class OverlayEntry {
   }
 
   @override
-  String toString() =>
-      '${describeIdentity(
+  String toString() => '${describeIdentity(
           this)}(opaque: $opaque; maintainState: $maintainState)';
 }
 
@@ -236,7 +235,7 @@ class Overlay extends flur.StatefulUIPluginWidget {
   /// ```
   static OverlayState of(BuildContext context, {Widget debugRequiredFor}) {
     final OverlayState result =
-    context.ancestorStateOfType(const TypeMatcher<OverlayState>());
+        context.ancestorStateOfType(const TypeMatcher<OverlayState>());
     assert(() {
       if (debugRequiredFor != null && result == null) {
         final String additional = context.widget != debugRequiredFor
@@ -265,8 +264,7 @@ class Overlay extends flur.StatefulUIPluginWidget {
 ///
 /// Used to insert [OverlayEntry]s into the overlay using the [insert] and
 /// [insertAll] functions.
-abstract class OverlayState extends State<Overlay>
-    with TickerProviderStateMixin<Overlay> {
+abstract class OverlayState extends TickerProviderStateMixin<Overlay> {
   /// Insert the given entry into the overlay.
   ///
   /// If [above] is non-null, the entry is inserted just above [above].

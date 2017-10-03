@@ -102,8 +102,8 @@ class RadioListTile<T> extends StatelessWidget {
     this.secondary,
     this.selected: false,
     this.controlAffinity: ListTileControlAffinity.platform,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// The value represented by this radio button.
   final T value;
@@ -211,9 +211,7 @@ class RadioListTile<T> extends StatelessWidget {
     }
     return new MergeSemantics(
       child: ListTileTheme.merge(
-        selectedColor: activeColor ?? Theme
-            .of(context)
-            .accentColor,
+        selectedColor: activeColor ?? Theme.of(context).accentColor,
         child: new ListTile(
           leading: leading,
           title: title,
@@ -222,9 +220,11 @@ class RadioListTile<T> extends StatelessWidget {
           isThreeLine: isThreeLine,
           dense: dense,
           enabled: onChanged != null,
-          onTap: onChanged != null ? () {
-            onChanged(value);
-          } : null,
+          onTap: onChanged != null
+              ? () {
+                  onChanged(value);
+                }
+              : null,
           selected: selected,
         ),
       ),

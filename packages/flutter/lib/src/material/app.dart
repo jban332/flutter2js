@@ -2,11 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+import 'arc.dart';
+import 'colors.dart';
+import 'floating_action_button.dart';
+import 'icons.dart';
 import 'material_localizations.dart';
 import 'page.dart';
 import 'theme.dart';
@@ -19,6 +24,18 @@ const TextStyle _errorTextStyle = const TextStyle(
     decoration: TextDecoration.underline,
     decorationColor: const Color(0xFFFFFF00),
     decorationStyle: TextDecorationStyle.double);
+
+class _MaterialLocalizationsDelegate
+    extends LocalizationsDelegate<MaterialLocalizations> {
+  const _MaterialLocalizationsDelegate();
+
+  @override
+  Future<MaterialLocalizations> load(Locale locale) =>
+      DefaultMaterialLocalizations.load(locale);
+
+  @override
+  bool shouldReload(_MaterialLocalizationsDelegate old) => false;
+}
 
 /// An application that uses material design.
 ///
@@ -53,7 +70,7 @@ const TextStyle _errorTextStyle = const TextStyle(
 ///  * [Navigator], which is used to manage the app's stack of pages.
 ///  * [MaterialPageRoute], which defines an app page that transitions in a material-specific way.
 ///  * [WidgetsApp], which defines the basic app elements but does not depend on the material library.
-class MaterialApp extends flur.StatelessUIPluginWidget {
+class MaterialApp extends StatefulWidget {
   /// Creates a MaterialApp.
   ///
   /// At least one of [home], [routes], or [onGenerateRoute] must be given. If
@@ -65,29 +82,55 @@ class MaterialApp extends flur.StatelessUIPluginWidget {
   /// This class creates an instance of [WidgetsApp].
   ///
   /// The boolean arguments, [routes], and [navigatorObservers], must not be null.
-  MaterialApp({ // can't be const because the asserts use methods on Map :-(
-    Key key,
-    this.title: '',
-    this.onGenerateTitle,
-    this.color,
-    this.theme,
-    this.home,
-    this.routes: const <String, WidgetBuilder>{},
-    this.initialRoute,
-    this.onGenerateRoute,
-    this.onUnknownRoute,
-    this.locale,
-    this.localizationsDelegates,
-    this.localeResolutionCallback,
-    this.supportedLocales: const <Locale>[const Locale('en', 'US')],
-    this.navigatorObservers: const <NavigatorObserver>[],
-    this.debugShowMaterialGrid: false,
-    this.showPerformanceOverlay: false,
-    this.checkerboardRasterCacheImages: false,
-    this.checkerboardOffscreenLayers: false,
-    this.showSemanticsDebugger: false,
-    this.debugShowCheckedModeBanner: true})
-      : super(key: key);
+  MaterialApp(
+      { // can't be const because the asserts use methods on Map :-(
+      Key key,
+      this.title: '',
+      this.onGenerateTitle,
+      this.color,
+      this.theme,
+      this.home,
+      this.routes: const <String, WidgetBuilder>{},
+      this.initialRoute,
+      this.onGenerateRoute,
+      this.onUnknownRoute,
+      this.locale,
+      this.localizationsDelegates,
+      this.localeResolutionCallback,
+      this.supportedLocales: const <Locale>[const Locale('en', 'US')],
+      this.navigatorObservers: const <NavigatorObserver>[],
+      this.debugShowMaterialGrid: false,
+      this.showPerformanceOverlay: false,
+      this.checkerboardRasterCacheImages: false,
+      this.checkerboardOffscreenLayers: false,
+      this.showSemanticsDebugger: false,
+      this.debugShowCheckedModeBanner: true})
+      : super(key: key) {
+    assert(title != null);
+    assert(routes != null);
+    assert(navigatorObservers != null);
+    assert(debugShowMaterialGrid != null);
+    assert(showPerformanceOverlay != null);
+    assert(checkerboardRasterCacheImages != null);
+    assert(checkerboardOffscreenLayers != null);
+    assert(showSemanticsDebugger != null);
+    assert(debugShowCheckedModeBanner != null);
+    assert(
+        home == null || !routes.containsKey(Navigator.defaultRouteName),
+        'If the home property is specified, the routes table '
+        'cannot include an entry for "/", since it would be redundant.');
+    assert(
+        home != null ||
+            routes.containsKey(Navigator.defaultRouteName) ||
+            onGenerateRoute != null ||
+            onUnknownRoute != null,
+        'Either the home property must be specified, '
+        'or the routes table must include an entry for "/", '
+        'or there must be on onGenerateRoute callback specified, '
+        'or there must be an onUnknownRoute callback specified, '
+        'because otherwise there is nothing to fall back on if the '
+        'app is started with an intent that specifies an unknown route.');
+  }
 
   /// A one-line description used by the device to identify the app for the user.
   ///
@@ -104,7 +147,7 @@ class MaterialApp extends flur.StatelessUIPluginWidget {
   /// If non-null this function is called to produce the app's
   /// title string, otherwise [title] is used.
   ///
-  /// The [onGenerateTitle] `context` parameter includes the [WidgetApp]'s
+  /// The [onGenerateTitle] `context` parameter includes the [WidgetsApp]'s
   /// [Localizations] widget so that this callback can be used to produce a
   /// localized title.
   ///
@@ -216,9 +259,9 @@ class MaterialApp extends flur.StatelessUIPluginWidget {
   /// Delegates that produce [WidgetsLocalizations] and [MaterialLocalizations]
   /// are included automatically. Apps can provide their own versions of these
   /// localizations by creating implementations of
-  /// [LocalizationsDelegate<WidgetLocalizations>] or
+  /// [LocalizationsDelegate<WidgetsLocalizations>] or
   /// [LocalizationsDelegate<MaterialLocalizations>] whose load methods return
-  /// custom versions of [WidgetLocalizations] or [MaterialLocalizations].
+  /// custom versions of [WidgetsLocalizations] or [MaterialLocalizations].
   ///
   /// For example: to add support to [MaterialLocalizations] for a
   /// locale it doesn't already support, say `const Locale('foo', 'BR')`,
@@ -374,7 +417,159 @@ class MaterialApp extends flur.StatelessUIPluginWidget {
   final bool debugShowMaterialGrid;
 
   @override
-  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
-    return plugin.buildMaterialApp(context, this);
+  _MaterialAppState createState() => new _MaterialAppState();
+}
+
+class _MaterialScrollBehavior extends ScrollBehavior {
+  @override
+  TargetPlatform getPlatform(BuildContext context) {
+    return Theme.of(context).platform;
+  }
+
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    // When modifying this function, consider modifying the implementation in
+    // the base class as well.
+    switch (getPlatform(context)) {
+      case TargetPlatform.iOS:
+        return child;
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+        return new GlowingOverscrollIndicator(
+          child: child,
+          axisDirection: axisDirection,
+          color: Theme.of(context).accentColor,
+        );
+    }
+    return null;
+  }
+}
+
+class _MaterialAppState extends State<MaterialApp> {
+  HeroController _heroController;
+
+  @override
+  void initState() {
+    super.initState();
+    _heroController = new HeroController(createRectTween: _createRectTween);
+  }
+
+  // Combine the Localizations for Material with the ones contributed
+  // by the localizationsDelegates parameter, if any. Only the first delegate
+  // of a particular LocalizationsDelegate.type is loaded so the
+  // localizationsDelegate parameter can be used to override
+  // _MaterialLocalizationsDelegate.
+  Iterable<LocalizationsDelegate<dynamic>> get _localizationsDelegates sync* {
+    if (widget.localizationsDelegates != null)
+      yield* widget.localizationsDelegates;
+    yield const _MaterialLocalizationsDelegate();
+  }
+
+  RectTween _createRectTween(Rect begin, Rect end) {
+    return new MaterialRectArcTween(begin: begin, end: end);
+  }
+
+  Route<dynamic> _onGenerateRoute(RouteSettings settings) {
+    final String name = settings.name;
+    WidgetBuilder builder;
+    if (name == Navigator.defaultRouteName && widget.home != null)
+      builder = (BuildContext context) => widget.home;
+    else
+      builder = widget.routes[name];
+    if (builder != null) {
+      return new MaterialPageRoute<dynamic>(
+        builder: builder,
+        settings: settings,
+      );
+    }
+    if (widget.onGenerateRoute != null) return widget.onGenerateRoute(settings);
+    return null;
+  }
+
+  Route<dynamic> _onUnknownRoute(RouteSettings settings) {
+    assert(() {
+      if (widget.onUnknownRoute == null) {
+        throw new FlutterError(
+            'Could not find a generator for route $settings in the $runtimeType.\n'
+            'Generators for routes are searched for in the following order:\n'
+            ' 1. For the "/" route, the "home" property, if non-null, is used.\n'
+            ' 2. Otherwise, the "routes" table is used, if it has an entry for '
+            'the route.\n'
+            ' 3. Otherwise, onGenerateRoute is called. It should return a '
+            'non-null value for any valid route not handled by "home" and "routes".\n'
+            ' 4. Finally if all else fails onUnknownRoute is called.\n'
+            'Unfortunately, onUnknownRoute was not set.');
+      }
+      return true;
+    }());
+    final Route<dynamic> result = widget.onUnknownRoute(settings);
+    assert(() {
+      if (result == null) {
+        throw new FlutterError('The onUnknownRoute callback returned null.\n'
+            'When the $runtimeType requested the route $settings from its '
+            'onUnknownRoute callback, the callback returned null. Such callbacks '
+            'must never return null.');
+      }
+      return true;
+    }());
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = widget.theme ?? new ThemeData.fallback();
+    Widget result = new AnimatedTheme(
+        data: theme,
+        isMaterialAppTheme: true,
+        child: new WidgetsApp(
+          key: new GlobalObjectKey(this),
+          title: widget.title,
+          onGenerateTitle: widget.onGenerateTitle,
+          textStyle: _errorTextStyle,
+          // blue is the primary color of the default theme
+          color: widget.color ?? theme?.primaryColor ?? Colors.blue,
+          navigatorObservers:
+              new List<NavigatorObserver>.from(widget.navigatorObservers)
+                ..add(_heroController),
+          initialRoute: widget.initialRoute,
+          onGenerateRoute: _onGenerateRoute,
+          onUnknownRoute: _onUnknownRoute,
+          locale: widget.locale,
+          localizationsDelegates: _localizationsDelegates,
+          localeResolutionCallback: widget.localeResolutionCallback,
+          supportedLocales: widget.supportedLocales,
+          showPerformanceOverlay: widget.showPerformanceOverlay,
+          checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
+          checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
+          showSemanticsDebugger: widget.showSemanticsDebugger,
+          debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner,
+          inspectorSelectButtonBuilder:
+              (BuildContext context, VoidCallback onPressed) {
+            return new FloatingActionButton(
+              child: const Icon(Icons.search),
+              onPressed: onPressed,
+              mini: true,
+            );
+          },
+        ));
+
+    assert(() {
+      if (widget.debugShowMaterialGrid) {
+        result = new GridPaper(
+          color: const Color(0xE0F9BBE0),
+          interval: 8.0,
+          divisions: 2,
+          subdivisions: 1,
+          child: result,
+        );
+      }
+      return true;
+    }());
+
+    return new ScrollConfiguration(
+      behavior: new _MaterialScrollBehavior(),
+      child: result,
+    );
   }
 }

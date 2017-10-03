@@ -36,7 +36,7 @@ import 'scrollable.dart';
 /// * [GridView], which handles multiple children in a scrolling grid.
 /// * [PageView], for a scrollable that works page by page.
 /// * [Scrollable], which handles arbitrary scrolling effects.
-class SingleChildScrollView extends flur.StatelessUIPluginWidget {
+class SingleChildScrollView extends flur.SingleChildUIPluginWidget {
   /// Creates a box in which a single widget can be scrolled.
   SingleChildScrollView({
     Key key,
@@ -49,7 +49,7 @@ class SingleChildScrollView extends flur.StatelessUIPluginWidget {
     this.child,
   })
       : primary =
-      primary ?? controller == null && scrollDirection == Axis.vertical,
+            primary ?? controller == null && scrollDirection == Axis.vertical,
         super(key: key);
 
   /// The axis along which the scroll view scrolls.

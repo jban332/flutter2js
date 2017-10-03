@@ -35,7 +35,7 @@ class SystemChannels {
 
   /// A JSON [BasicMessageChannel] for key events.
   static const BasicMessageChannel<dynamic> keyEvent =
-  const BasicMessageChannel<dynamic>(
+      const BasicMessageChannel<dynamic>(
     'flutter/keyevent',
     const JSONMessageCodec(),
   );
@@ -45,14 +45,14 @@ class SystemChannels {
   /// Valid messages are string representations of the values of the
   /// [AppLifecycleState] enumeration.
   static const BasicMessageChannel<String> lifecycle =
-  const BasicMessageChannel<String>(
+      const BasicMessageChannel<String>(
     'flutter/lifecycle',
     const StringCodec(),
   );
 
   /// A JSON [BasicMessageChannel] for system events.
   static const BasicMessageChannel<dynamic> system =
-  const BasicMessageChannel<dynamic>(
+      const BasicMessageChannel<dynamic>(
     'flutter/system',
     const JSONMessageCodec(),
   );
@@ -64,7 +64,7 @@ class SystemChannels {
   /// * [SemanticsEvents] and its subclasses for a list of valid accessibility
   ///   events that can be sent over this channel.
   static const BasicMessageChannel<dynamic> accessibility =
-  const BasicMessageChannel<dynamic>(
+      const BasicMessageChannel<dynamic>(
     'flutter/accessibility',
     const StandardMessageCodec(),
   );

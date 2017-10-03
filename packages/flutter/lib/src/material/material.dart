@@ -44,7 +44,7 @@ enum MaterialType {
 ///  * [MaterialType]
 ///  * [Material]
 final Map<MaterialType, BorderRadius> kMaterialEdges =
-<MaterialType, BorderRadius>{
+    <MaterialType, BorderRadius>{
   MaterialType.canvas: null,
   MaterialType.card: new BorderRadius.circular(2.0),
   MaterialType.circle: null,

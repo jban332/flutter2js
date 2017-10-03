@@ -88,8 +88,8 @@ class CheckboxListTile extends StatelessWidget {
     this.secondary,
     this.selected: false,
     this.controlAffinity: ListTileControlAffinity.platform,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// Whether this checkbox is checked.
   ///
@@ -185,9 +185,7 @@ class CheckboxListTile extends StatelessWidget {
     }
     return new MergeSemantics(
       child: ListTileTheme.merge(
-        selectedColor: activeColor ?? Theme
-            .of(context)
-            .accentColor,
+        selectedColor: activeColor ?? Theme.of(context).accentColor,
         child: new ListTile(
           leading: leading,
           title: title,
@@ -196,9 +194,11 @@ class CheckboxListTile extends StatelessWidget {
           isThreeLine: isThreeLine,
           dense: dense,
           enabled: onChanged != null,
-          onTap: onChanged != null ? () {
-            onChanged(!value);
-          } : null,
+          onTap: onChanged != null
+              ? () {
+                  onChanged(!value);
+                }
+              : null,
           selected: selected,
         ),
       ),

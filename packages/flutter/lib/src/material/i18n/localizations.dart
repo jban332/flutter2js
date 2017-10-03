@@ -11,7 +11,7 @@
 ///
 /// This variable is used by [MaterialLocalizations].
 const Map<String, Map<String, String>> localizations =
-const <String, Map<String, String>>{
+    const <String, Map<String, String>>{
   "ar": const <String, String>{
     "timeOfDayFormat": r"h:mm a",
     "openAppDrawerTooltip": r"افتح قائمة التنقل",
@@ -121,7 +121,7 @@ const <String, Map<String, String>>{
     "licensesPageTitle": r"Licencias",
     "pageRowsInfoTitle": r"$firstRow–$lastRow de $rowCount",
     "pageRowsInfoTitleApproximate":
-    r"$firstRow–$lastRow de aproximadamente $rowCount",
+        r"$firstRow–$lastRow de aproximadamente $rowCount",
     "rowsPerPageTitle": r"Filas por página:",
     "selectedRowCountTitleZero": r"No se han seleccionado elementos",
     "selectedRowCountTitleOne": r"1 artículo seleccionado",
@@ -392,7 +392,7 @@ const <String, Map<String, String>>{
     "licensesPageTitle": r"لائسنس",
     "pageRowsInfoTitle": r"$firstRow–$lastRow کے $rowCount",
     "pageRowsInfoTitleApproximate":
-    r"$firstRow–$lastRow میں سے $rowCount تقریبا",
+        r"$firstRow–$lastRow میں سے $rowCount تقریبا",
     "rowsPerPageTitle": r"رویوں فی صفحہ:",
     "selectedRowCountTitleOther": r"$selectedRowCount منتخب کردہ اشیاء",
     "cancelButtonLabel": r"منسوخ کریں",

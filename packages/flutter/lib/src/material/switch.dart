@@ -41,12 +41,13 @@ class Switch extends flur.StatelessUIPluginWidget {
   ///
   /// * [value] determines whether this switch is on or off.
   /// * [onChanged] is called when the user toggles the switch on or off.
-  const Switch({Key key,
-    @required this.value,
-    @required this.onChanged,
-    this.activeColor,
-    this.activeThumbImage,
-    this.inactiveThumbImage})
+  const Switch(
+      {Key key,
+      @required this.value,
+      @required this.onChanged,
+      this.activeColor,
+      this.activeThumbImage,
+      this.inactiveThumbImage})
       : super(key: key);
 
   /// Whether this switch is on or off.

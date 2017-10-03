@@ -58,12 +58,14 @@ typedef Widget RoutePageBuilder(BuildContext context,
 /// transitions.
 ///
 /// See [ModalRoute.buildTransitions] for complete definition of the parameters.
-typedef Widget RouteTransitionsBuilder(BuildContext context,
+typedef Widget RouteTransitionsBuilder(
+    BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child);
 
-Widget _defaultTransitionsBuilder(BuildContext context,
+Widget _defaultTransitionsBuilder(
+    BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     Widget child) {

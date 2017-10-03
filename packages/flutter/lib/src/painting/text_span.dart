@@ -293,7 +293,7 @@ class TextSpan extends DiagnosticableTree {
     if (children != null) {
       for (int index = 0; index < children.length; index += 1) {
         final RenderComparison candidate =
-        children[index].compareTo(other.children[index]);
+            children[index].compareTo(other.children[index]);
         if (candidate.index > result.index) result = candidate;
         if (result == RenderComparison.layout) return result;
       }

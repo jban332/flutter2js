@@ -31,8 +31,7 @@ class _Vector {
 
   double operator *(_Vector a) {
     double result = 0.0;
-    for (int i = 0; i < _length; i += 1)
-      result += this[i] * a[i];
+    for (int i = 0; i < _length; i += 1) result += this[i] * a[i];
     return result;
   }
 
@@ -105,8 +104,7 @@ class LeastSquaresSolver {
     final _Matrix a = new _Matrix(n, m);
     for (int h = 0; h < m; h += 1) {
       a.set(0, h, w[h]);
-      for (int i = 1; i < n; i += 1)
-        a.set(i, h, a.get(i - 1, h) * x[h]);
+      for (int i = 1; i < n; i += 1) a.set(i, h, a.get(i - 1, h) * x[h]);
     }
 
     // Apply the Gram-Schmidt process to A to obtain its QR decomposition.
@@ -116,8 +114,7 @@ class LeastSquaresSolver {
     // Upper triangular matrix, row-major order.
     final _Matrix r = new _Matrix(n, n);
     for (int j = 0; j < n; j += 1) {
-      for (int h = 0; h < m; h += 1)
-        q.set(j, h, a.get(j, h));
+      for (int h = 0; h < m; h += 1) q.set(j, h, a.get(j, h));
       for (int i = 0; i < j; i += 1) {
         final double dot = q.getRow(j) * q.getRow(i);
         for (int h = 0; h < m; h += 1)
@@ -131,8 +128,7 @@ class LeastSquaresSolver {
       }
 
       final double inverseNorm = 1.0 / norm;
-      for (int h = 0; h < m; h += 1)
-        q.set(j, h, q.get(j, h) * inverseNorm);
+      for (int h = 0; h < m; h += 1) q.set(j, h, q.get(j, h) * inverseNorm);
       for (int i = 0; i < n; i += 1)
         r.set(j, i, i < j ? 0.0 : q.getRow(j) * a.getRow(i));
     }
@@ -140,8 +136,7 @@ class LeastSquaresSolver {
     // Solve R B = Qt W Y to find B.  This is easy because R is upper triangular.
     // We just work from bottom-right to top-left calculating B's coefficients.
     final _Vector wy = new _Vector(m);
-    for (int h = 0; h < m; h += 1)
-      wy[h] = y[h] * w[h];
+    for (int h = 0; h < m; h += 1) wy[h] = y[h] * w[h];
     for (int i = n - 1; i >= 0; i -= 1) {
       result.coefficients[i] = q.getRow(i) * wy;
       for (int j = n - 1; j > i; j -= 1)
@@ -155,8 +150,7 @@ class LeastSquaresSolver {
     // error), and sumSquaredTotal is the total sum of squares (variance of the
     // data) where each has been weighted.
     double yMean = 0.0;
-    for (int h = 0; h < m; h += 1)
-      yMean += y[h];
+    for (int h = 0; h < m; h += 1) yMean += y[h];
     yMean /= m;
 
     double sumSquaredError = 0.0;

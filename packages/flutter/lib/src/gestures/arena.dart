@@ -197,11 +197,12 @@ class GestureArenaManager {
   /// Reject or accept a gesture recognizer.
   ///
   /// This is called by calling [GestureArenaEntry.resolve] on the object returned from [add].
-  void _resolve(int pointer, GestureArenaMember member,
-      GestureDisposition disposition) {
+  void _resolve(
+      int pointer, GestureArenaMember member, GestureDisposition disposition) {
     final _GestureArena state = _arenas[pointer];
     if (state == null) return; // This arena has already resolved.
-    assert(_debugLogDiagnostic(pointer,
+    assert(_debugLogDiagnostic(
+        pointer,
         '${ disposition == GestureDisposition.accepted
             ? "Accepting"
             : "Rejecting" }: $member'));
@@ -231,7 +232,7 @@ class GestureArenaManager {
       assert(_debugLogDiagnostic(pointer, 'Arena empty.'));
     } else if (state.eagerWinner != null) {
       assert(
-      _debugLogDiagnostic(pointer, 'Eager winner: ${state.eagerWinner}'));
+          _debugLogDiagnostic(pointer, 'Eager winner: ${state.eagerWinner}'));
       _resolveInFavorOf(pointer, state, state.eagerWinner);
     }
   }
@@ -244,12 +245,12 @@ class GestureArenaManager {
     assert(members.length == 1);
     _arenas.remove(pointer);
     assert(
-    _debugLogDiagnostic(pointer, 'Default winner: ${state.members.first}'));
+        _debugLogDiagnostic(pointer, 'Default winner: ${state.members.first}'));
     state.members.first.acceptGesture(pointer);
   }
 
-  void _resolveInFavorOf(int pointer, _GestureArena state,
-      GestureArenaMember member) {
+  void _resolveInFavorOf(
+      int pointer, _GestureArena state, GestureArenaMember member) {
     assert(state == _arenas[pointer]);
     assert(state != null);
     assert(state.eagerWinner == null || state.eagerWinner == member);
@@ -266,8 +267,7 @@ class GestureArenaManager {
       if (debugPrintGestureArenaDiagnostics) {
         final int count = state != null ? state.members.length : null;
         final String s = count != 1 ? 's' : '';
-        debugPrint(
-            'Gesture arena ${pointer.toString().padRight(
+        debugPrint('Gesture arena ${pointer.toString().padRight(
                 4)} ❙ $message${ count != null
                 ? " with $count member$s."
                 : ""}');

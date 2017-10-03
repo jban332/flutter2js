@@ -11,17 +11,23 @@ class MdlUIPlugin extends HtmlUIPlugin {
   MdlUIStyle get style => const MdlUIStyle();
 
   @override
+  Widget buildDrawer(BuildContext context, Drawer widget) {
+    return new HtmlElementWidget("div",
+        debugCreator: widget, children: [widget.child]);
+  }
+  @override
   Widget buildSnackBar(BuildContext context, SnackBar widget) {
     final children = [
-      new HtmlReactWidget("div",
+      new HtmlElementWidget("div",
           className: "mdl-snackbar__text", children: [widget.content])
     ];
     if (widget.action != null) {
-      children.add(new HtmlReactWidget("button",
+      children.add(new HtmlElementWidget("button",
           className: "mdl-snackbar__action",
-          props: new ReactProps({"type": "button"})));
+          attributes: const {"type": "button"}));
     }
-    return new HtmlReactWidget("div",
+    return new HtmlElementWidget("div",
+        debugCreator: widget,
         className: "mdl-snackbar", children: children);
   }
 
@@ -34,29 +40,30 @@ class MdlUIPlugin extends HtmlUIPlugin {
     for (var item in widget.tabs) {
       i++;
       final tab = item as Tab;
-      buttons.add(new HtmlReactWidget("a",
+      buttons.add(new HtmlElementWidget("a",
           className: "mdl-layout__tab",
-          props: new ReactProps({"href": "#tab-${i}"}),
+          attributes: {"href": "#tab-${i}"},
           children: [
             tab.text,
           ]));
-      tabs.add(new HtmlReactWidget("section",
+      tabs.add(new HtmlElementWidget("section",
           className: "mdl-layout__tab-panel",
-          props: new ReactProps({"id": "#tab-${i}"}),
+          attributes: {"id": "#tab-${i}"},
           children: [
             tab.build(context),
           ]));
     }
 
-    final header = new HtmlReactWidget("header", children: [
-      new HtmlReactWidget("div",
+    final header = new HtmlElementWidget("header", children: [
+      new HtmlElementWidget("div",
           className: "mdl-layout__tab-bar mdl-js-ripple-effect",
           children: buttons)
     ]);
 
-    final main = new HtmlReactWidget("main", children: tabs);
-    return new HtmlReactWidget(
+    final main = new HtmlElementWidget("main", children: tabs);
+    return new HtmlElementWidget(
       "div",
+      debugCreator: widget,
       className: "mdl-layout mdl-js-layout mdl-layout--fixed-header",
       children: [
         header,
@@ -69,18 +76,19 @@ class MdlUIPlugin extends HtmlUIPlugin {
   Widget buildTooltip(BuildContext context, Tooltip widget) {
     final id = generateHtmlElementId();
     final children = [
-      new HtmlReactWidget("div",
-          props: new ReactProps({"id": id}), children: [widget.child]),
-      new HtmlReactWidget(
+      new HtmlElementWidget("div",
+          attributes: {"id": id}, children: [widget.child]),
+      new HtmlElementWidget(
         "div",
-        props: new ReactProps({
+        attributes: {
           "classNames": "mdl-tooltip",
           "data-mdl-for": id,
-        }),
+        },
         children: [widget.message],
       )
     ];
-    return new HtmlReactWidget("div", children: children);
+    return new HtmlElementWidget("div",
+        debugCreator: widget, children: children);
   }
 }
 
@@ -145,7 +153,7 @@ class MdlUIStyle extends HtmlUIStyle {
 
   @override
   String buildIconButton(BuildContext context, IconButton widget) {
-    return "mdl-button mdl-js-button mdl-button--icon";
+    return "mdl-button mdl-js-button mdl-button--icon mdl-button--colored";
   }
 
   @override

@@ -28,6 +28,6 @@ import 'framework.dart';
 ///   ensure the widget, element, and render trees are all built.
 void runApp(Widget app) {
   final plugin = flur.RenderTreePlugin.current;
-  assert(plugin!=null, "RenderTreePlugin.current is null");
+  assert(plugin != null, "RenderTreePlugin.current is null");
   plugin.runApp(app);
 }

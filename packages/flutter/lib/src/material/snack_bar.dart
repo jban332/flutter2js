@@ -26,7 +26,7 @@ const Duration _kSnackBarTransitionDuration = const Duration(milliseconds: 250);
 const Duration _kSnackBarDisplayDuration = const Duration(milliseconds: 1500);
 const Curve _snackBarHeightCurve = Curves.fastOutSlowIn;
 const Curve _snackBarFadeCurve =
-const Interval(0.72, 1.0, curve: Curves.fastOutSlowIn);
+    const Interval(0.72, 1.0, curve: Curves.fastOutSlowIn);
 
 /// Specify how a [SnackBar] was closed.
 ///

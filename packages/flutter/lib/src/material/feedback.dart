@@ -96,8 +96,8 @@ class Feedback {
   ///
   ///  * [forTap] to just trigger the platform-specific feedback without wrapping
   ///    a [GestureTapCallback].
-  static GestureTapCallback wrapForTap(GestureTapCallback callback,
-      BuildContext context) {
+  static GestureTapCallback wrapForTap(
+      GestureTapCallback callback, BuildContext context) {
     if (callback == null) return null;
     return () {
       callback();

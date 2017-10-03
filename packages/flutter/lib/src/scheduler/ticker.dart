@@ -144,7 +144,7 @@ class Ticker {
     _future = new TickerFuture._();
     if (shouldScheduleTick) scheduleTick();
     if (SchedulerBinding.instance.schedulerPhase.index >
-        SchedulerPhase.idle.index &&
+            SchedulerPhase.idle.index &&
         SchedulerBinding.instance.schedulerPhase.index <
             SchedulerPhase.postFrameCallbacks.index)
       _startTime = SchedulerBinding.instance.currentFrameTimeStamp;
@@ -260,14 +260,14 @@ class Ticker {
     assert(_startTime == null);
     assert(_animationId == null);
     assert(
-    (originalTicker._future == null) == (originalTicker._startTime == null),
-    'Cannot absorb Ticker after it has been disposed.');
+        (originalTicker._future == null) == (originalTicker._startTime == null),
+        'Cannot absorb Ticker after it has been disposed.');
     if (originalTicker._future != null) {
       _future = originalTicker._future;
       _startTime = originalTicker._startTime;
       if (shouldScheduleTick) scheduleTick();
       originalTicker._future =
-      null; // so that it doesn't get disposed when we dispose of originalTicker
+          null; // so that it doesn't get disposed when we dispose of originalTicker
       originalTicker.unscheduleTick();
     }
     originalTicker.dispose();
@@ -315,7 +315,7 @@ class Ticker {
             'The stack trace when the $runtimeType was actually created was:');
         FlutterError
             .defaultStackFilter(
-            _debugCreationStack.toString().trimRight().split('\n'))
+                _debugCreationStack.toString().trimRight().split('\n'))
             .forEach(buffer.writeln);
       }
       return true;
@@ -357,7 +357,7 @@ class TickerFuture implements Future<Null> {
   final Completer<Null> _primaryCompleter = new Completer<Null>();
   Completer<Null> _secondaryCompleter;
   bool
-  _completed; // null means unresolved, true means complete, false means canceled
+      _completed; // null means unresolved, true means complete, false means canceled
 
   void _complete() {
     assert(_completed == null);

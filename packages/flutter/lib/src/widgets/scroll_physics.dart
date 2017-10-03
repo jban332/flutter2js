@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
+import 'package:flutter/ui.dart' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
-import 'package:flutter/ui.dart' as ui;
 
+import 'overscroll_indicator.dart';
 import 'scroll_metrics.dart';
 import 'scroll_simulation.dart';
 
@@ -142,14 +143,14 @@ class ScrollPhysics {
   /// The given `position` is only valid during this method call. Do not keep a
   /// reference to it to use later, as the values may update, may not update, or
   /// may update to reflect an entirely unrelated scrollable.
-  Simulation createBallisticSimulation(ScrollMetrics position,
-      double velocity) {
+  Simulation createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     if (parent == null) return null;
     return parent.createBallisticSimulation(position, velocity);
   }
 
   static final SpringDescription _kDefaultSpring =
-  new SpringDescription.withDampingRatio(
+      new SpringDescription.withDampingRatio(
     mass: 0.5,
     stiffness: 100.0,
     ratio: 1.1,
@@ -160,12 +161,12 @@ class ScrollPhysics {
 
   /// The default accuracy to which scrolling is computed.
   static final Tolerance _kDefaultTolerance = new Tolerance(
-    // TODO(ianh): Handle the case of the device pixel ratio changing.
-    // TODO(ianh): Get this from the local MediaQuery not dart:ui's window object.
+      // TODO(ianh): Handle the case of the device pixel ratio changing.
+      // TODO(ianh): Get this from the local MediaQuery not dart:ui's window object.
       velocity: 1.0 /
           (0.050 * ui.window.devicePixelRatio), // logical pixels per second
       distance: 1.0 / ui.window.devicePixelRatio // logical pixels
-  );
+      );
 
   /// The tolerance to use for ballistic simulations.
   Tolerance get tolerance => parent?.tolerance ?? _kDefaultTolerance;
@@ -196,6 +197,17 @@ class ScrollPhysics {
 
   /// Scroll fling velocity magnitudes will be clamped to this value.
   double get maxFlingVelocity => parent?.maxFlingVelocity ?? kMaxFlingVelocity;
+
+  /// Returns the velocity carried on repeated flings.
+  ///
+  /// The function is applied to the existing scroll velocity when another
+  /// scroll drag is applied in the same direction.
+  ///
+  /// By default, physics for platforms other than iOS doesn't carry momentum.
+  double carriedMomentum(double existingVelocity) {
+    if (parent == null) return 0.0;
+    return parent.carriedMomentum(existingVelocity);
+  }
 
   @override
   String toString() {
@@ -244,26 +256,26 @@ class BouncingScrollPhysics extends ScrollPhysics {
     if (!position.outOfRange) return offset;
 
     final double overscrollPastStart =
-    math.max(position.minScrollExtent - position.pixels, 0.0);
+        math.max(position.minScrollExtent - position.pixels, 0.0);
     final double overscrollPastEnd =
-    math.max(position.pixels - position.maxScrollExtent, 0.0);
+        math.max(position.pixels - position.maxScrollExtent, 0.0);
     final double overscrollPast =
-    math.max(overscrollPastStart, overscrollPastEnd);
+        math.max(overscrollPastStart, overscrollPastEnd);
     final bool easing = (overscrollPastStart > 0.0 && offset < 0.0) ||
         (overscrollPastEnd > 0.0 && offset > 0.0);
 
     final double friction = easing
-    // Apply less resistance when easing the overscroll vs tensioning.
+        // Apply less resistance when easing the overscroll vs tensioning.
         ? frictionFactor(
-        (overscrollPast - offset.abs()) / position.viewportDimension)
+            (overscrollPast - offset.abs()) / position.viewportDimension)
         : frictionFactor(overscrollPast / position.viewportDimension);
     final double direction = offset.sign;
 
     return direction * _applyFriction(overscrollPast, offset.abs(), friction);
   }
 
-  static double _applyFriction(double extentOutside, double absDelta,
-      double gamma) {
+  static double _applyFriction(
+      double extentOutside, double absDelta, double gamma) {
     assert(absDelta > 0);
     double total = 0.0;
     if (extentOutside > 0) {
@@ -279,16 +291,15 @@ class BouncingScrollPhysics extends ScrollPhysics {
   double applyBoundaryConditions(ScrollMetrics position, double value) => 0.0;
 
   @override
-  Simulation createBallisticSimulation(ScrollMetrics position,
-      double velocity) {
+  Simulation createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     final Tolerance tolerance = this.tolerance;
     if (velocity.abs() >= tolerance.velocity || position.outOfRange) {
       return new BouncingScrollSimulation(
         spring: spring,
         position: position.pixels,
         velocity: velocity *
-            0.91,
-        // TODO(abarth): We should move this constant closer to the drag end.
+            0.91, // TODO(abarth): We should move this constant closer to the drag end.
         leadingExtent: position.minScrollExtent,
         trailingExtent: position.maxScrollExtent,
         tolerance: tolerance,
@@ -302,6 +313,27 @@ class BouncingScrollPhysics extends ScrollPhysics {
   // to trigger a fling.
   @override
   double get minFlingVelocity => kMinFlingVelocity * 2.0;
+
+  // Methodology:
+  // 1- Use https://github.com/flutter/scroll_overlay to test with Flutter and
+  //    platform scroll views superimposed.
+  // 2- Record incoming speed and make rapid flings in the test app.
+  // 3- If the scrollables stopped overlapping at any moment, adjust the desired
+  //    output value of this function at that input speed.
+  // 4- Feed new input/output set into a power curve fitter. Change function
+  //    and repeat from 2.
+  // 5- Repeat from 2 with medium and slow flings.
+  /// Momentum build-up function that mimics iOS's scroll speed increase with repeated flings.
+  ///
+  /// The velocity of the last fling is not an important factor. Existing speed
+  /// and (related) time since last fling are factors for the velocity transfer
+  /// calculations.
+  @override
+  double carriedMomentum(double existingVelocity) {
+    return existingVelocity.sign *
+        math.min(0.000816 * math.pow(existingVelocity.abs(), 1.967).toDouble(),
+            40000.0);
+  }
 }
 
 /// Scroll physics for environments that prevent the scroll offset from reaching
@@ -334,17 +366,17 @@ class ClampingScrollPhysics extends ScrollPhysics {
       if (value == position.pixels) {
         throw new FlutterError(
             '$runtimeType.applyBoundaryConditions() was called redundantly.\n'
-                'The proposed new position, $value, is exactly equal to the current position of the '
-                'given ${position.runtimeType}, ${position.pixels}.\n'
-                'The applyBoundaryConditions method should only be called when the value is '
-                'going to actually change the pixels, otherwise it is redundant.\n'
-                'The physics object in question was:\n'
-                '  $this\n'
-                'The position object in question was:\n'
-                '  $position\n');
+            'The proposed new position, $value, is exactly equal to the current position of the '
+            'given ${position.runtimeType}, ${position.pixels}.\n'
+            'The applyBoundaryConditions method should only be called when the value is '
+            'going to actually change the pixels, otherwise it is redundant.\n'
+            'The physics object in question was:\n'
+            '  $this\n'
+            'The position object in question was:\n'
+            '  $position\n');
       }
       return true;
-    });
+    }());
     if (value < position.pixels &&
         position.pixels <= position.minScrollExtent) // underscroll
       return value - position.pixels;
@@ -361,8 +393,8 @@ class ClampingScrollPhysics extends ScrollPhysics {
   }
 
   @override
-  Simulation createBallisticSimulation(ScrollMetrics position,
-      double velocity) {
+  Simulation createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     final Tolerance tolerance = this.tolerance;
     if (position.outOfRange) {
       double end;

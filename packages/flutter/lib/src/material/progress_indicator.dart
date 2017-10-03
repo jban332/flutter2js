@@ -33,7 +33,8 @@ abstract class ProgressIndicator extends flur.StatelessUIPluginWidget {
     this.value,
     this.backgroundColor,
     this.valueColor,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// If non-null, the value of this progress indicator with 0.0 corresponding
   /// to no progress having been made and 1.0 corresponding to all the progress
@@ -58,8 +59,8 @@ abstract class ProgressIndicator extends flur.StatelessUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new PercentProperty(
-        'value', value, showName: false, ifNull: '<indeterminate>'));
+    description.add(new PercentProperty('value', value,
+        showName: false, ifNull: '<indeterminate>'));
   }
 
   @override
@@ -67,7 +68,6 @@ abstract class ProgressIndicator extends flur.StatelessUIPluginWidget {
     return plugin.buildProgressIndicator(context, this);
   }
 }
-
 
 /// A material design linear progress indicator, also known as a progress bar.
 ///
@@ -96,7 +96,8 @@ class LinearProgressIndicator extends ProgressIndicator {
   const LinearProgressIndicator({
     Key key,
     double value,
-  }) : super(key: key, value: value);
+  })
+      : super(key: key, value: value);
 
   @override
   Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
@@ -135,10 +136,12 @@ class CircularProgressIndicator extends ProgressIndicator {
     Color backgroundColor,
     Animation<Color> valueColor,
     this.strokeWidth: 4.0,
-  }) : super(key: key,
-      value: value,
-      backgroundColor: backgroundColor,
-      valueColor: valueColor);
+  })
+      : super(
+            key: key,
+            value: value,
+            backgroundColor: backgroundColor,
+            valueColor: valueColor);
 
   /// The width of the line used to draw the circle.
   final double strokeWidth;
@@ -168,14 +171,16 @@ class RefreshProgressIndicator extends CircularProgressIndicator {
     double value,
     Color backgroundColor,
     Animation<Color> valueColor,
-    double strokeWidth: 2.0, // Different default than CircularProgressIndicator.
-  }) : super(
-    key: key,
-    value: value,
-    backgroundColor: backgroundColor,
-    valueColor: valueColor,
-    strokeWidth: strokeWidth,
-  );
+    double strokeWidth:
+        2.0, // Different default than CircularProgressIndicator.
+  })
+      : super(
+          key: key,
+          value: value,
+          backgroundColor: backgroundColor,
+          valueColor: valueColor,
+          strokeWidth: strokeWidth,
+        );
 
   @override
   Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {

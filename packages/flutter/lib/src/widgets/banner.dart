@@ -4,19 +4,19 @@
 
 import 'dart:math' as math;
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 
 import 'basic.dart';
+import 'debug.dart';
 import 'framework.dart';
 
 const double _kOffset =
-40.0; // distance to bottom of banner, at a 45 degree angle inwards
+    40.0; // distance to bottom of banner, at a 45 degree angle inwards
 const double _kHeight = 12.0; // height of banner
 const double _kBottomOffset =
     _kOffset + 0.707 * _kHeight; // offset plus sqrt(2)/2 * banner height
 final Rect _kRect =
-new Rect.fromLTWH(-_kOffset, _kOffset - _kHeight, _kOffset * 2.0, _kHeight);
+    new Rect.fromLTWH(-_kOffset, _kOffset - _kHeight, _kOffset * 2.0, _kHeight);
 
 const Color _kColor = const Color(0xA0B71C1C);
 const TextStyle _kTextStyle = const TextStyle(
@@ -26,37 +26,80 @@ const TextStyle _kTextStyle = const TextStyle(
     height: 1.0);
 
 /// Where to show a [Banner].
+///
+/// The start and end locations are relative to the ambient [Directionality]
+/// (which can be overridden by [Banner.layoutDirection]).
 enum BannerLocation {
-  /// Show the banner in the top right corner.
-  topRight,
+  /// Show the banner in the top-right corner when the ambient [Directionality]
+  /// (or [Banner.layoutDirection]) is [TextDirection.rtl] and in the top-left
+  /// corner when the ambient [Directionality] is [TextDirection.ltr].
+  topStart,
 
-  /// Show the banner in the top left corner.
-  topLeft,
+  /// Show the banner in the top-left corner when the ambient [Directionality]
+  /// (or [Banner.layoutDirection]) is [TextDirection.rtl] and in the top-right
+  /// corner when the ambient [Directionality] is [TextDirection.ltr].
+  topEnd,
 
-  /// Show the banner in the bottom right corner.
-  bottomRight,
+  /// Show the banner in the bottom-right corner when the ambient
+  /// [Directionality] (or [Banner.layoutDirection]) is [TextDirection.rtl] and
+  /// in the bottom-left corner when the ambient [Directionality] is
+  /// [TextDirection.ltr].
+  bottomStart,
 
-  /// Show the banner in the bottom left corner.
-  bottomLeft,
+  /// Show the banner in the bottom-left corner when the ambient
+  /// [Directionality] (or [Banner.layoutDirection]) is [TextDirection.rtl] and
+  /// in the bottom-right corner when the ambient [Directionality] is
+  /// [TextDirection.ltr].
+  bottomEnd,
 }
 
 /// Paints a [Banner].
 class BannerPainter extends CustomPainter {
   /// Creates a banner painter.
   ///
-  /// The [message] and [location] arguments must not be null.
+  /// The [message], [textDirection], [location], and [layoutDirection]
+  /// arguments must not be null.
   BannerPainter({
     @required this.message,
+    @required this.textDirection,
     @required this.location,
+    @required this.layoutDirection,
     this.color: _kColor,
     this.textStyle: _kTextStyle,
-  });
+  }) {
+    assert(message != null);
+    assert(textDirection != null);
+    assert(location != null);
+    assert(color != null);
+    assert(textStyle != null);
+  }
 
   /// The message to show in the banner.
   final String message;
 
+  /// The directionality of the text.
+  ///
+  /// This value is used to disambiguate how to render bidirectional text. For
+  /// example, if the message is an English phrase followed by a Hebrew phrase,
+  /// in a [TextDirection.ltr] context the English phrase will be on the left
+  /// and the Hebrew phrase to its right, while in a [TextDirection.rtl]
+  /// context, the English phrase will be on the right and the Hebrow phrase on
+  /// its left.
+  ///
+  /// See also [layoutDirection], which controls the interpretation of values in
+  /// [location].
+  final TextDirection textDirection;
+
   /// Where to show the banner (e.g., the upper right corder).
   final BannerLocation location;
+
+  /// The directionality of the layout.
+  ///
+  /// This value is used to interpret the [location] of the banner.
+  ///
+  /// See also [textDirection], which controls the reading direction of the
+  /// [message].
+  final TextDirection layoutDirection;
 
   /// The color to paint behind the [message].
   ///
@@ -77,11 +120,11 @@ class BannerPainter extends CustomPainter {
     _paintShadow = new Paint()
       ..color = const Color(0x7F000000)
       ..maskFilter = new MaskFilter.blur(BlurStyle.normal, 4.0);
-    _paintBanner = new Paint()
-      ..color = color;
+    _paintBanner = new Paint()..color = color;
     _textPainter = new TextPainter(
       text: new TextSpan(style: textStyle, text: message),
       textAlign: TextAlign.center,
+      textDirection: textDirection,
     );
     _prepared = true;
   }
@@ -92,7 +135,8 @@ class BannerPainter extends CustomPainter {
     canvas
       ..translate(_translationX(size.width), _translationY(size.height))
       ..rotate(_rotation)
-      ..drawRect(_kRect, _paintShadow)..drawRect(_kRect, _paintBanner);
+      ..drawRect(_kRect, _paintShadow)
+      ..drawRect(_kRect, _paintBanner);
     final double width = _kOffset * 2.0;
     _textPainter.layout(minWidth: width, maxWidth: width);
     _textPainter.paint(
@@ -114,15 +158,32 @@ class BannerPainter extends CustomPainter {
 
   double _translationX(double width) {
     assert(location != null);
-    switch (location) {
-      case BannerLocation.bottomRight:
-        return width - _kBottomOffset;
-      case BannerLocation.topRight:
-        return width;
-      case BannerLocation.bottomLeft:
-        return _kBottomOffset;
-      case BannerLocation.topLeft:
-        return 0.0;
+    assert(layoutDirection != null);
+    switch (layoutDirection) {
+      case TextDirection.rtl:
+        switch (location) {
+          case BannerLocation.bottomEnd:
+            return _kBottomOffset;
+          case BannerLocation.topEnd:
+            return 0.0;
+          case BannerLocation.bottomStart:
+            return width - _kBottomOffset;
+          case BannerLocation.topStart:
+            return width;
+        }
+        break;
+      case TextDirection.ltr:
+        switch (location) {
+          case BannerLocation.bottomEnd:
+            return width - _kBottomOffset;
+          case BannerLocation.topEnd:
+            return width;
+          case BannerLocation.bottomStart:
+            return _kBottomOffset;
+          case BannerLocation.topStart:
+            return 0.0;
+        }
+        break;
     }
     return null;
   }
@@ -130,11 +191,11 @@ class BannerPainter extends CustomPainter {
   double _translationY(double height) {
     assert(location != null);
     switch (location) {
-      case BannerLocation.bottomRight:
-      case BannerLocation.bottomLeft:
+      case BannerLocation.bottomStart:
+      case BannerLocation.bottomEnd:
         return height - _kBottomOffset;
-      case BannerLocation.topRight:
-      case BannerLocation.topLeft:
+      case BannerLocation.topStart:
+      case BannerLocation.topEnd:
         return 0.0;
     }
     return null;
@@ -142,13 +203,28 @@ class BannerPainter extends CustomPainter {
 
   double get _rotation {
     assert(location != null);
-    switch (location) {
-      case BannerLocation.bottomLeft:
-      case BannerLocation.topRight:
-        return math.PI / 4.0;
-      case BannerLocation.bottomRight:
-      case BannerLocation.topLeft:
-        return -math.PI / 4.0;
+    assert(layoutDirection != null);
+    switch (layoutDirection) {
+      case TextDirection.rtl:
+        switch (location) {
+          case BannerLocation.bottomStart:
+          case BannerLocation.topEnd:
+            return -math.PI / 4.0;
+          case BannerLocation.bottomEnd:
+          case BannerLocation.topStart:
+            return math.PI / 4.0;
+        }
+        break;
+      case TextDirection.ltr:
+        switch (location) {
+          case BannerLocation.bottomStart:
+          case BannerLocation.topEnd:
+            return math.PI / 4.0;
+          case BannerLocation.bottomEnd:
+          case BannerLocation.topStart:
+            return -math.PI / 4.0;
+        }
+        break;
     }
     return null;
   }
@@ -161,8 +237,9 @@ class BannerPainter extends CustomPainter {
 ///
 /// See also:
 ///
-///  * [CheckedModeBanner].
-class Banner extends flur.StatelessUIPluginWidget {
+///  * [CheckedModeBanner], which the [WidgetsApp] widget includes by default in
+///    debug mode, to show a banner that says "SLOW MODE".
+class Banner extends StatelessWidget {
   /// Creates a banner.
   ///
   /// The [message] and [location] arguments must not be null.
@@ -170,7 +247,9 @@ class Banner extends flur.StatelessUIPluginWidget {
     Key key,
     this.child,
     @required this.message,
+    this.textDirection,
     @required this.location,
+    this.layoutDirection,
     this.color: _kColor,
     this.textStyle: _kTextStyle,
   })
@@ -182,8 +261,33 @@ class Banner extends flur.StatelessUIPluginWidget {
   /// The message to show in the banner.
   final String message;
 
+  /// The directionality of the text.
+  ///
+  /// This is used to disambiguate how to render bidirectional text. For
+  /// example, if the message is an English phrase followed by a Hebrew phrase,
+  /// in a [TextDirection.ltr] context the English phrase will be on the left
+  /// and the Hebrew phrase to its right, while in a [TextDirection.rtl]
+  /// context, the English phrase will be on the right and the Hebrow phrase on
+  /// its left.
+  ///
+  /// Defaults to the ambient [Directionality], if any.
+  ///
+  /// See also [layoutDirection], which controls the interpretation of the
+  /// [location].
+  final TextDirection textDirection;
+
   /// Where to show the banner (e.g., the upper right corder).
   final BannerLocation location;
+
+  /// The directionality of the layout.
+  ///
+  /// This is used to resolve the [location] values.
+  ///
+  /// Defaults to the ambient [Directionality], if any.
+  ///
+  /// See also [textDirection], which controls the reading direction of the
+  /// [message].
+  final TextDirection layoutDirection;
 
   /// The color of the banner.
   final Color color;
@@ -192,15 +296,33 @@ class Banner extends flur.StatelessUIPluginWidget {
   final TextStyle textStyle;
 
   @override
-  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
-    return plugin.buildBanner(context, this);
+  Widget build(BuildContext context) {
+    assert((textDirection != null && layoutDirection != null) ||
+        debugCheckHasDirectionality(context));
+    return new CustomPaint(
+      foregroundPainter: new BannerPainter(
+        message: message,
+        textDirection: textDirection ?? Directionality.of(context),
+        location: location,
+        layoutDirection: layoutDirection ?? Directionality.of(context),
+        color: color,
+        textStyle: textStyle,
+      ),
+      child: child,
+    );
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
     description.add(new StringProperty('message', message, showName: false));
+    description.add(new EnumProperty<TextDirection>(
+        'textDirection', textDirection,
+        defaultValue: null));
     description.add(new EnumProperty<BannerLocation>('location', location));
+    description.add(new EnumProperty<TextDirection>(
+        'layoutDirection', layoutDirection,
+        defaultValue: null));
     description
         .add(new DiagnosticsProperty<Color>('color', color, showName: false));
     textStyle?.debugFillProperties(description, prefix: 'text ');
@@ -222,11 +344,13 @@ class CheckedModeBanner extends StatelessWidget {
     Widget result = child;
     assert(() {
       result = new Banner(
-          child: result,
-          message: 'SLOW MODE',
-          location: BannerLocation.topRight);
+        child: result,
+        message: 'SLOW MODE',
+        textDirection: TextDirection.ltr,
+        location: BannerLocation.topEnd,
+      );
       return true;
-    });
+    }());
     return result;
   }
 
@@ -237,7 +361,7 @@ class CheckedModeBanner extends StatelessWidget {
     assert(() {
       message = '"SLOW MODE"';
       return true;
-    });
+    }());
     description.add(new DiagnosticsNode.message(message));
   }
 }

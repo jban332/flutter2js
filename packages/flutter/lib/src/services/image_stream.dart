@@ -153,7 +153,7 @@ class ImageStream extends Diagnosticable {
       'listeners',
       _listeners,
       ifPresent:
-      '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
+          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
       ifNull: 'no listeners',
       level: _completer != null ? DiagnosticLevel.hidden : DiagnosticLevel.info,
     ));
@@ -205,7 +205,7 @@ class ImageStreamCompleter extends Diagnosticable {
     _current = image;
     if (_listeners.isEmpty) return;
     final List<ImageListener> localListeners =
-    new List<ImageListener>.from(_listeners);
+        new List<ImageListener>.from(_listeners);
     for (ImageListener listener in localListeners) {
       try {
         listener(image, false);
@@ -237,7 +237,7 @@ class ImageStreamCompleter extends Diagnosticable {
       'listeners',
       _listeners,
       ifPresent:
-      '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
+          '${_listeners?.length} listener${_listeners?.length == 1 ? "" : "s" }',
     ));
   }
 }

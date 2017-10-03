@@ -124,7 +124,7 @@ class AppBar extends flur.StatelessUIPluginWidget
     this.bottomOpacity: 1.0,
   })
       : preferredSize = new Size.fromHeight(
-      kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0)),
+            kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0)),
         super(key: key);
 
   /// A widget to display before the [title].

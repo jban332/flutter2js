@@ -19,7 +19,9 @@ class DragDownDetails {
   /// Creates details for a [GestureDragDownCallback].
   ///
   /// The [globalPosition] argument must not be null.
-  DragDownDetails({this.globalPosition: Offset.zero});
+  DragDownDetails({this.globalPosition: Offset.zero}) {
+    assert(globalPosition != null);
+  }
 
   /// The global position at which the pointer contacted the screen.
   ///
@@ -50,7 +52,15 @@ class DragStartDetails {
   /// Creates details for a [GestureDragStartCallback].
   ///
   /// The [globalPosition] argument must not be null.
-  DragStartDetails({this.globalPosition: Offset.zero});
+  DragStartDetails({this.sourceTimeStamp, this.globalPosition: Offset.zero}) {
+    assert(globalPosition != null);
+  }
+
+  /// Recorded timestamp of the source pointer event that triggered the drag
+  /// event.
+  ///
+  /// Could be null if triggered from proxied events such as accessibility.
+  final Duration sourceTimeStamp;
 
   /// The global position at which the pointer contacted the screen.
   ///
@@ -90,9 +100,22 @@ class DragUpdateDetails {
   /// coordinates of [delta] and the other coordinate must be zero.
   ///
   /// The [globalPosition] argument must be provided and must not be null.
-  DragUpdateDetails({this.delta: Offset.zero,
-    this.primaryDelta,
-    @required this.globalPosition});
+  DragUpdateDetails(
+      {this.sourceTimeStamp,
+      this.delta: Offset.zero,
+      this.primaryDelta,
+      @required this.globalPosition}) {
+    assert(delta != null);
+    assert(primaryDelta == null ||
+        (primaryDelta == delta.dx && delta.dy == 0.0) ||
+        (primaryDelta == delta.dy && delta.dx == 0.0));
+  }
+
+  /// Recorded timestamp of the source pointer event that triggered the drag
+  /// event.
+  ///
+  /// Could be null if triggered from proxied events such as accessibility.
+  final Duration sourceTimeStamp;
 
   /// The amount the pointer has moved since the previous update.
   ///
@@ -146,7 +169,12 @@ class DragEndDetails {
   DragEndDetails({
     this.velocity: Velocity.zero,
     this.primaryVelocity,
-  });
+  }) {
+    assert(velocity != null);
+    assert(primaryVelocity == null ||
+        primaryVelocity == velocity.pixelsPerSecond.dx ||
+        primaryVelocity == velocity.pixelsPerSecond.dy);
+  }
 
   /// The velocity the pointer was moving when it stopped contacting the screen.
   ///

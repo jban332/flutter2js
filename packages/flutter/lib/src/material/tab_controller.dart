@@ -78,17 +78,18 @@ class TabController extends ChangeNotifier {
   ///
   /// The `initialIndex` must be valid given [length] and must not be null. If [length] is
   /// zero, then `initialIndex` must be 0 (the default).
-  TabController({int initialIndex: 0,
-    @required this.length,
-    @required TickerProvider vsync})
+  TabController(
+      {int initialIndex: 0,
+      @required this.length,
+      @required TickerProvider vsync})
       : _index = initialIndex,
         _previousIndex = initialIndex,
         _animationController = length < 2
             ? null
             : new AnimationController(
-            value: initialIndex.toDouble(),
-            upperBound: (length - 1).toDouble(),
-            vsync: vsync);
+                value: initialIndex.toDouble(),
+                upperBound: (length - 1).toDouble(),
+                vsync: vsync);
 
   /// An animation whose value represents the current position of the [TabBar]'s
   /// selected tab indicator as well as the scrollOffsets of the [TabBar]
@@ -275,7 +276,7 @@ class DefaultTabController extends StatefulWidget {
   /// ```
   static TabController of(BuildContext context) {
     final _TabControllerScope scope =
-    context.inheritFromWidgetOfExactType(_TabControllerScope);
+        context.inheritFromWidgetOfExactType(_TabControllerScope);
     return scope?.controller;
   }
 
@@ -283,8 +284,8 @@ class DefaultTabController extends StatefulWidget {
   _DefaultTabControllerState createState() => new _DefaultTabControllerState();
 }
 
-class _DefaultTabControllerState extends State<DefaultTabController>
-    with SingleTickerProviderStateMixin<DefaultTabController> {
+class _DefaultTabControllerState
+    extends SingleTickerProviderStateMixin<DefaultTabController> {
   TabController _controller;
 
   @override

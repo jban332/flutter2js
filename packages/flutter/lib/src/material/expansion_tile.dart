@@ -38,7 +38,8 @@ class ExpansionTile extends StatefulWidget {
     this.backgroundColor,
     this.onExpansionChanged,
     this.children: const <Widget>[],
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// A widget to display before the title.
   ///
@@ -69,8 +70,8 @@ class ExpansionTile extends StatefulWidget {
   _ExpansionTileState createState() => new _ExpansionTileState();
 }
 
-class _ExpansionTileState extends State<ExpansionTile>
-    with SingleTickerProviderStateMixin {
+class _ExpansionTileState
+    extends SingleTickerProviderStateMixin<ExpansionTile> {
   AnimationController _controller;
   CurvedAnimation _easeOutAnimation;
   CurvedAnimation _easeInAnimation;
@@ -87,9 +88,9 @@ class _ExpansionTileState extends State<ExpansionTile>
     super.initState();
     _controller = new AnimationController(duration: _kExpand, vsync: this);
     _easeOutAnimation =
-    new CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+        new CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _easeInAnimation =
-    new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+        new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _borderColor = new ColorTween(begin: Colors.transparent);
     _headerColor = new ColorTween();
     _iconColor = new ColorTween();
@@ -98,8 +99,7 @@ class _ExpansionTileState extends State<ExpansionTile>
     _backgroundColor = new ColorTween();
 
     _isExpanded = PageStorage.of(context)?.readState(context) ?? false;
-    if (_isExpanded)
-      _controller.value = 1.0;
+    if (_isExpanded) _controller.value = 1.0;
   }
 
   @override
@@ -135,14 +135,13 @@ class _ExpansionTileState extends State<ExpansionTile>
           border: new Border(
             top: new BorderSide(color: borderSideColor),
             bottom: new BorderSide(color: borderSideColor),
-          )
-      ),
+          )),
       child: new Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           IconTheme.merge(
-            data: new IconThemeData(
-                color: _iconColor.evaluate(_easeInAnimation)),
+            data:
+                new IconThemeData(color: _iconColor.evaluate(_easeInAnimation)),
             child: new ListTile(
               onTap: _handleTap,
               leading: widget.leading,

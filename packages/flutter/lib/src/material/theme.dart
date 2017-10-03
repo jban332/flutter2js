@@ -116,7 +116,7 @@ class Theme extends StatelessWidget {
   /// ```
   static ThemeData of(BuildContext context, {bool shadowThemeOnly: false}) {
     final _InheritedTheme inheritedTheme =
-    context.inheritFromWidgetOfExactType(_InheritedTheme);
+        context.inheritFromWidgetOfExactType(_InheritedTheme);
     if (shadowThemeOnly) {
       if (inheritedTheme == null || inheritedTheme.theme.isMaterialAppTheme)
         return null;
@@ -220,7 +220,7 @@ class _AnimatedThemeState extends AnimatedWidgetBaseState<AnimatedTheme> {
   void forEachTween(TweenVisitor<dynamic> visitor) {
     // TODO(ianh): Use constructor tear-offs when it becomes possible
     _data = visitor(_data, widget.data,
-            (dynamic value) => new ThemeDataTween(begin: value));
+        (dynamic value) => new ThemeDataTween(begin: value));
     assert(_data != null);
   }
 

@@ -95,6 +95,9 @@ class DeviceInfo {
 
   /// Obtains operating system type from Flutter.
   static OperatingSystemType getOperatingSystemTypeFromFlutter() {
+    if (JsValue.global != null) {
+      return null;
+    }
     switch (defaultTargetPlatform) {
       case flutter.TargetPlatform.android:
         return OperatingSystemType.android;

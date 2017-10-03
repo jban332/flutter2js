@@ -83,12 +83,13 @@ class SpringSimulation extends Simulation {
   /// The units for the velocity are L/T, where L is the aforementioned
   /// arbitrary unit of length, and T is the time unit used for driving the
   /// [SpringSimulation].
-  SpringSimulation(SpringDescription spring,
-      double start,
-      double end,
-      double velocity, {
-        Tolerance tolerance: Tolerance.defaultTolerance,
-      })
+  SpringSimulation(
+    SpringDescription spring,
+    double start,
+    double end,
+    double velocity, {
+    Tolerance tolerance: Tolerance.defaultTolerance,
+  })
       : _endPosition = end,
         _solution = new _SpringSolution(spring, start - end, velocity),
         super(tolerance: tolerance);
@@ -126,12 +127,13 @@ class ScrollSpringSimulation extends SpringSimulation {
   ///
   /// See the [new SpringSimulation] constructor on the superclass for a
   /// discussion of the arguments' units.
-  ScrollSpringSimulation(SpringDescription spring,
-      double start,
-      double end,
-      double velocity, {
-        Tolerance tolerance: Tolerance.defaultTolerance,
-      })
+  ScrollSpringSimulation(
+    SpringDescription spring,
+    double start,
+    double end,
+    double velocity, {
+    Tolerance tolerance: Tolerance.defaultTolerance,
+  })
       : super(spring, start, end, velocity, tolerance: tolerance);
 
   @override
@@ -166,8 +168,8 @@ abstract class _SpringSolution {
 }
 
 class _CriticalSolution implements _SpringSolution {
-  factory _CriticalSolution(SpringDescription spring, double distance,
-      double velocity) {
+  factory _CriticalSolution(
+      SpringDescription spring, double distance, double velocity) {
     final double r = -spring.damping / (2.0 * spring.mass);
     final double c1 = distance;
     final double c2 = velocity / (r * distance);
@@ -197,8 +199,8 @@ class _CriticalSolution implements _SpringSolution {
 }
 
 class _OverdampedSolution implements _SpringSolution {
-  factory _OverdampedSolution(SpringDescription spring, double distance,
-      double velocity) {
+  factory _OverdampedSolution(
+      SpringDescription spring, double distance, double velocity) {
     final double cmk =
         spring.damping * spring.damping - 4 * spring.mass * spring.stiffness;
     final double r1 = (-spring.damping - math.sqrt(cmk)) / (2.0 * spring.mass);
@@ -233,10 +235,10 @@ class _OverdampedSolution implements _SpringSolution {
 }
 
 class _UnderdampedSolution implements _SpringSolution {
-  factory _UnderdampedSolution(SpringDescription spring, double distance,
-      double velocity) {
+  factory _UnderdampedSolution(
+      SpringDescription spring, double distance, double velocity) {
     final double w = math.sqrt(4.0 * spring.mass * spring.stiffness -
-        spring.damping * spring.damping) /
+            spring.damping * spring.damping) /
         (2.0 * spring.mass);
     final double r = -(spring.damping / 2.0 * spring.mass);
     final double c1 = distance;

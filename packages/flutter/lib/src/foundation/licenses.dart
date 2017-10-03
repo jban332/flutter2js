@@ -142,7 +142,7 @@ class LicenseEntryWithLineBreaks extends LicenseEntry {
       assert(lines.isNotEmpty);
       assert(currentParagraphIndentation != null);
       final LicenseParagraph result =
-      new LicenseParagraph(lines.join(' '), currentParagraphIndentation);
+          new LicenseParagraph(lines.join(' '), currentParagraphIndentation);
       assert(result.text.trimLeft() == result.text);
       assert(result.text.isNotEmpty);
       lines.clear();
@@ -174,12 +174,12 @@ class LicenseEntryWithLineBreaks extends LicenseEntry {
               state = _LicenseEntryWithLineBreaksParserState.beforeParagraph;
               break;
             case '[':
-            // This is a bit of a hack for the LGPL 2.1, which does something like this:
-            //
-            //   [this is a
-            //    single paragraph]
-            //
-            // ...near the top.
+              // This is a bit of a hack for the LGPL 2.1, which does something like this:
+              //
+              //   [this is a
+              //    single paragraph]
+              //
+              // ...near the top.
               currentLineIndent += 1;
               continue startParagraph;
             startParagraph:
@@ -284,7 +284,6 @@ class LicenseRegistry {
   /// only be called once.
   static Stream<LicenseEntry> get licenses async* {
     if (_collectors == null) return;
-    for (LicenseEntryCollector collector in _collectors)
-      yield* collector();
+    for (LicenseEntryCollector collector in _collectors) yield* collector();
   }
 }

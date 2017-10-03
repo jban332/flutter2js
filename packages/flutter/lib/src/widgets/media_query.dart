@@ -35,10 +35,11 @@ class MediaQueryData {
   ///
   /// Consider using [MediaQueryData.fromWindow] to create data based on a
   /// [Window].
-  const MediaQueryData({this.size: Size.zero,
-    this.devicePixelRatio: 1.0,
-    this.textScaleFactor: 1.0,
-    this.padding: EdgeInsets.zero});
+  const MediaQueryData(
+      {this.size: Size.zero,
+      this.devicePixelRatio: 1.0,
+      this.textScaleFactor: 1.0,
+      this.padding: EdgeInsets.zero});
 
   /// Creates data for a media query based on the given window.
   ///
@@ -49,8 +50,7 @@ class MediaQueryData {
   MediaQueryData.fromWindow(ui.Window window)
       : size = window.physicalSize / window.devicePixelRatio,
         devicePixelRatio = window.devicePixelRatio,
-        textScaleFactor = 1.0,
-  // TODO(abarth): Read this value from window.
+        textScaleFactor = 1.0, // TODO(abarth): Read this value from window.
         padding = new EdgeInsets.fromWindowPadding(
             window.padding, window.devicePixelRatio);
 
@@ -96,6 +96,39 @@ class MediaQueryData {
       devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
       textScaleFactor: textScaleFactor ?? this.textScaleFactor,
       padding: padding ?? this.padding,
+    );
+  }
+
+  /// Creates a copy of this media query data but with the given paddings
+  /// replaced with zero.
+  ///
+  /// The `removeLeft`, `removeTop`, `removeRight`, and `removeBottom` arguments
+  /// must not be null. If all four are false (the default) then this
+  /// [MediaQueryData] is returned unmodified.
+  ///
+  /// See also:
+  ///
+  ///  * [new MediaQuery.removePadding], which uses this method to remove padding
+  ///    from the ambient [MediaQuery].
+  ///  * [SafeArea], which both removes the padding from the [MediaQuery] and
+  ///    adds a [Padding] widget.
+  MediaQueryData removePadding({
+    bool removeLeft: false,
+    bool removeTop: false,
+    bool removeRight: false,
+    bool removeBottom: false,
+  }) {
+    if (!(removeLeft || removeTop || removeRight || removeBottom)) return this;
+    return new MediaQueryData(
+      size: size,
+      devicePixelRatio: devicePixelRatio,
+      textScaleFactor: textScaleFactor,
+      padding: padding.copyWith(
+        left: removeLeft ? 0.0 : null,
+        top: removeTop ? 0.0 : null,
+        right: removeRight ? 0.0 : null,
+        bottom: removeBottom ? 0.0 : null,
+      ),
     );
   }
 
@@ -149,6 +182,44 @@ class MediaQuery extends InheritedWidget {
   })
       : super(key: key, child: child);
 
+  /// Creates a new [MediaQuery] that inherits from the ambient [MediaQuery] from
+  /// the given context, but removes the specified paddings.
+  ///
+  /// The [context] argument is required, must not be null, and must have a
+  /// [MediaQuery] in scope.
+  ///
+  /// The `removeLeft`, `removeTop`, `removeRight`, and `removeBottom` arguments
+  /// must not be null. If all four are false (the default) then the returned
+  /// [MediaQuery] reuses the ambient [MediaQueryData] unmodified, which is not
+  /// particularly useful.
+  ///
+  /// The [child] argument is required and must not be null.
+  ///
+  /// See also:
+  ///
+  ///  * [SafeArea], which both removes the padding from the [MediaQuery] and
+  ///    adds a [Padding] widget.
+  factory MediaQuery.removePadding({
+    Key key,
+    @required BuildContext context,
+    bool removeLeft: false,
+    bool removeTop: false,
+    bool removeRight: false,
+    bool removeBottom: false,
+    @required Widget child,
+  }) {
+    return new MediaQuery(
+      key: key,
+      data: MediaQuery.of(context).removePadding(
+            removeLeft: removeLeft,
+            removeTop: removeTop,
+            removeRight: removeRight,
+            removeBottom: removeBottom,
+          ),
+      child: child,
+    );
+  }
+
   /// Contains information about the current media.
   ///
   /// For example, the [MediaQueryData.size] property contains the width and
@@ -174,17 +245,19 @@ class MediaQuery extends InheritedWidget {
   /// If you use this from a widget (e.g. in its build function), consider
   /// calling [debugCheckHasMediaQuery].
   static MediaQueryData of(BuildContext context, {bool nullOk: false}) {
+    assert(context != null);
+    assert(nullOk != null);
     final MediaQuery query = context.inheritFromWidgetOfExactType(MediaQuery);
     if (query != null) return query.data;
     if (nullOk) return null;
     throw new FlutterError(
         'MediaQuery.of() called with a context that does not contain a MediaQuery.\n'
-            'No MediaQuery ancestor could be found starting from the context that was passed '
-            'to MediaQuery.of(). This can happen because you do not have a WidgetsApp or '
-            'MaterialApp widget (those widgets introduce a MediaQuery), or it can happen '
-            'if the context you use comes from a widget above those widgets.\n'
-            'The context used was:\n'
-            '  $context');
+        'No MediaQuery ancestor could be found starting from the context that was passed '
+        'to MediaQuery.of(). This can happen because you do not have a WidgetsApp or '
+        'MaterialApp widget (those widgets introduce a MediaQuery), or it can happen '
+        'if the context you use comes from a widget above those widgets.\n'
+        'The context used was:\n'
+        '  $context');
   }
 
   @override

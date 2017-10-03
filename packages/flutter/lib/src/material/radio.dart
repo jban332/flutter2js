@@ -49,11 +49,12 @@ class Radio<T> extends flur.StatelessUIPluginWidget {
   /// * [value] and [groupValue] together determine whether the radio button is
   ///   selected.
   /// * [onChanged] is called when the user selects this radio button.
-  const Radio({Key key,
-    @required this.value,
-    @required this.groupValue,
-    @required this.onChanged,
-    this.activeColor})
+  const Radio(
+      {Key key,
+      @required this.value,
+      @required this.groupValue,
+      @required this.onChanged,
+      this.activeColor})
       : super(key: key);
 
   /// The value represented by this radio button.

@@ -189,12 +189,13 @@ class DefaultTextStyle extends InheritedWidget {
 ///
 ///  * [RichText], which gives you more control over the text styles.
 ///  * [DefaultTextStyle], which sets default styles for [Text] widgets.
-class Text extends LeafRenderObjectWidget {
+class Text extends flur.SingleChildUIPluginWidget {
   /// Creates a text widget.
   ///
   /// If the [style] argument is null, the text will use the style from the
   /// closest enclosing [DefaultTextStyle].
-  const Text(this.data, {
+  const Text(
+    this.data, {
     Key key,
     this.style,
     this.textAlign,

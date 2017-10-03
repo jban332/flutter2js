@@ -220,7 +220,7 @@ class TextStyle extends Diagnosticable {
     this.package,
   })
       : fontFamily =
-  package == null ? fontFamily : 'packages/$package/$fontFamily';
+            package == null ? fontFamily : 'packages/$package/$fontFamily';
 
   /// Whether null values are replaced with their value in an ancestor text
   /// style (e.g., in a [TextSpan] tree).
@@ -366,11 +366,11 @@ class TextStyle extends Diagnosticable {
       color: color ?? this.color,
       fontFamily: fontFamily ?? this.fontFamily,
       fontSize:
-      fontSize == null ? null : fontSize * fontSizeFactor + fontSizeDelta,
+          fontSize == null ? null : fontSize * fontSizeFactor + fontSizeDelta,
       fontWeight: fontWeight == null
           ? null
           : FontWeight.values[(fontWeight.index + fontWeightDelta)
-          .clamp(0, FontWeight.values.length - 1)],
+              .clamp(0, FontWeight.values.length - 1)],
       fontStyle: fontStyle,
       letterSpacing: letterSpacing == null
           ? null
@@ -429,7 +429,7 @@ class TextStyle extends Diagnosticable {
             begin.height ?? end.height, end.height ?? begin.height, t),
         decoration: t < 0.5 ? begin.decoration : end.decoration,
         decorationColor:
-        Color.lerp(begin.decorationColor, end.decorationColor, t),
+            Color.lerp(begin.decorationColor, end.decorationColor, t),
         decorationStyle: t < 0.5 ? begin.decorationStyle : end.decorationStyle);
   }
 
@@ -634,13 +634,12 @@ class TextStyle extends Diagnosticable {
     }
 
     final bool styleSpecified =
-    styles.any((DiagnosticsNode n) => !n.isFiltered(DiagnosticLevel.info));
+        styles.any((DiagnosticsNode n) => !n.isFiltered(DiagnosticLevel.info));
     properties.add(new DiagnosticsProperty<bool>('${prefix}inherit', inherit,
         level: (!styleSpecified && inherit)
             ? DiagnosticLevel.fine
             : DiagnosticLevel.info));
-    for (DiagnosticsNode style in styles)
-      properties.add(style);
+    for (DiagnosticsNode style in styles) properties.add(style);
 
     if (!styleSpecified)
       properties.add(new FlagProperty('inherit',

@@ -22,8 +22,8 @@ typedef void ExpansionPanelCallback(int panelIndex, bool isExpanded);
 
 /// Signature for the callback that's called when the header of the
 /// [ExpansionPanel] needs to rebuild.
-typedef Widget ExpansionPanelHeaderBuilder(BuildContext context,
-    bool isExpanded);
+typedef Widget ExpansionPanelHeaderBuilder(
+    BuildContext context, bool isExpanded);
 
 /// A material expansion panel. It has a header and a body and can be either
 /// expanded or collapsed. The body of the panel is only visible when it is
@@ -40,11 +40,10 @@ class ExpansionPanel {
   /// Creates an expansion panel to be used as a child for [ExpansionPanelList].
   ///
   /// None of the arguments can be null.
-  ExpansionPanel({
-    @required this.headerBuilder,
-    @required this.body,
-    this.isExpanded: false
-  });
+  ExpansionPanel(
+      {@required this.headerBuilder,
+      @required this.body,
+      this.isExpanded: false});
 
   /// The widget builder that builds the expansion panels' header.
   final ExpansionPanelHeaderBuilder headerBuilder;
@@ -70,12 +69,11 @@ class ExpansionPanel {
 class ExpansionPanelList extends StatelessWidget {
   /// Creates an expansion panel list widget. The [expansionCallback] is
   /// triggered when an expansion panel expand/collapse button is pushed.
-  const ExpansionPanelList({
-    Key key,
-    this.children: const <ExpansionPanel>[],
-    this.expansionCallback,
-    this.animationDuration: kThemeAnimationDuration
-  });
+  const ExpansionPanelList(
+      {Key key,
+      this.children: const <ExpansionPanel>[],
+      this.expansionCallback,
+      this.animationDuration: kThemeAnimationDuration});
 
   /// The children of the expansion panel list. They are laid out in a similar
   /// fashion to [ListBody].
@@ -101,76 +99,57 @@ class ExpansionPanelList extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<MergeableMaterialItem> items = <MergeableMaterialItem>[];
     const EdgeInsets kExpandedEdgeInsets = const EdgeInsets.symmetric(
-        vertical: _kPanelHeaderExpandedHeight - _kPanelHeaderCollapsedHeight
-    );
+        vertical: _kPanelHeaderExpandedHeight - _kPanelHeaderCollapsedHeight);
 
     for (int i = 0; i < children.length; i += 1) {
       if (_isChildExpanded(i) && i != 0 && !_isChildExpanded(i - 1))
         items.add(new MaterialGap(key: new ValueKey<int>(i * 2 - 1)));
 
-      final Row header = new Row(
-          children: <Widget>[
-            new Expanded(
-                child: new AnimatedContainer(
-                    duration: animationDuration,
-                    curve: Curves.fastOutSlowIn,
-                    margin: _isChildExpanded(i)
-                        ? kExpandedEdgeInsets
-                        : EdgeInsets.zero,
-                    child: new SizedBox(
-                        height: _kPanelHeaderCollapsedHeight,
-                        child: children[i].headerBuilder(
-                            context,
-                            children[i].isExpanded
-                        )
-                    )
-                )
-            ),
-            new Container(
-                margin: const EdgeInsetsDirectional.only(end: 8.0),
-                child: new ExpandIcon(
-                    isExpanded: _isChildExpanded(i),
-                    padding: const EdgeInsets.all(16.0),
-                    onPressed: (bool isExpanded) {
-                      if (expansionCallback != null) {
-                        expansionCallback(i, isExpanded);
-                      }
-                    }
-                )
-            )
-          ]
-      );
+      final Row header = new Row(children: <Widget>[
+        new Expanded(
+            child: new AnimatedContainer(
+                duration: animationDuration,
+                curve: Curves.fastOutSlowIn,
+                margin:
+                    _isChildExpanded(i) ? kExpandedEdgeInsets : EdgeInsets.zero,
+                child: new SizedBox(
+                    height: _kPanelHeaderCollapsedHeight,
+                    child: children[i]
+                        .headerBuilder(context, children[i].isExpanded)))),
+        new Container(
+            margin: const EdgeInsetsDirectional.only(end: 8.0),
+            child: new ExpandIcon(
+                isExpanded: _isChildExpanded(i),
+                padding: const EdgeInsets.all(16.0),
+                onPressed: (bool isExpanded) {
+                  if (expansionCallback != null) {
+                    expansionCallback(i, isExpanded);
+                  }
+                }))
+      ]);
 
-      items.add(
-          new MaterialSlice(
-              key: new ValueKey<int>(i * 2),
-              child: new Column(
-                  children: <Widget>[
-                    header,
-                    new AnimatedCrossFade(
-                      firstChild: new Container(height: 0.0),
-                      secondChild: children[i].body,
-                      firstCurve: const Interval(
-                          0.0, 0.6, curve: Curves.fastOutSlowIn),
-                      secondCurve: const Interval(
-                          0.4, 1.0, curve: Curves.fastOutSlowIn),
-                      sizeCurve: Curves.fastOutSlowIn,
-                      crossFadeState: _isChildExpanded(i) ? CrossFadeState
-                          .showSecond : CrossFadeState.showFirst,
-                      duration: animationDuration,
-                    )
-                  ]
-              )
-          )
-      );
+      items.add(new MaterialSlice(
+          key: new ValueKey<int>(i * 2),
+          child: new Column(children: <Widget>[
+            header,
+            new AnimatedCrossFade(
+              firstChild: new Container(height: 0.0),
+              secondChild: children[i].body,
+              firstCurve: const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
+              secondCurve:
+                  const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
+              sizeCurve: Curves.fastOutSlowIn,
+              crossFadeState: _isChildExpanded(i)
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: animationDuration,
+            )
+          ])));
 
       if (_isChildExpanded(i) && i != children.length - 1)
         items.add(new MaterialGap(key: new ValueKey<int>(i * 2 + 1)));
     }
 
-    return new MergeableMaterial(
-        hasDividers: true,
-        children: items
-    );
+    return new MergeableMaterial(hasDividers: true, children: items);
   }
 }

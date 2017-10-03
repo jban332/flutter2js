@@ -56,11 +56,11 @@ class Velocity {
     if (valueSquared > maxValue * maxValue)
       return new Velocity(
           pixelsPerSecond:
-          (pixelsPerSecond / pixelsPerSecond.distance) * maxValue);
+              (pixelsPerSecond / pixelsPerSecond.distance) * maxValue);
     if (valueSquared < minValue * minValue)
       return new Velocity(
           pixelsPerSecond:
-          (pixelsPerSecond / pixelsPerSecond.distance) * minValue);
+              (pixelsPerSecond / pixelsPerSecond.distance) * minValue);
     return this;
   }
 
@@ -122,8 +122,7 @@ class VelocityEstimate {
   final Offset offset;
 
   @override
-  String toString() =>
-      'VelocityEstimate(${pixelsPerSecond.dx.toStringAsFixed(
+  String toString() => 'VelocityEstimate(${pixelsPerSecond.dx.toStringAsFixed(
           1)}, ${pixelsPerSecond.dy.toStringAsFixed(1)})';
 }
 
@@ -191,9 +190,9 @@ class VelocityTracker {
       if (sample == null) break;
 
       final double age =
-      (newestSample.time - sample.time).inMilliseconds.toDouble();
+          (newestSample.time - sample.time).inMilliseconds.toDouble();
       final double delta =
-      (sample.time - previousSample.time).inMilliseconds.abs().toDouble();
+          (sample.time - previousSample.time).inMilliseconds.abs().toDouble();
       previousSample = sample;
       if (age > _kHorizonMilliseconds ||
           delta > _kAssumePointerMoveStoppedMilliseconds) break;

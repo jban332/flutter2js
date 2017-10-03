@@ -284,17 +284,17 @@ class InkWell extends InkResponse {
     bool enableFeedback: true,
   })
       : super(
-    key: key,
-    child: child,
-    onTap: onTap,
-    onDoubleTap: onDoubleTap,
-    onLongPress: onLongPress,
-    onHighlightChanged: onHighlightChanged,
-    containedInkWell: true,
-    highlightShape: BoxShape.rectangle,
-    highlightColor: highlightColor,
-    splashColor: splashColor,
-    borderRadius: borderRadius,
-    enableFeedback: enableFeedback,
-  );
+          key: key,
+          child: child,
+          onTap: onTap,
+          onDoubleTap: onDoubleTap,
+          onLongPress: onLongPress,
+          onHighlightChanged: onHighlightChanged,
+          containedInkWell: true,
+          highlightShape: BoxShape.rectangle,
+          highlightColor: highlightColor,
+          splashColor: splashColor,
+          borderRadius: borderRadius,
+          enableFeedback: enableFeedback,
+        );
 }

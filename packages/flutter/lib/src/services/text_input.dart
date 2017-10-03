@@ -119,9 +119,10 @@ class TextEditingValue {
   ///
   /// The [text], [selection], and [composing] arguments must not be null but
   /// each have default values.
-  const TextEditingValue({this.text: '',
-    this.selection: const TextSelection.collapsed(offset: -1),
-    this.composing: TextRange.empty});
+  const TextEditingValue(
+      {this.text: '',
+      this.selection: const TextSelection.collapsed(offset: -1),
+      this.composing: TextRange.empty});
 
   /// Creates an instance of this class from a JSON object.
   factory TextEditingValue.fromJSON(Map<String, dynamic> encoded) {
@@ -282,8 +283,8 @@ class TextInput {
   /// A client that no longer wishes to interact with the text input control
   /// should call [TextInputConnection.close] on the returned
   /// [TextInputConnection].
-  static TextInputConnection attach(TextInputClient client,
-      TextInputConfiguration configuration) {
+  static TextInputConnection attach(
+      TextInputClient client, TextInputConfiguration configuration) {
     assert(client != null);
     assert(configuration != null);
     final TextInputConnection connection = new TextInputConnection._(client);

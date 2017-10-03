@@ -14,7 +14,8 @@ class IconData {
   ///
   /// Rarely used directly. Instead, consider using one of the predefined icons
   /// like the [Icons] collection.
-  const IconData(this.codePoint, {
+  const IconData(
+    this.codePoint, {
     this.fontFamily,
   });
 

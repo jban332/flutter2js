@@ -29,7 +29,7 @@ enum DebugSemanticsDumpOrder {
 }
 
 const HSVColor _kDebugDefaultRepaintColor =
-const HSVColor.fromAHSV(0.4, 60.0, 1.0, 1.0);
+    const HSVColor.fromAHSV(0.4, 60.0, 1.0, 1.0);
 
 /// Causes each RenderBox to paint a box around its bounds, and some extra
 /// boxes, such as [RenderPadding], to draw construction lines.
@@ -137,7 +137,7 @@ bool debugProfilePaintsEnabled = false;
 List<String> debugDescribeTransform(Matrix4 transform) {
   if (transform == null) return const <String>['null'];
   final List<String> matrix =
-  transform.toString().split('\n').map((String s) => '  $s').toList();
+      transform.toString().split('\n').map((String s) => '  $s').toList();
   matrix.removeLast();
   return matrix;
 }
@@ -147,19 +147,20 @@ class TransformProperty extends DiagnosticsProperty<Matrix4> {
   /// Create a diagnostics property for [Matrix4] objects.
   ///
   /// The [showName] and [level] arguments must not be null.
-  TransformProperty(String name,
-      Matrix4 value, {
-        bool showName: true,
-        Object defaultValue: kNoDefaultValue,
-        DiagnosticLevel level: DiagnosticLevel.info,
-      })
+  TransformProperty(
+    String name,
+    Matrix4 value, {
+    bool showName: true,
+    Object defaultValue: kNoDefaultValue,
+    DiagnosticLevel level: DiagnosticLevel.info,
+  })
       : super(
-    name,
-    value,
-    showName: showName,
-    defaultValue: defaultValue,
-    level: level,
-  );
+          name,
+          value,
+          showName: showName,
+          defaultValue: defaultValue,
+          level: level,
+        );
 
   @override
   String valueToString({TextTreeConfiguration parentConfiguration}) {

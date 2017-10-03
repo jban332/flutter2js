@@ -42,7 +42,7 @@ export 'package:flutter/rendering.dart' show AxisDirection, GrowthDirection;
 ///    sliver context (the opposite of this widget).
 ///  * [ShrinkWrappingViewport], a variant of [Viewport] that shrink-wraps its
 ///    contents along the main axis.
-class Viewport extends MultiChildRenderObjectWidget {
+class Viewport extends flur.MultiChildUIPluginWidget {
   /// Creates a widget that is bigger on the inside.
   ///
   /// The viewport listens to the [offset], which means you do not need to
@@ -155,7 +155,7 @@ class Viewport extends MultiChildRenderObjectWidget {
 ///  * [SliverToBoxAdapter], which allows a box widget to be placed inside a
 ///    sliver context (the opposite of this widget).
 ///  * [Viewport], a viewport that does not shrink-wrap its contents
-class ShrinkWrappingViewport extends MultiChildRenderObjectWidget {
+class ShrinkWrappingViewport extends flur.MultiChildUIPluginWidget {
   /// Creates a widget that is bigger on the inside and shrink wraps its
   /// children in the main axis.
   ///

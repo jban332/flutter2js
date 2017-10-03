@@ -70,7 +70,7 @@ class Form extends StatefulWidget {
 class FormState extends State<Form> {
   int _generation = 0;
   final Set<FormFieldState<dynamic>> _fields =
-  new Set<FormFieldState<dynamic>>();
+      new Set<FormFieldState<dynamic>>();
 
   // Called when a form field has changed. This will cause all form fields
   // to rebuild, useful if form fields have interdependencies.
@@ -103,15 +103,13 @@ class FormState extends State<Form> {
 
   /// Saves every [FormField] that is a descendant of this [Form].
   void save() {
-    for (FormFieldState<dynamic> field in _fields)
-      field.save();
+    for (FormFieldState<dynamic> field in _fields) field.save();
   }
 
   /// Resets every [FormField] that is a descendant of this [Form] back to its
   /// initialState.
   void reset() {
-    for (FormFieldState<dynamic> field in _fields)
-      field.reset();
+    for (FormFieldState<dynamic> field in _fields) field.reset();
     _fieldDidChange();
   }
 

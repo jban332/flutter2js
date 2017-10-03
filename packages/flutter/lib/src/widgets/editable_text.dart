@@ -54,8 +54,8 @@ class TextEditingController extends ValueNotifier<TextEditingValue> {
   /// string.
   TextEditingController({String text})
       : super(text == null
-      ? TextEditingValue.empty
-      : new TextEditingValue(text: text));
+            ? TextEditingValue.empty
+            : new TextEditingValue(text: text));
 
   /// Creates a controller for an editiable text field from an initial [TextEditingValue].
   ///
@@ -168,12 +168,11 @@ class EditableText extends flur.StatelessUIPluginWidget {
     List<TextInputFormatter> inputFormatters,
   })
       : inputFormatters = maxLines == 1
-      ? (<TextInputFormatter>[
-    BlacklistingTextInputFormatter.singleLineFormatter
-  ]
-    ..addAll(
-        inputFormatters ?? const Iterable<TextInputFormatter>.empty()))
-      : inputFormatters,
+            ? (<TextInputFormatter>[
+                BlacklistingTextInputFormatter.singleLineFormatter
+              ]..addAll(
+                inputFormatters ?? const Iterable<TextInputFormatter>.empty()))
+            : inputFormatters,
         super(key: key);
 
   /// Controls the text being edited.

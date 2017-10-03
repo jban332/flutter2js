@@ -15,21 +15,21 @@ part of flur.ui;
 bool _rectIsValid(Rect rect) {
   assert(rect != null, 'Rect argument was null.');
   assert(!rect._value.any((double value) => value.isNaN),
-  'Rect argument contained a NaN value.');
+      'Rect argument contained a NaN value.');
   return true;
 }
 
 bool _rrectIsValid(RRect rrect) {
   assert(rrect != null, 'RRect argument was null.');
   assert(!rrect._value.any((double value) => value.isNaN),
-  'RRect argument contained a NaN value.');
+      'RRect argument contained a NaN value.');
   return true;
 }
 
 bool _offsetIsValid(Offset offset) {
   assert(offset != null, 'Offset argument was null.');
   assert(!offset.dx.isNaN && !offset.dy.isNaN,
-  'Offset argument contained a NaN value.');
+      'Offset argument contained a NaN value.');
   return true;
 }
 
@@ -100,10 +100,10 @@ class Color {
   /// value.
   const Color.fromARGB(int a, int r, int g, int b)
       : value = ((((a & 0xff) << 24) |
-  ((r & 0xff) << 16) |
-  ((g & 0xff) << 8) |
-  ((b & 0xff) << 0)) &
-  0xFFFFFFFF);
+                ((r & 0xff) << 16) |
+                ((g & 0xff) << 8) |
+                ((b & 0xff) << 0)) &
+            0xFFFFFFFF);
 
   /// Create a color from red, green, blue, and opacity, similar to `rgba()` in CSS.
   ///
@@ -118,10 +118,10 @@ class Color {
   /// See also [fromARGB], which takes the opacity as an integer value.
   const Color.fromRGBO(int r, int g, int b, double opacity)
       : value = (((((opacity * 0xff ~/ 1) & 0xff) << 24) |
-  ((r & 0xff) << 16) |
-  ((g & 0xff) << 8) |
-  ((b & 0xff) << 0)) &
-  0xFFFFFFFF);
+                ((r & 0xff) << 16) |
+                ((g & 0xff) << 8) |
+                ((b & 0xff) << 0)) &
+            0xFFFFFFFF);
 
   /// A 32 bit value representing this color.
   ///
@@ -410,7 +410,7 @@ class Paint {
   static const int _kMaskFilterIndex = 0;
   static const int _kShaderIndex = 1;
   static const int _kObjectCount =
-  2; // Must be one larger than the largest index
+      2; // Must be one larger than the largest index
 
   /// Whether to apply anti-aliasing to lines and images drawn on the
   /// canvas.
@@ -627,7 +627,7 @@ class Paint {
     return new ColorFilter.mode(
         new Color(_data.getInt32(_kColorFilterColorOffset, _kFakeHostEndian)),
         BlendMode.values[
-        _data.getInt32(_kColorFilterBlendModeOffset, _kFakeHostEndian)]);
+            _data.getInt32(_kColorFilterBlendModeOffset, _kFakeHostEndian)]);
   }
 
   set colorFilter(ColorFilter value) {
@@ -786,15 +786,15 @@ abstract class Path {
   /// Adds a cubic bezier segment that curves from the current point
   /// to the given point (x3,y3), using the control points (x1,y1) and
   /// (x2,y2).
-  void cubicTo(double x1, double y1, double x2, double y2, double x3,
-      double y3);
+  void cubicTo(
+      double x1, double y1, double x2, double y2, double x3, double y3);
 
   /// Adds a cubcic bezier segment that curves from the current point
   /// to the point at the offset (x3,y3) from the current point, using
   /// the control points at the offsets (x1,y1) and (x2,y2) from the
   /// current point.
-  void relativeCubicTo(double x1, double y1, double x2, double y2, double x3,
-      double y3);
+  void relativeCubicTo(
+      double x1, double y1, double x2, double y2, double x3, double y3);
 
   /// Adds a bezier segment that curves from the current point to the
   /// given point (x2,y2), using the control points (x1,y1) and the
@@ -827,16 +827,10 @@ abstract class Path {
   ///
   /// The line segment added if [forceMoveTo] is false starts at the
   /// current point and ends at the start of the arc.
-  void arcTo(Rect rect, double startAngle, double sweepAngle,
-      bool forceMoveTo) {
+  void arcTo(
+      Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
     assert(_rectIsValid(rect));
-    _arcTo(
-        rect.left,
-        rect.top,
-        rect.right,
-        rect.bottom,
-        startAngle,
-        sweepAngle,
+    _arcTo(rect.left, rect.top, rect.right, rect.bottom, startAngle, sweepAngle,
         forceMoveTo);
   }
 
@@ -1086,8 +1080,7 @@ enum TileMode {
 Int32List _encodeColorList(List<Color> colors) {
   final int colorCount = colors.length;
   final Int32List result = new Int32List(colorCount);
-  for (int i = 0; i < colorCount; ++i)
-    result[i] = colors[i].value;
+  for (int i = 0; i < colorCount; ++i) result[i] = colors[i].value;
   return result;
 }
 
@@ -1447,19 +1440,12 @@ abstract class Canvas {
       Paint paint) {
     assert(_rectIsValid(rect));
     assert(paint != null);
-    _drawArc(
-        rect.left,
-        rect.top,
-        rect.right,
-        rect.bottom,
-        startAngle,
-        sweepAngle,
-        useCenter,
-        paint._objects,
-        paint._data);
+    _drawArc(rect.left, rect.top, rect.right, rect.bottom, startAngle,
+        sweepAngle, useCenter, paint._objects, paint._data);
   }
 
-  void _drawArc(double left,
+  void _drawArc(
+      double left,
       double top,
       double right,
       double bottom,
@@ -1513,21 +1499,12 @@ abstract class Canvas {
     assert(_rectIsValid(center));
     assert(_rectIsValid(dst));
     assert(paint != null);
-    _drawImageNine(
-        image,
-        center.left,
-        center.top,
-        center.right,
-        center.bottom,
-        dst.left,
-        dst.top,
-        dst.right,
-        dst.bottom,
-        paint._objects,
-        paint._data);
+    _drawImageNine(image, center.left, center.top, center.right, center.bottom,
+        dst.left, dst.top, dst.right, dst.bottom, paint._objects, paint._data);
   }
 
-  void _drawImageNine(Image image,
+  void _drawImageNine(
+      Image image,
       double centerLeft,
       double centerTop,
       double centerRight,
@@ -1637,18 +1614,11 @@ abstract class Canvas {
     }
 
     final Int32List colorBuffer =
-    colors.isEmpty ? null : _encodeColorList(colors);
+        colors.isEmpty ? null : _encodeColorList(colors);
     final Float32List cullRectBuffer = cullRect?._value;
 
-    _drawAtlas(
-        paint._objects,
-        paint._data,
-        atlas,
-        rstTransformBuffer,
-        rectBuffer,
-        colorBuffer,
-        blendMode.index,
-        cullRectBuffer);
+    _drawAtlas(paint._objects, paint._data, atlas, rstTransformBuffer,
+        rectBuffer, colorBuffer, blendMode.index, cullRectBuffer);
   }
 
   //
@@ -1669,7 +1639,8 @@ abstract class Canvas {
   void drawRawAtlas(Image atlas, Float32List rstTransforms, Float32List rects,
       Int32List colors, BlendMode blendMode, Rect cullRect, Paint paint);
 
-  void _drawAtlas(List<dynamic> paintObjects,
+  void _drawAtlas(
+      List<dynamic> paintObjects,
       ByteData paintData,
       Image atlas,
       Float32List rstTransforms,
@@ -1681,15 +1652,15 @@ abstract class Canvas {
   /// Draws a shadow for a [Path] representing the given material elevation.
   ///
   /// transparentOccluder should be true if the occluding object is not opaque.
-  void drawShadow(Path path, Color color, double elevation,
-      bool transparentOccluder) {
+  void drawShadow(
+      Path path, Color color, double elevation, bool transparentOccluder) {
     assert(path != null); // path is checked on the engine side
     assert(color != null);
     _drawShadow(path, color.value, elevation, transparentOccluder);
   }
 
-  void _drawShadow(Path path, int color, double elevation,
-      bool transparentOccluder);
+  void _drawShadow(
+      Path path, int color, double elevation, bool transparentOccluder);
 }
 
 /// An object representing a sequence of recorded graphical operations.

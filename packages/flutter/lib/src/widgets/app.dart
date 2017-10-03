@@ -4,10 +4,9 @@
 
 import 'dart:async';
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/ui.dart' as ui;
+import 'package:flutter/ui.dart' as ui show window;
 
 import 'banner.dart';
 import 'basic.dart';
@@ -16,8 +15,13 @@ import 'framework.dart';
 import 'localizations.dart';
 import 'media_query.dart';
 import 'navigator.dart';
+import 'performance_overlay.dart';
+import 'semantics_debugger.dart';
 import 'text.dart';
 import 'title.dart';
+import 'widget_inspector.dart';
+
+export 'package:flutter/ui.dart' show Locale;
 
 /// The signature of [WidgetsApp.localeResolutionCallback].
 ///
@@ -27,19 +31,32 @@ import 'title.dart';
 ///
 /// The `locale` is the device's locale when the app started, or the device
 /// locale the user selected after the app was started. The `supportedLocales`
-/// parameter is just the value of [WidgetApp.supportedLocales].
-typedef Locale LocaleResolutionCallback(Locale locale,
-    Iterable<Locale> supportedLocales);
+/// parameter is just the value of [WidgetsApp.supportedLocales].
+typedef Locale LocaleResolutionCallback(
+    Locale locale, Iterable<Locale> supportedLocales);
 
 /// The signature of [WidgetsApp.onGenerateTitle].
 ///
 /// Used to generate a value for the app's [Title.title], which the device uses
-/// to identify the app for the user. The `context` includes the [WidgetApp]'s
+/// to identify the app for the user. The `context` includes the [WidgetsApp]'s
 /// [Localizations] widget so that this method can be used to produce a
 /// localized title.
 ///
 /// This function must not return null.
 typedef String GenerateAppTitle(BuildContext context);
+
+// Delegate that fetches the default (English) strings.
+class _WidgetsLocalizationsDelegate
+    extends LocalizationsDelegate<WidgetsLocalizations> {
+  const _WidgetsLocalizationsDelegate();
+
+  @override
+  Future<WidgetsLocalizations> load(Locale locale) =>
+      DefaultWidgetsLocalizations.load(locale);
+
+  @override
+  bool shouldReload(_WidgetsLocalizationsDelegate old) => false;
+}
 
 /// A convenience class that wraps a number of widgets that are commonly
 /// required for an application.
@@ -53,7 +70,7 @@ typedef String GenerateAppTitle(BuildContext context);
 ///
 /// The [onGenerateRoute] argument is required, and corresponds to
 /// [Navigator.onGenerateRoute].
-class WidgetsApp extends flur.StatelessUIPluginWidget {
+class WidgetsApp extends StatefulWidget {
   /// Creates a widget that wraps a number of widgets that are commonly
   /// required for an application.
   ///
@@ -83,8 +100,21 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
     this.showSemanticsDebugger: false,
     this.debugShowWidgetInspector: false,
     this.debugShowCheckedModeBanner: true,
+    this.inspectorSelectButtonBuilder,
   })
-      : super(key: key);
+      : super(key: key) {
+    assert(title != null);
+    assert(onGenerateRoute != null);
+    assert(color != null);
+    assert(navigatorObservers != null);
+    assert(supportedLocales != null && supportedLocales.isNotEmpty);
+    assert(showPerformanceOverlay != null);
+    assert(checkerboardRasterCacheImages != null);
+    assert(checkerboardOffscreenLayers != null);
+    assert(showSemanticsDebugger != null);
+    assert(debugShowCheckedModeBanner != null);
+    assert(debugShowWidgetInspector != null);
+  }
 
   /// A one-line description used by the device to identify the app for the user.
   ///
@@ -99,7 +129,7 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
   /// If non-null this callback function is called to produce the app's
   /// title string, otherwise [title] is used.
   ///
-  /// The [onGenerateTitle] `context` parameter includes the [WidgetApp]'s
+  /// The [onGenerateTitle] `context` parameter includes the [WidgetsApp]'s
   /// [Localizations] widget so that this callback can be used to produce a
   /// localized title.
   ///
@@ -184,7 +214,7 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
   /// If the callback is null or if it returns null then the resolved locale is:
   ///
   /// - The callback's `locale` parameter if it's equal to a supported locale.
-  /// - The first supported locale with the same [Locale.langaugeCode] as the
+  /// - The first supported locale with the same [Locale.languageCode] as the
   ///   callback's `locale` parameter.
   /// - The first locale in [supportedLocales].
   ///
@@ -216,7 +246,7 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
   ///  * [localeResolutionCallback], an app callback that resolves the app's locale
   ///    when the device's locale changes.
   ///
-  ///  * [localizationDelegates], which collectively define all of the localized
+  ///  * [localizationsDelegates], which collectively define all of the localized
   ///    resources used by this app.
   final Iterable<Locale> supportedLocales;
 
@@ -244,6 +274,14 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
   /// [RenderObject.debugDescribeChildren] which should not be called outside of
   /// checked mode.
   final bool debugShowWidgetInspector;
+
+  /// Builds the widget the [WidgetInspector] uses to switch between view and
+  /// inspect modes.
+  ///
+  /// This lets [MaterialApp] to use a material button to toggle the inspector
+  /// select mode without requiring [WidgetInspector] to depend on the the
+  /// material package.
+  final InspectorSelectButtonBuilder inspectorSelectButtonBuilder;
 
   /// Turns on a "SLOW MODE" little banner in checked mode to indicate
   /// that the app is in checked mode. This is on by default (in
@@ -287,7 +325,201 @@ class WidgetsApp extends flur.StatelessUIPluginWidget {
   static bool debugAllowBannerOverride = true;
 
   @override
-  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
-    return plugin.buildWidgetsApp(context, this);
+  _WidgetsAppState createState() => new _WidgetsAppState();
+}
+
+class _WidgetsAppState extends State<WidgetsApp>
+    implements WidgetsBindingObserver {
+  GlobalObjectKey<NavigatorState> _navigator;
+  Locale _locale;
+
+  Locale _resolveLocale(Locale newLocale, Iterable<Locale> supportedLocales) {
+    // Android devices (Java really) report 3 deprecated language codes, see
+    // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=4140555
+    // and https://developer.android.com/reference/java/util/Locale.html
+    switch (newLocale.languageCode) {
+      case 'iw':
+        newLocale = new Locale('he', newLocale.countryCode); // Hebrew
+        break;
+      case 'ji':
+        newLocale = new Locale('yi', newLocale.countryCode); // Yiddish
+        break;
+      case 'in':
+        newLocale = new Locale('id', newLocale.countryCode); // Indonesian
+        break;
+    }
+
+    if (widget.localeResolutionCallback != null) {
+      final Locale locale =
+          widget.localeResolutionCallback(newLocale, widget.supportedLocales);
+      if (locale != null) return locale;
+    }
+
+    Locale matchesLanguageCode;
+    for (Locale locale in supportedLocales) {
+      if (locale == newLocale) return newLocale;
+      if (locale.languageCode == newLocale.languageCode)
+        matchesLanguageCode ??= locale;
+    }
+    return matchesLanguageCode ?? supportedLocales.first;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _navigator = new GlobalObjectKey<NavigatorState>(this);
+    _locale = _resolveLocale(ui.window.locale, widget.supportedLocales);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // On Android: the user has pressed the back button.
+  @override
+  Future<bool> didPopRoute() async {
+    assert(mounted);
+    final NavigatorState navigator = _navigator.currentState;
+    assert(navigator != null);
+    return await navigator.maybePop();
+  }
+
+  @override
+  Future<bool> didPushRoute(String route) async {
+    assert(mounted);
+    final NavigatorState navigator = _navigator.currentState;
+    assert(navigator != null);
+    navigator.pushNamed(route);
+    return true;
+  }
+
+  @override
+  void didChangeMetrics() {
+    setState(() {
+      // The properties of ui.window have changed. We use them in our build
+      // function, so we need setState(), but we don't cache anything locally.
+    });
+  }
+
+  @override
+  void didChangeLocale(Locale locale) {
+    if (locale == _locale) return;
+    final Locale newLocale = _resolveLocale(locale, widget.supportedLocales);
+    if (newLocale != _locale) {
+      setState(() {
+        _locale = newLocale;
+      });
+    }
+  }
+
+  // Combine the Localizations for Widgets with the ones contributed
+  // by the localizationsDelegates parameter, if any. Only the first delegate
+  // of a particular LocalizationsDelegate.type is loaded so the
+  // localizationsDelegate parameter can be used to override
+  // _WidgetsLocalizationsDelegate.
+  Iterable<LocalizationsDelegate<dynamic>> get _localizationsDelegates sync* {
+    if (widget.localizationsDelegates != null)
+      yield* widget.localizationsDelegates;
+    yield const _WidgetsLocalizationsDelegate();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {}
+
+  @override
+  void didHaveMemoryPressure() {}
+
+  @override
+  Widget build(BuildContext context) {
+    Widget result = new Navigator(
+      key: _navigator,
+      initialRoute: widget.initialRoute ?? ui.window.defaultRouteName,
+      onGenerateRoute: widget.onGenerateRoute,
+      onUnknownRoute: widget.onUnknownRoute,
+      observers: widget.navigatorObservers,
+    );
+
+    if (widget.textStyle != null) {
+      result = new DefaultTextStyle(
+        style: widget.textStyle,
+        child: result,
+      );
+    }
+
+    PerformanceOverlay performanceOverlay;
+    // We need to push a performance overlay if any of the display or checkerboarding
+    // options are set.
+    if (widget.showPerformanceOverlay ||
+        WidgetsApp.showPerformanceOverlayOverride) {
+      performanceOverlay = new PerformanceOverlay.allEnabled(
+        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
+      );
+    } else if (widget.checkerboardRasterCacheImages ||
+        widget.checkerboardOffscreenLayers) {
+      performanceOverlay = new PerformanceOverlay(
+        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
+        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
+      );
+    }
+    if (performanceOverlay != null) {
+      result = new Stack(children: <Widget>[
+        result,
+        new Positioned(
+            top: 0.0, left: 0.0, right: 0.0, child: performanceOverlay),
+      ]);
+    }
+
+    if (widget.showSemanticsDebugger) {
+      result = new SemanticsDebugger(
+        child: result,
+      );
+    }
+
+    assert(() {
+      if (widget.debugShowWidgetInspector ||
+          WidgetsApp.debugShowWidgetInspectorOverride) {
+        result = new WidgetInspector(
+          child: result,
+          selectButtonBuilder: widget.inspectorSelectButtonBuilder,
+        );
+      }
+      if (widget.debugShowCheckedModeBanner &&
+          WidgetsApp.debugAllowBannerOverride) {
+        result = new CheckedModeBanner(
+          child: result,
+        );
+      }
+      return true;
+    }());
+
+    return new MediaQuery(
+      data: new MediaQueryData.fromWindow(ui.window),
+      child: new Localizations(
+        locale: widget.locale ?? _locale,
+        delegates: _localizationsDelegates.toList(),
+        // This Builder exists to provide a context below the Localizations widget.
+        // The onGenerateCallback() can refer to Localizations via its context
+        // parameter.
+        child: new Builder(
+          builder: (BuildContext context) {
+            String title = widget.title;
+            if (widget.onGenerateTitle != null) {
+              title = widget.onGenerateTitle(context);
+              assert(title != null,
+                  'onGenerateTitle must return a non-null String');
+            }
+            return new Title(
+              title: title,
+              color: widget.color,
+              child: result,
+            );
+          },
+        ),
+      ),
+    );
   }
 }

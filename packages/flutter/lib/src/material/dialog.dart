@@ -44,9 +44,7 @@ class Dialog extends StatelessWidget {
   final Widget child;
 
   Color _getColor(BuildContext context) {
-    return Theme
-        .of(context)
-        .dialogBackgroundColor;
+    return Theme.of(context).dialogBackgroundColor;
   }
 
   @override
@@ -54,7 +52,7 @@ class Dialog extends StatelessWidget {
     return new Center(
         child: new Container(
             margin:
-            const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
+                const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
             child: new ConstrainedBox(
                 constraints: const BoxConstraints(minWidth: 280.0),
                 child: new Material(
@@ -126,12 +124,13 @@ class AlertDialog extends StatelessWidget {
   /// Creates an alert dialog.
   ///
   /// Typically used in conjunction with [showDialog].
-  const AlertDialog({Key key,
-    this.title,
-    this.titlePadding,
-    this.content,
-    this.contentPadding,
-    this.actions})
+  const AlertDialog(
+      {Key key,
+      this.title,
+      this.titlePadding,
+      this.content,
+      this.contentPadding,
+      this.actions})
       : super(key: key);
 
   /// The (optional) title of the dialog is displayed in a large font at the top
@@ -177,10 +176,7 @@ class AlertDialog extends StatelessWidget {
             new EdgeInsetsDirectional.fromSTEB(
                 24.0, 24.0, 24.0, content == null ? 20.0 : 0.0),
         child: new DefaultTextStyle(
-          style: Theme
-              .of(context)
-              .textTheme
-              .title,
+          style: Theme.of(context).textTheme.title,
           child: title,
         ),
       ));
@@ -192,10 +188,7 @@ class AlertDialog extends StatelessWidget {
           padding: contentPadding ??
               const EdgeInsetsDirectional.fromSTEB(24.0, 20.0, 24.0, 24.0),
           child: new DefaultTextStyle(
-            style: Theme
-                .of(context)
-                .textTheme
-                .subhead,
+            style: Theme.of(context).textTheme.subhead,
             child: content,
           ),
         ),
@@ -383,19 +376,16 @@ class SimpleDialog extends StatelessWidget {
           padding: titlePadding ??
               const EdgeInsetsDirectional.fromSTEB(24.0, 24.0, 24.0, 0.0),
           child: new DefaultTextStyle(
-              style: Theme
-                  .of(context)
-                  .textTheme
-                  .title, child: title)));
+              style: Theme.of(context).textTheme.title, child: title)));
     }
 
     if (children != null) {
       body.add(new Flexible(
           child: new SingleChildScrollView(
-            padding: contentPadding ??
-                const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 16.0),
-            child: new ListBody(children: children),
-          )));
+        padding: contentPadding ??
+            const EdgeInsetsDirectional.fromSTEB(0.0, 12.0, 0.0, 16.0),
+        child: new ListBody(children: children),
+      )));
     }
 
     return new Dialog(

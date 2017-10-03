@@ -151,8 +151,8 @@ bool axisDirectionIsReversed(AxisDirection axisDirection) {
 /// This function is useful in [RenderSliver] subclasses that are given both an
 /// [AxisDirection] and a [GrowthDirection] and wish to compute the
 /// [AxisDirection] in which growth will occur.
-AxisDirection applyGrowthDirectionToAxisDirection(AxisDirection axisDirection,
-    GrowthDirection growthDirection) {
+AxisDirection applyGrowthDirectionToAxisDirection(
+    AxisDirection axisDirection, GrowthDirection growthDirection) {
   assert(axisDirection != null);
   assert(growthDirection != null);
   switch (growthDirection) {
@@ -232,7 +232,7 @@ class SliverConstraints extends Constraints {
       crossAxisExtent: crossAxisExtent ?? this.crossAxisExtent,
       crossAxisDirection: crossAxisDirection ?? this.crossAxisDirection,
       viewportMainAxisExtent:
-      viewportMainAxisExtent ?? this.viewportMainAxisExtent,
+          viewportMainAxisExtent ?? this.viewportMainAxisExtent,
     );
   }
 
@@ -756,8 +756,8 @@ class SliverPhysicalParentData extends ParentData {
   String toString() => 'paintOffset=$paintOffset';
 }
 
-String _debugCompareFloats(String labelA, double valueA, String labelB,
-    double valueB) {
+String _debugCompareFloats(
+    String labelA, double valueA, String labelB, double valueB) {
   if (valueA.toStringAsFixed(1) != valueB.toStringAsFixed(1)) {
     return 'The $labelA is ${valueA.toStringAsFixed(1)}, but '
         'the $labelB is ${valueB.toStringAsFixed(1)}. ';
@@ -766,3 +766,140 @@ String _debugCompareFloats(String labelA, double valueA, String labelB,
       'Maybe you have fallen prey to floating point rounding errors, and should explicitly '
       'apply the min() or max() functions, or the clamp() method, to the $labelB? ';
 }
+
+/// Base class for the render objects that implement scroll effects in viewports.
+///
+/// A [RenderViewport] has a list of child slivers. Each sliver — literally a
+/// slice of the viewport's contents — is laid out in turn, covering the
+/// viewport in the process. (Every sliver is laid out each time, including
+/// those that have zero extent because they are "scrolled off" or are beyond
+/// the end of the viewport.)
+///
+/// Slivers participate in the _sliver protocol_, wherein during [layout] each
+/// sliver receives a [SliverConstraints] object and computes a corresponding
+/// [SliverGeometry] that describes where it fits in the viewport. This is
+/// analogous to the box protocol used by [RenderBox], which gets a
+/// [BoxConstraints] as input and computes a [Size].
+///
+/// Slivers have a leading edge, which is where the position described by
+/// [SliverConstraints.scrollOffset] for this sliver begins. Slivers have
+/// several dimensions, the primary of which is [SliverGeometry.paintExtent],
+/// which describes the extent of the sliver along the main axis, starting from
+/// the leading edge, reaching either the end of the viewport or the end of the
+/// sliver, whichever comes first.
+///
+/// Slivers can change dimensions based on the changing constraints in a
+/// non-linear fashion, to achieve various scroll effects. For example, the
+/// various [RenderSliverPersistentHeader] subclasses, on which [SliverAppBar]
+/// is based, achieve effects such as staying visible despite the scroll offset,
+/// or reappearing at different offsets based on the user's scroll direction
+/// ([SliverConstraints.userScrollDirection]).
+///
+/// ## Writing a RenderSliver subclass
+///
+/// Slivers can have sliver children, or children from another coordinate
+/// system, typically box children. (For details on the box protocol, see
+/// [RenderBox].) Slivers can also have different child models, typically having
+/// either one child, or a list of children.
+///
+/// ### Examples of slivers
+///
+/// A good example of a sliver with a single child that is also itself a sliver
+/// is [RenderSliverPadding], which indents its child. A sliver-to-sliver render
+/// object such as this must construct a [SliverConstraints] object for its
+/// child, then must take its child's [SliverGeometry] and use it to form its
+/// own [geometry].
+///
+/// The other common kind of one-child sliver is a sliver that has a single
+/// [RenderBox] child. An example of that would be [RenderSliverToBoxAdapter],
+/// which lays out a single box and sizes itself around the box. Such a sliver
+/// must use its [SliverConstraints] to create a [BoxConstraints] for the
+/// child, lay the child out (using the child's [layout] method), and then use
+/// the child's [RenderBox.size] to generate the sliver's [SliverGeometry].
+///
+/// The most common kind of sliver though is one with multiple children. The
+/// most straight-forward example of this is [RenderSliverList], which arranges
+/// its children one after the other in the main axis direction. As with the
+/// one-box-child sliver case, it uses its [constraints] to create a
+/// [BoxConstraints] for the children, and then it uses the aggregate
+/// information from all its children to generate its [geometry]. Unlike the
+/// one-child cases, however, it is judicious in which children it actually lays
+/// out (and later paints). If the scroll offset is 1000 pixels, and it
+/// previously determined that the first three children are each 400 pixels
+/// tall, then it will skip the first two and start the layout with its third
+/// child.
+///
+/// ### Layout
+///
+/// As they are laid out, slivers decide their [geometry], which includes their
+/// size ([SliverGeometry.paintExtent]) and the position of the next sliver
+/// ([SliverGeometry.layoutExtent]), as well as the position of each of their
+/// children, based on the input [constraints] from the viewport such as the
+/// scroll offset ([SliverConstraints.scrollOffset]).
+///
+/// For example, a sliver that just paints a box 100 pixels high would say its
+/// [SliverGeometry.paintExtent] was 100 pixels when the scroll offset was zero,
+/// but would say its [SliverGeometry.paintExtent] was 25 pixels when the scroll
+/// offset was 75 pixels, and would say it was zero when the scroll offset was
+/// 100 pixels or more. (This is assuming that
+/// [SliverConstraints.remainingPaintExtent] was more than 100 pixels.)
+///
+/// The various dimensions that are provided as input to this system are in the
+/// [constraints]. They are described in detail in the documentation for the
+/// [SliverConstraints] class.
+///
+/// The [performLayout] function must take these [constraints] and create a
+/// [SliverGeometry] object that it must then assign to the [geometry] property.
+/// The different dimensions of the geometry that can be configured are
+/// described in detail in the documentation for the [SliverGeometry] class.
+///
+/// ### Painting
+///
+/// In addition to implementing layout, a sliver must also implement painting.
+/// This is achieved by overriding the [paint] method.
+///
+/// The [paint] method is called with an [Offset] from the [Canvas] origin to
+/// the top-left corner of the sliver, _regardless of the axis direction_.
+///
+/// Subclasses should also override [applyPaintTransform] to provide the
+/// [Matrix4] describing the position of each child relative to the sliver.
+/// (This is used by, among other things, the accessibility layer, to determine
+/// the bounds of the child.)
+///
+/// ### Hit testing
+///
+/// To implement hit testing, either override the [hitTestSelf] and
+/// [hitTestChildren] methods, or, for more complex cases, instead override the
+/// [hitTest] method directly.
+///
+/// To actually react to pointer events, the [handleEvent] method may be
+/// implemented. By default it does nothing. (Typically gestures are handled by
+/// widgets in the box protocol, not by slivers directly.)
+///
+/// ### Helper methods
+///
+/// There are a number of methods that a sliver should implement which will make
+/// the other methods easier to implement. Each method listed below has detailed
+/// documentation. In addition, the [RenderSliverHelpers] class can be used to
+/// mix in some helpful methods.
+///
+/// #### childScrollOffset
+///
+/// If the subclass positions children anywhere other than at scroll offset
+/// zero, it should override [childScrollOffset]. For example,
+/// [RenderSliverList] and [RenderSliverGrid] override this method, but
+/// [RenderSliverToBoxAdapter] does not.
+///
+/// This is used by, among other things, [Scrollable.ensureVisible].
+///
+/// #### childMainAxisPosition
+///
+/// Subclasses should implement [childMainAxisPosition] to describe where their
+/// children are positioned.
+///
+/// #### childCrossAxisPosition
+///
+/// If the subclass positions children in the cross-axis at a position other
+/// than zero, then it should override [childCrossAxisPosition]. For example
+/// [RenderSliverGrid] overrides this method.
+abstract class RenderSliver extends RenderObject {}

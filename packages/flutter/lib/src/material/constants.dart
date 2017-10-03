@@ -30,4 +30,4 @@ const Duration kTabScrollDuration = const Duration(milliseconds: 300);
 
 /// The padding added around material list items.
 const EdgeInsets kMaterialListPadding =
-const EdgeInsets.symmetric(vertical: 8.0);
+    const EdgeInsets.symmetric(vertical: 8.0);

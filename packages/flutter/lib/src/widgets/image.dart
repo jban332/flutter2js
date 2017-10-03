@@ -35,9 +35,7 @@ ImageConfiguration createLocalImageConfiguration(BuildContext context,
   return new ImageConfiguration(
     bundle: DefaultAssetBundle.of(context),
     devicePixelRatio:
-    MediaQuery
-        .of(context, nullOk: true)
-        ?.devicePixelRatio ?? 1.0,
+        MediaQuery.of(context, nullOk: true)?.devicePixelRatio ?? 1.0,
     // TODO(ianh): provide the locale
     size: size,
     platform: defaultTargetPlatform,
@@ -63,7 +61,7 @@ ImageConfiguration createLocalImageConfiguration(BuildContext context,
 Future<Null> precacheImage(ImageProvider provider, BuildContext context,
     {Size size}) {
   final ImageConfiguration config =
-  createLocalImageConfiguration(context, size: size);
+      createLocalImageConfiguration(context, size: size);
   final Completer<Null> completer = new Completer<Null>();
   final ImageStream stream = provider.resolve(config);
   void listener(ImageInfo image, bool sync) {
@@ -125,7 +123,8 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   /// Creates a widget that displays an [ImageStream] obtained from the network.
   ///
   /// The [src], [scale], and [repeat] arguments must not be null.
-  Image.network(String src, {
+  Image.network(
+    String src, {
     Key key,
     double scale: 1.0,
     this.width,
@@ -251,7 +250,8 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   ///    scale is present.
   ///  * <https://flutter.io/assets-and-images/>, an introduction to assets in
   ///    Flutter.
-  Image.asset(String name, {
+  Image.asset(
+    String name, {
     Key key,
     AssetBundle bundle,
     double scale,
@@ -267,15 +267,16 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
     this.package,
   })
       : image = scale != null
-      ? new ExactAssetImage(name,
-      bundle: bundle, scale: scale, package: package)
-      : new AssetImage(name, bundle: bundle, package: package),
+            ? new ExactAssetImage(name,
+                bundle: bundle, scale: scale, package: package)
+            : new AssetImage(name, bundle: bundle, package: package),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
   ///
   /// The [bytes], [scale], and [repeat] arguments must not be null.
-  Image.memory(Uint8List bytes, {
+  Image.memory(
+    Uint8List bytes, {
     Key key,
     double scale: 1.0,
     this.width,
@@ -331,7 +332,7 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   /// An alignment of (0.0, 0.0) aligns the image to the top-left corner of its
   /// layout bounds.  An alignment of (1.0, 0.5) aligns the image to the middle
   /// of the right edge of its layout bounds.
-  final FractionalOffset alignment;
+  final Alignment alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -368,7 +369,7 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
         'colorBlendMode', colorBlendMode,
         defaultValue: null));
     description.add(new EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    description.add(new DiagnosticsProperty<FractionalOffset>(
+    description.add(new DiagnosticsProperty<Alignment>(
         'alignment', alignment,
         defaultValue: null));
     description.add(new EnumProperty<ImageRepeat>('repeat', repeat,

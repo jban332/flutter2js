@@ -40,7 +40,7 @@ class _AlwaysCompleteAnimation extends Animation<double> {
 /// [AnimationController] with an initial value of 1.0. This is useful when an
 /// API expects an animation but you don't actually want to animate anything.
 const Animation<double> kAlwaysCompleteAnimation =
-const _AlwaysCompleteAnimation();
+    const _AlwaysCompleteAnimation();
 
 class _AlwaysDismissedAnimation extends Animation<double> {
   const _AlwaysDismissedAnimation();
@@ -73,7 +73,7 @@ class _AlwaysDismissedAnimation extends Animation<double> {
 /// [AnimationController] with an initial value of 0.0. This is useful when an
 /// API expects an animation but you don't actually want to animate anything.
 const Animation<double> kAlwaysDismissedAnimation =
-const _AlwaysDismissedAnimation();
+    const _AlwaysDismissedAnimation();
 
 /// An animation that is always stopped at a given value.
 ///
@@ -397,7 +397,7 @@ class CurvedAnimation extends Animation<double>
       assert(() {
         final double transformedValue = activeCurve.transform(t);
         final double roundedTransformedValue =
-        transformedValue.round().toDouble();
+            transformedValue.round().toDouble();
         if (roundedTransformedValue != t) {
           throw new FlutterError('Invalid curve endpoint at $t.\n'
               'Curves must map 0.0 to near zero and 1.0 to near one but '

@@ -42,7 +42,7 @@ class PrimaryScrollController extends InheritedWidget {
   /// context.
   static ScrollController of(BuildContext context) {
     final PrimaryScrollController result =
-    context.inheritFromWidgetOfExactType(PrimaryScrollController);
+        context.inheritFromWidgetOfExactType(PrimaryScrollController);
     return result?.controller;
   }
 

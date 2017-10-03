@@ -25,15 +25,14 @@ class _PlaceholderPainter extends CustomPainter {
     final Rect rect = Offset.zero & size;
     final Path path = new Path()
       ..addRect(rect)
-      ..addPolygon(<Offset>[rect.topRight, rect.bottomLeft], false)..addPolygon(
-          <Offset>[rect.topLeft, rect.bottomRight], false);
+      ..addPolygon(<Offset>[rect.topRight, rect.bottomLeft], false)
+      ..addPolygon(<Offset>[rect.topLeft, rect.bottomRight], false);
     canvas.drawPath(path, paint);
   }
 
   @override
   bool shouldRepaint(_PlaceholderPainter oldPainter) {
-    return oldPainter.color != color
-        || oldPainter.strokeWidth != strokeWidth;
+    return oldPainter.color != color || oldPainter.strokeWidth != strokeWidth;
   }
 
   @override
@@ -57,7 +56,8 @@ class Placeholder extends StatelessWidget {
     this.strokeWidth: 2.0,
     this.fallbackWidth: 400.0,
     this.fallbackHeight: 400.0,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// The color to draw the placeholder box.
   final Color color;

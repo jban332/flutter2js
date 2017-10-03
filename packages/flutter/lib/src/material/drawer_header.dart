@@ -36,7 +36,8 @@ class DrawerHeader extends StatelessWidget {
     this.duration: const Duration(milliseconds: 250),
     this.curve: Curves.fastOutSlowIn,
     @required this.child,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// Decoration for the main drawer header [Container]; useful for applying
   /// backgrounds.
@@ -74,10 +75,7 @@ class DrawerHeader extends StatelessWidget {
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMediaQuery(context));
     final ThemeData theme = Theme.of(context);
-    final double statusBarHeight = MediaQuery
-        .of(context)
-        .padding
-        .top;
+    final double statusBarHeight = MediaQuery.of(context).padding.top;
     return new Container(
       height: statusBarHeight + _kDrawerHeaderHeight,
       margin: margin,
@@ -94,10 +92,12 @@ class DrawerHeader extends StatelessWidget {
         decoration: decoration,
         duration: duration,
         curve: curve,
-        child: child == null ? null : new DefaultTextStyle(
-          style: theme.textTheme.body2,
-          child: child,
-        ),
+        child: child == null
+            ? null
+            : new DefaultTextStyle(
+                style: theme.textTheme.body2,
+                child: child,
+              ),
       ),
     );
   }

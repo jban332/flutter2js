@@ -100,7 +100,7 @@ class ListTileTheme extends InheritedWidget {
   /// ```
   static ListTileTheme of(BuildContext context) {
     final ListTileTheme result =
-    context.inheritFromWidgetOfExactType(ListTileTheme);
+        context.inheritFromWidgetOfExactType(ListTileTheme);
     return result ?? const ListTileTheme();
   }
 
@@ -278,15 +278,14 @@ class ListTile extends StatelessWidget {
   /// See also:
   ///
   /// * [Divider], which you can use to obtain this effect manually.
-  static Iterable<Widget> divideTiles({BuildContext context,
-    @required Iterable<Widget> tiles,
-    Color color}) sync* {
+  static Iterable<Widget> divideTiles(
+      {BuildContext context,
+      @required Iterable<Widget> tiles,
+      Color color}) sync* {
     assert(tiles != null);
     assert(color != null || context != null);
 
-    final Color dividerColor = color ?? Theme
-        .of(context)
-        .dividerColor;
+    final Color dividerColor = color ?? Theme.of(context).dividerColor;
     final Iterator<Widget> iterator = tiles.iterator;
     final bool isNotEmpty = iterator.moveNext();
 
@@ -326,8 +325,8 @@ class ListTile extends StatelessWidget {
     return null;
   }
 
-  Color _textColor(ThemeData theme, ListTileTheme tileTheme,
-      Color defaultColor) {
+  Color _textColor(
+      ThemeData theme, ListTileTheme tileTheme, Color defaultColor) {
     if (!enabled) return theme.disabledColor;
 
     if (selected && tileTheme?.selectedColor != null)
@@ -363,7 +362,7 @@ class ListTile extends StatelessWidget {
   TextStyle _subtitleTextStyle(ThemeData theme, ListTileTheme tileTheme) {
     final TextStyle style = theme.textTheme.body1;
     final Color color =
-    _textColor(theme, tileTheme, theme.textTheme.caption.color);
+        _textColor(theme, tileTheme, theme.textTheme.caption.color);
     return _denseLayout(tileTheme)
         ? style.copyWith(color: color, fontSize: 12.0)
         : style.copyWith(color: color);
@@ -394,7 +393,7 @@ class ListTile extends StatelessWidget {
         child: new Container(
           margin: const EdgeInsetsDirectional.only(end: 16.0),
           width: 40.0,
-          alignment: FractionalOffsetDirectional.centerStart,
+          alignment: AlignmentDirectional.centerStart,
           child: leading,
         ),
       ));
@@ -426,7 +425,7 @@ class ListTile extends StatelessWidget {
     if (trailing != null) {
       children.add(new Container(
         margin: const EdgeInsetsDirectional.only(start: 16.0),
-        alignment: FractionalOffsetDirectional.centerEnd,
+        alignment: AlignmentDirectional.centerEnd,
         child: trailing,
       ));
     }

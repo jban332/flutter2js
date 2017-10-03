@@ -70,38 +70,39 @@ class ThemeData {
   ///
   /// See <https://material.google.com/style/color.html> for
   /// more discussion on how to pick the right colors.
-  factory ThemeData({Brightness brightness,
-    MaterialColor primarySwatch,
-    Color primaryColor,
-    Brightness primaryColorBrightness,
-    Color accentColor,
-    Brightness accentColorBrightness,
-    Color canvasColor,
-    Color scaffoldBackgroundColor,
-    Color cardColor,
-    Color dividerColor,
-    Color highlightColor,
-    Color splashColor,
-    Color selectedRowColor,
-    Color unselectedWidgetColor,
-    Color disabledColor,
-    Color buttonColor,
-    Color secondaryHeaderColor,
-    Color textSelectionColor,
-    Color textSelectionHandleColor,
-    Color backgroundColor,
-    Color dialogBackgroundColor,
-    Color indicatorColor,
-    Color hintColor,
-    Color errorColor,
-    String fontFamily,
-    TextTheme textTheme,
-    TextTheme primaryTextTheme,
-    TextTheme accentTextTheme,
-    IconThemeData iconTheme,
-    IconThemeData primaryIconTheme,
-    IconThemeData accentIconTheme,
-    TargetPlatform platform}) {
+  factory ThemeData(
+      {Brightness brightness,
+      MaterialColor primarySwatch,
+      Color primaryColor,
+      Brightness primaryColorBrightness,
+      Color accentColor,
+      Brightness accentColorBrightness,
+      Color canvasColor,
+      Color scaffoldBackgroundColor,
+      Color cardColor,
+      Color dividerColor,
+      Color highlightColor,
+      Color splashColor,
+      Color selectedRowColor,
+      Color unselectedWidgetColor,
+      Color disabledColor,
+      Color buttonColor,
+      Color secondaryHeaderColor,
+      Color textSelectionColor,
+      Color textSelectionHandleColor,
+      Color backgroundColor,
+      Color dialogBackgroundColor,
+      Color indicatorColor,
+      Color hintColor,
+      Color errorColor,
+      String fontFamily,
+      TextTheme textTheme,
+      TextTheme primaryTextTheme,
+      TextTheme accentTextTheme,
+      IconThemeData iconTheme,
+      IconThemeData primaryIconTheme,
+      IconThemeData accentIconTheme,
+      TargetPlatform platform}) {
     brightness ??= Brightness.light;
     final bool isDark = brightness == Brightness.dark;
     primarySwatch ??= Colors.blue;
@@ -116,7 +117,7 @@ class ThemeData {
     cardColor ??= isDark ? Colors.grey[800] : Colors.white;
     dividerColor ??= isDark ? const Color(0x1FFFFFFF) : const Color(0x1F000000);
     highlightColor ??=
-    isDark ? _kDarkThemeHighlightColor : _kLightThemeHighlightColor;
+        isDark ? _kDarkThemeHighlightColor : _kLightThemeHighlightColor;
     splashColor ??= isDark ? _kDarkThemeSplashColor : _kLightThemeSplashColor;
     selectedRowColor ??= Colors.grey[100];
     unselectedWidgetColor ??= isDark ? Colors.white70 : Colors.black54;
@@ -126,7 +127,7 @@ class ThemeData {
     secondaryHeaderColor ??= isDark ? Colors.grey[700] : primarySwatch[50];
     textSelectionColor ??= isDark ? accentColor : primarySwatch[200];
     textSelectionHandleColor ??=
-    isDark ? Colors.tealAccent[400] : primarySwatch[300];
+        isDark ? Colors.tealAccent[400] : primarySwatch[300];
     backgroundColor ??= isDark ? Colors.grey[700] : primarySwatch[200];
     dialogBackgroundColor ??= isDark ? Colors.grey[800] : Colors.white;
     indicatorColor ??= accentColor == primaryColor ? Colors.white : accentColor;
@@ -190,36 +191,37 @@ class ThemeData {
   /// This will rarely be used directly. It is used by [lerp] to
   /// create intermediate themes based on two themes created with the
   /// [new ThemeData] constructor.
-  const ThemeData.raw({@required this.brightness,
-    @required this.primaryColor,
-    @required this.primaryColorBrightness,
-    @required this.accentColor,
-    @required this.accentColorBrightness,
-    @required this.canvasColor,
-    @required this.scaffoldBackgroundColor,
-    @required this.cardColor,
-    @required this.dividerColor,
-    @required this.highlightColor,
-    @required this.splashColor,
-    @required this.selectedRowColor,
-    @required this.unselectedWidgetColor,
-    @required this.disabledColor,
-    @required this.buttonColor,
-    @required this.secondaryHeaderColor,
-    @required this.textSelectionColor,
-    @required this.textSelectionHandleColor,
-    @required this.backgroundColor,
-    @required this.dialogBackgroundColor,
-    @required this.indicatorColor,
-    @required this.hintColor,
-    @required this.errorColor,
-    @required this.textTheme,
-    @required this.primaryTextTheme,
-    @required this.accentTextTheme,
-    @required this.iconTheme,
-    @required this.primaryIconTheme,
-    @required this.accentIconTheme,
-    @required this.platform});
+  const ThemeData.raw(
+      {@required this.brightness,
+      @required this.primaryColor,
+      @required this.primaryColorBrightness,
+      @required this.accentColor,
+      @required this.accentColorBrightness,
+      @required this.canvasColor,
+      @required this.scaffoldBackgroundColor,
+      @required this.cardColor,
+      @required this.dividerColor,
+      @required this.highlightColor,
+      @required this.splashColor,
+      @required this.selectedRowColor,
+      @required this.unselectedWidgetColor,
+      @required this.disabledColor,
+      @required this.buttonColor,
+      @required this.secondaryHeaderColor,
+      @required this.textSelectionColor,
+      @required this.textSelectionHandleColor,
+      @required this.backgroundColor,
+      @required this.dialogBackgroundColor,
+      @required this.indicatorColor,
+      @required this.hintColor,
+      @required this.errorColor,
+      @required this.textTheme,
+      @required this.primaryTextTheme,
+      @required this.accentTextTheme,
+      @required this.iconTheme,
+      @required this.primaryIconTheme,
+      @required this.accentIconTheme,
+      @required this.platform});
 
   /// A default light blue theme.
   factory ThemeData.light() => new ThemeData(brightness: Brightness.light);
@@ -385,29 +387,29 @@ class ThemeData {
       brightness: brightness ?? this.brightness,
       primaryColor: primaryColor ?? this.primaryColor,
       primaryColorBrightness:
-      primaryColorBrightness ?? this.primaryColorBrightness,
+          primaryColorBrightness ?? this.primaryColorBrightness,
       accentColor: accentColor ?? this.accentColor,
       accentColorBrightness:
-      accentColorBrightness ?? this.accentColorBrightness,
+          accentColorBrightness ?? this.accentColorBrightness,
       canvasColor: canvasColor ?? this.canvasColor,
       scaffoldBackgroundColor:
-      scaffoldBackgroundColor ?? this.scaffoldBackgroundColor,
+          scaffoldBackgroundColor ?? this.scaffoldBackgroundColor,
       cardColor: cardColor ?? this.cardColor,
       dividerColor: dividerColor ?? this.dividerColor,
       highlightColor: highlightColor ?? this.highlightColor,
       splashColor: splashColor ?? this.splashColor,
       selectedRowColor: selectedRowColor ?? this.selectedRowColor,
       unselectedWidgetColor:
-      unselectedWidgetColor ?? this.unselectedWidgetColor,
+          unselectedWidgetColor ?? this.unselectedWidgetColor,
       disabledColor: disabledColor ?? this.disabledColor,
       buttonColor: buttonColor ?? this.buttonColor,
       secondaryHeaderColor: secondaryHeaderColor ?? this.secondaryHeaderColor,
       textSelectionColor: textSelectionColor ?? this.textSelectionColor,
       textSelectionHandleColor:
-      textSelectionHandleColor ?? this.textSelectionHandleColor,
+          textSelectionHandleColor ?? this.textSelectionHandleColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       dialogBackgroundColor:
-      dialogBackgroundColor ?? this.dialogBackgroundColor,
+          dialogBackgroundColor ?? this.dialogBackgroundColor,
       indicatorColor: indicatorColor ?? this.indicatorColor,
       hintColor: hintColor ?? this.hintColor,
       errorColor: errorColor ?? this.errorColor,
@@ -460,7 +462,7 @@ class ThemeData {
         brightness: t < 0.5 ? begin.brightness : end.brightness,
         primaryColor: Color.lerp(begin.primaryColor, end.primaryColor, t),
         primaryColorBrightness:
-        t < 0.5 ? begin.primaryColorBrightness : end.primaryColorBrightness,
+            t < 0.5 ? begin.primaryColorBrightness : end.primaryColorBrightness,
         canvasColor: Color.lerp(begin.canvasColor, end.canvasColor, t),
         scaffoldBackgroundColor: Color.lerp(
             begin.scaffoldBackgroundColor, end.scaffoldBackgroundColor, t),
@@ -469,37 +471,37 @@ class ThemeData {
         highlightColor: Color.lerp(begin.highlightColor, end.highlightColor, t),
         splashColor: Color.lerp(begin.splashColor, end.splashColor, t),
         selectedRowColor:
-        Color.lerp(begin.selectedRowColor, end.selectedRowColor, t),
+            Color.lerp(begin.selectedRowColor, end.selectedRowColor, t),
         unselectedWidgetColor: Color.lerp(
             begin.unselectedWidgetColor, end.unselectedWidgetColor, t),
         disabledColor: Color.lerp(begin.disabledColor, end.disabledColor, t),
         buttonColor: Color.lerp(begin.buttonColor, end.buttonColor, t),
         secondaryHeaderColor:
-        Color.lerp(begin.secondaryHeaderColor, end.secondaryHeaderColor, t),
+            Color.lerp(begin.secondaryHeaderColor, end.secondaryHeaderColor, t),
         textSelectionColor:
-        Color.lerp(begin.textSelectionColor, end.textSelectionColor, t),
+            Color.lerp(begin.textSelectionColor, end.textSelectionColor, t),
         textSelectionHandleColor: Color.lerp(
             begin.textSelectionHandleColor, end.textSelectionHandleColor, t),
         backgroundColor:
-        Color.lerp(begin.backgroundColor, end.backgroundColor, t),
+            Color.lerp(begin.backgroundColor, end.backgroundColor, t),
         dialogBackgroundColor: Color.lerp(
             begin.dialogBackgroundColor, end.dialogBackgroundColor, t),
         accentColor: Color.lerp(begin.accentColor, end.accentColor, t),
         accentColorBrightness:
-        t < 0.5 ? begin.accentColorBrightness : end.accentColorBrightness,
+            t < 0.5 ? begin.accentColorBrightness : end.accentColorBrightness,
         indicatorColor: Color.lerp(begin.indicatorColor, end.indicatorColor, t),
         hintColor: Color.lerp(begin.hintColor, end.hintColor, t),
         errorColor: Color.lerp(begin.errorColor, end.errorColor, t),
         textTheme: TextTheme.lerp(begin.textTheme, end.textTheme, t),
         primaryTextTheme:
-        TextTheme.lerp(begin.primaryTextTheme, end.primaryTextTheme, t),
+            TextTheme.lerp(begin.primaryTextTheme, end.primaryTextTheme, t),
         accentTextTheme:
-        TextTheme.lerp(begin.accentTextTheme, end.accentTextTheme, t),
+            TextTheme.lerp(begin.accentTextTheme, end.accentTextTheme, t),
         iconTheme: IconThemeData.lerp(begin.iconTheme, end.iconTheme, t),
         primaryIconTheme:
-        IconThemeData.lerp(begin.primaryIconTheme, end.primaryIconTheme, t),
+            IconThemeData.lerp(begin.primaryIconTheme, end.primaryIconTheme, t),
         accentIconTheme:
-        IconThemeData.lerp(begin.accentIconTheme, end.accentIconTheme, t),
+            IconThemeData.lerp(begin.accentIconTheme, end.accentIconTheme, t),
         platform: t < 0.5 ? begin.platform : end.platform);
   }
 
@@ -578,8 +580,7 @@ class ThemeData {
   }
 
   @override
-  String toString() =>
-      '$runtimeType(${ platform != defaultTargetPlatform
+  String toString() => '$runtimeType(${ platform != defaultTargetPlatform
           ? "$platform "
           : ''}$brightness $primaryColor etc...)';
 }

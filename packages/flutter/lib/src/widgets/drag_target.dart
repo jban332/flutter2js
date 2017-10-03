@@ -28,8 +28,8 @@ typedef void DragTargetAccept<T>(T data);
 /// this [DragTarget] and that will not be accepted by the [DragTarget].
 ///
 /// Used by [DragTarget.builder].
-typedef Widget DragTargetBuilder<T>(BuildContext context, List<T> candidateData,
-    List<dynamic> rejectedData);
+typedef Widget DragTargetBuilder<T>(
+    BuildContext context, List<T> candidateData, List<dynamic> rejectedData);
 
 /// Signature for when a [Draggable] is dropped without being accepted by a [DragTarget].
 ///
@@ -77,7 +77,7 @@ enum DragAnchor {
 ///
 ///  * [DragTarget]
 ///  * [LongPressDraggable]
-class Draggable<T> extends flur.StatelessUIPluginWidget {
+class Draggable<T> extends flur.SingleChildUIPluginWidget {
   /// Creates a widget that can be dragged to a [DragTarget].
   ///
   /// The [child] and [feedback] arguments must not be null. If
@@ -95,9 +95,8 @@ class Draggable<T> extends flur.StatelessUIPluginWidget {
     this.onDragStarted,
     this.onDraggableCanceled,
     this.onDragCompleted,
-  }) :
-        super(key: key);
-
+  })
+      : super(key: key);
 
   /// The data that will be dropped by this draggable.
   final T data;
@@ -202,29 +201,28 @@ class LongPressDraggable<T> extends Draggable<T> {
   ///
   /// The [child] and [feedback] arguments must not be null. If
   /// [maxSimultaneousDrags] is non-null, it must be non-negative.
-  const LongPressDraggable({
-    Key key,
-    @required Widget child,
-    @required Widget feedback,
-    T data,
-    Widget childWhenDragging,
-    Offset feedbackOffset: Offset.zero,
-    DragAnchor dragAnchor: DragAnchor.child,
-    int maxSimultaneousDrags,
-    VoidCallback onDragStarted,
-    DraggableCanceledCallback onDraggableCanceled
-  }) : super(
-      key: key,
-      child: child,
-      feedback: feedback,
-      data: data,
-      childWhenDragging: childWhenDragging,
-      feedbackOffset: feedbackOffset,
-      dragAnchor: dragAnchor,
-      maxSimultaneousDrags: maxSimultaneousDrags,
-      onDragStarted: onDragStarted,
-      onDraggableCanceled: onDraggableCanceled
-  );
+  const LongPressDraggable(
+      {Key key,
+      @required Widget child,
+      @required Widget feedback,
+      T data,
+      Widget childWhenDragging,
+      Offset feedbackOffset: Offset.zero,
+      DragAnchor dragAnchor: DragAnchor.child,
+      int maxSimultaneousDrags,
+      VoidCallback onDragStarted,
+      DraggableCanceledCallback onDraggableCanceled})
+      : super(
+            key: key,
+            child: child,
+            feedback: feedback,
+            data: data,
+            childWhenDragging: childWhenDragging,
+            feedbackOffset: feedbackOffset,
+            dragAnchor: dragAnchor,
+            maxSimultaneousDrags: maxSimultaneousDrags,
+            onDragStarted: onDragStarted,
+            onDraggableCanceled: onDraggableCanceled);
 }
 
 /// A widget that receives data when a [Draggable] widget is dropped.
@@ -243,12 +241,9 @@ class DragTarget<T> extends flur.StatelessUIPluginWidget {
   /// Creates a widget that receives drags.
   ///
   /// The [builder] argument must not be null.
-  const DragTarget({
-    Key key,
-    @required this.builder,
-    this.onWillAccept,
-    this.onAccept
-  }) : super(key: key);
+  const DragTarget(
+      {Key key, @required this.builder, this.onWillAccept, this.onAccept})
+      : super(key: key);
 
   /// Called to build the contents of this widget.
   ///

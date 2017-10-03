@@ -26,8 +26,8 @@ class GridTile extends StatelessWidget {
     this.header,
     this.footer,
     @required this.child,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// The widget to show over the top of this grid tile.
   ///
@@ -44,29 +44,16 @@ class GridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (header == null && footer == null)
-      return child;
+    if (header == null && footer == null) return child;
 
-    final List<Widget> children = <Widget>[
-      new Positioned.fill(
-          child: child
-      )
-    ];
+    final List<Widget> children = <Widget>[new Positioned.fill(child: child)];
     if (header != null) {
-      children.add(new Positioned(
-          top: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: header
-      ));
+      children
+          .add(new Positioned(top: 0.0, left: 0.0, right: 0.0, child: header));
     }
     if (footer != null) {
-      children.add(new Positioned(
-          left: 0.0,
-          bottom: 0.0,
-          right: 0.0,
-          child: footer
-      ));
+      children.add(
+          new Positioned(left: 0.0, bottom: 0.0, right: 0.0, child: footer));
     }
     return new Stack(children: children);
   }

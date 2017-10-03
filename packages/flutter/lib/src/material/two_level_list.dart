@@ -29,8 +29,8 @@ enum MaterialListType {
 /// This constant is deprecated. The [ListTile] class sizes itself based on
 /// its content and [ListTileTheme].
 @deprecated
-Map<MaterialListType, double> kListTileExtent = const
-<MaterialListType, double>{
+Map<MaterialListType, double> kListTileExtent =
+    const <MaterialListType, double>{
   MaterialListType.oneLine: 48.0,
   MaterialListType.oneLineWithAvatar: 56.0,
   MaterialListType.twoLine: 72.0,
@@ -43,16 +43,15 @@ const Duration _kExpand = const Duration(milliseconds: 200);
 @deprecated
 class TwoLevelListItem extends StatelessWidget {
   /// Creates an item in a two-level list.
-  const TwoLevelListItem({
-    Key key,
-    this.leading,
-    @required this.title,
-    this.trailing,
-    this.enabled: true,
-    this.onTap,
-    this.onLongPress
-  }) :
-        super(key: key);
+  const TwoLevelListItem(
+      {Key key,
+      this.leading,
+      @required this.title,
+      this.trailing,
+      this.enabled: true,
+      this.onTap,
+      this.onLongPress})
+      : super(key: key);
 
   /// A widget to display before the title.
   ///
@@ -88,8 +87,8 @@ class TwoLevelListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TwoLevelList parentList = context.ancestorWidgetOfExactType(
-        TwoLevelList);
+    final TwoLevelList parentList =
+        context.ancestorWidgetOfExactType(TwoLevelList);
     assert(parentList != null);
 
     return new SizedBox(
@@ -100,9 +99,7 @@ class TwoLevelListItem extends StatelessWidget {
             trailing: trailing,
             enabled: enabled,
             onTap: onTap,
-            onLongPress: onLongPress
-        )
-    );
+            onLongPress: onLongPress));
   }
 }
 
@@ -117,7 +114,8 @@ class TwoLevelSublist extends StatefulWidget {
     this.backgroundColor,
     this.onOpenChanged,
     this.children: const <Widget>[],
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// A widget to display before the title.
   ///
@@ -149,8 +147,8 @@ class TwoLevelSublist extends StatefulWidget {
 }
 
 @deprecated
-class _TwoLevelSublistState extends State<TwoLevelSublist>
-    with SingleTickerProviderStateMixin<TwoLevelSublist> {
+class _TwoLevelSublistState
+    extends SingleTickerProviderStateMixin<TwoLevelSublist> {
   AnimationController _controller;
   CurvedAnimation _easeOutAnimation;
   CurvedAnimation _easeInAnimation;
@@ -167,9 +165,9 @@ class _TwoLevelSublistState extends State<TwoLevelSublist>
     super.initState();
     _controller = new AnimationController(duration: _kExpand, vsync: this);
     _easeOutAnimation =
-    new CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+        new CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _easeInAnimation =
-    new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+        new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _borderColor = new ColorTween(begin: Colors.transparent);
     _headerColor = new ColorTween();
     _iconColor = new ColorTween();
@@ -178,8 +176,7 @@ class _TwoLevelSublistState extends State<TwoLevelSublist>
     _backgroundColor = new ColorTween();
 
     _isExpanded = PageStorage.of(context)?.readState(context) ?? false;
-    if (_isExpanded)
-      _controller.value = 1.0;
+    if (_isExpanded) _controller.value = 1.0;
   }
 
   @override
@@ -197,8 +194,7 @@ class _TwoLevelSublistState extends State<TwoLevelSublist>
         _controller.reverse();
       PageStorage.of(context)?.writeState(context, _isExpanded);
     });
-    if (widget.onOpenChanged != null)
-      widget.onOpenChanged(_isExpanded);
+    if (widget.onOpenChanged != null) widget.onOpenChanged(_isExpanded);
   }
 
   Widget buildList(BuildContext context, Widget child) {
@@ -209,41 +205,26 @@ class _TwoLevelSublistState extends State<TwoLevelSublist>
                 top: new BorderSide(
                     color: _borderColor.evaluate(_easeOutAnimation)),
                 bottom: new BorderSide(
-                    color: _borderColor.evaluate(_easeOutAnimation))
-            )
-        ),
-        child: new Column(
-            children: <Widget>[
-              IconTheme.merge(
-                  data: new IconThemeData(
-                      color: _iconColor.evaluate(_easeInAnimation)),
-                  child: new TwoLevelListItem(
-                      onTap: _handleOnTap,
-                      leading: widget.leading,
-                      title: new DefaultTextStyle(
-                          style: Theme
-                              .of(context)
-                              .textTheme
-                              .subhead
-                              .copyWith(
-                              color: _headerColor.evaluate(_easeInAnimation)),
-                          child: widget.title
-                      ),
-                      trailing: new RotationTransition(
-                          turns: _iconTurns,
-                          child: const Icon(Icons.expand_more)
-                      )
-                  )
-              ),
-              new ClipRect(
-                  child: new Align(
-                      heightFactor: _easeInAnimation.value,
-                      child: new Column(children: widget.children)
-                  )
-              )
-            ]
-        )
-    );
+                    color: _borderColor.evaluate(_easeOutAnimation)))),
+        child: new Column(children: <Widget>[
+          IconTheme.merge(
+              data: new IconThemeData(
+                  color: _iconColor.evaluate(_easeInAnimation)),
+              child: new TwoLevelListItem(
+                  onTap: _handleOnTap,
+                  leading: widget.leading,
+                  title: new DefaultTextStyle(
+                      style: Theme.of(context).textTheme.subhead.copyWith(
+                          color: _headerColor.evaluate(_easeInAnimation)),
+                      child: widget.title),
+                  trailing: new RotationTransition(
+                      turns: _iconTurns,
+                      child: const Icon(Icons.expand_more)))),
+          new ClipRect(
+              child: new Align(
+                  heightFactor: _easeInAnimation.value,
+                  child: new Column(children: widget.children)))
+        ]));
   }
 
   @override
@@ -260,10 +241,7 @@ class _TwoLevelSublistState extends State<TwoLevelSublist>
       ..begin = Colors.transparent
       ..end = widget.backgroundColor ?? Colors.transparent;
 
-    return new AnimatedBuilder(
-        animation: _controller.view,
-        builder: buildList
-    );
+    return new AnimatedBuilder(animation: _controller.view, builder: buildList);
   }
 }
 
@@ -278,8 +256,8 @@ class TwoLevelList extends StatelessWidget {
     this.children: const <Widget>[],
     this.type: MaterialListType.twoLine,
     this.padding,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// The widgets to display in this list.
   ///

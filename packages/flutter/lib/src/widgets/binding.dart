@@ -4,16 +4,18 @@
 
 import 'dart:async';
 
+import 'package:flur/flur.dart' as flur;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/ui.dart' show AppLifecycleState, Locale;
+import 'package:flutter/ui.dart' as ui show window;
 
 import 'app.dart';
 import 'focus_manager.dart';
 import 'framework.dart';
 
 export 'package:flutter/ui.dart' show AppLifecycleState, Locale;
-
-export 'binding_run_app.dart';
 
 /// Interface for classes that register with the Widgets layer binding.
 ///
@@ -161,15 +163,14 @@ abstract class WidgetsBindingObserver {
 }
 
 /// The glue between the widgets layer and the Flutter engine.
-abstract class WidgetsBinding extends BindingBase {
-  // This class is intended to be used as a mixin, and should not be
-  // extended directly.
-  factory WidgetsBinding._() => null;
-
+abstract class WidgetsBinding extends RendererBinding {
   @override
   void initInstances() {
     super.initInstances();
     _instance = this;
+    ui.window.onLocaleChanged = handleLocaleChanged;
+    SystemChannels.navigation.setMethodCallHandler(_handleNavigationInvocation);
+    SystemChannels.lifecycle.setMessageHandler(_handleLifecycleMessage);
   }
 
   /// The current [WidgetsBinding], if one has been created.
@@ -183,7 +184,36 @@ abstract class WidgetsBinding extends BindingBase {
   @override
   void initServiceExtensions() {
     super.initServiceExtensions();
+
+    registerSignalServiceExtension(
+        name: 'debugDumpApp',
+        callback: () {
+          debugDumpApp();
+          return debugPrintDone;
+        });
+
+    registerBoolServiceExtension(
+        name: 'showPerformanceOverlay',
+        getter: () =>
+            new Future<bool>.value(WidgetsApp.showPerformanceOverlayOverride),
+        setter: (bool value) {});
+
+    registerBoolServiceExtension(
+        name: 'debugAllowBanner',
+        getter: () =>
+            new Future<bool>.value(WidgetsApp.debugAllowBannerOverride),
+        setter: (bool value) {});
+
+    registerBoolServiceExtension(
+        name: 'debugWidgetInspector',
+        getter: () async => WidgetsApp.debugShowWidgetInspectorOverride,
+        setter: (bool value) {});
   }
+
+  /// The [BuildOwner] in charge of executing the build pipeline for the
+  /// widget tree rooted at this binding.
+  BuildOwner get buildOwner => _buildOwner;
+  final BuildOwner _buildOwner = new BuildOwner();
 
   /// The object in charge of the focus tree.
   ///
@@ -225,6 +255,15 @@ abstract class WidgetsBinding extends BindingBase {
   bool removeObserver(WidgetsBindingObserver observer) =>
       _observers.remove(observer);
 
+  /// Called when the system locale changes.
+  ///
+  /// Calls [dispatchLocaleChanged] to notify the binding observers.
+  ///
+  /// See [Window.onLocaleChanged].
+  void handleLocaleChanged() {
+    dispatchLocaleChanged(ui.window.locale);
+  }
+
   /// Notify all the observers that the locale has changed (using
   /// [WidgetsBindingObserver.didChangeLocale]), giving them the
   /// `locale` argument.
@@ -246,18 +285,29 @@ abstract class WidgetsBinding extends BindingBase {
   /// pages, and so forth.
   Future<Null> handlePopRoute() async {
     for (WidgetsBindingObserver observer
-    in new List<WidgetsBindingObserver>.from(_observers)) {
+        in new List<WidgetsBindingObserver>.from(_observers)) {
       if (await observer.didPopRoute()) return;
     }
+    SystemNavigator.pop();
   }
 
   /// Called when the host tells the app to push a new route onto the
   /// navigator.
   Future<Null> handlePushRoute(String route) async {
     for (WidgetsBindingObserver observer
-    in new List<WidgetsBindingObserver>.from(_observers)) {
+        in new List<WidgetsBindingObserver>.from(_observers)) {
       if (await observer.didPushRoute(route)) return;
     }
+  }
+
+  Future<dynamic> _handleNavigationInvocation(MethodCall methodCall) {
+    switch (methodCall.method) {
+      case 'popRoute':
+        return handlePopRoute();
+      case 'pushRoute':
+        return handlePushRoute(methodCall.arguments);
+    }
+    return new Future<Null>.value();
   }
 
   /// Called when the application lifecycle state changes.
@@ -269,31 +319,22 @@ abstract class WidgetsBinding extends BindingBase {
       observer.didChangeAppLifecycleState(state);
   }
 
-  int _deferFirstFrameReportCount = 0;
-
-  /// Tell the framework not to report the frame it is building as a "useful"
-  /// first frame until there is a corresponding call to [allowFirstFrameReport].
-  ///
-  /// This is used by [WidgetsApp] to report the first frame.
-  //
-  // TODO(ianh): This method should only be available in debug and profile modes.
-  void deferFirstFrameReport() {
-    assert(_deferFirstFrameReportCount >= 0);
-    _deferFirstFrameReportCount += 1;
-  }
-
-  /// When called after [deferFirstFrameReport]: tell the framework to report
-  /// the frame it is building as a "useful" first frame.
-  ///
-  /// This method may only be called once for each corresponding call
-  /// to [deferFirstFrameReport].
-  ///
-  /// This is used by [WidgetsApp] to report the first frame.
-  //
-  // TODO(ianh): This method should only be available in debug and profile modes.
-  void allowFirstFrameReport() {
-    assert(_deferFirstFrameReportCount >= 1);
-    _deferFirstFrameReportCount -= 1;
+  Future<String> _handleLifecycleMessage(String message) async {
+    switch (message) {
+      case 'AppLifecycleState.paused':
+        handleAppLifecycleStateChanged(AppLifecycleState.paused);
+        break;
+      case 'AppLifecycleState.resumed':
+        handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+        break;
+      case 'AppLifecycleState.inactive':
+        handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+        break;
+      case 'AppLifecycleState.suspending':
+        handleAppLifecycleStateChanged(AppLifecycleState.suspending);
+        break;
+    }
+    return null;
   }
 
   /// Whether we are currently in a frame. This is used to verify
@@ -304,32 +345,33 @@ abstract class WidgetsBinding extends BindingBase {
   /// This flag is not used in release builds.
   @protected
   bool debugBuildingDirtyElements = false;
+}
 
-  /// The [Element] that is at the root of the hierarchy (and which wraps the
-  /// [RenderView] object at the root of the rendering hierarchy).
-  ///
-  /// This is initialized the first time [runApp] is called.
-  Element get renderViewElement => _renderViewElement;
-  Element _renderViewElement;
-
-  /// Takes a widget and attaches it to the [renderViewElement], creating it if
-  /// necessary.
-  ///
-  /// This is called by [runApp] to configure the widget tree.
-  ///
-  /// See also [RenderObjectToWidgetAdapter.attachToRenderTree].
-  void attachRootWidget(Widget rootWidget) {}
-
-  @override
-  Future<Null> performReassemble() {
-    deferFirstFrameReport();
-    // TODO(hansmuller): eliminate the value variable after analyzer bug
-    // https://github.com/flutter/flutter/issues/11646 is fixed.
-    final Future<Null> value = super.performReassemble();
-    return value.then((Null _) {
-      allowFirstFrameReport();
-    });
-  }
+/// Inflate the given widget and attach it to the screen.
+///
+/// The widget is given constraints during layout that force it to fill the
+/// entire screen. If you wish to align your widget to one side of the screen
+/// (e.g., the top), consider using the [Align] widget. If you wish to center
+/// your widget, you can also use the [Center] widget
+///
+/// Calling [runApp] again will detach the previous root widget from the screen
+/// and attach the given widget in its place. The new widget tree is compared
+/// against the previous widget tree and any differences are applied to the
+/// underlying render tree, similar to what happens when a [StatefulWidget]
+/// rebuilds after calling [State.setState].
+///
+/// Initializes the binding using [WidgetsFlutterBinding] if necessary.
+///
+/// See also:
+///
+/// * [WidgetsBinding.attachRootWidget], which creates the root widget for the
+///   widget hierarchy.
+/// * [RenderObjectToWidgetAdapter.attachToRenderTree], which creates the root
+///   element for the element hierarchy.
+/// * [WidgetsBinding.handleBeginFrame], which pumps the widget pipeline to
+///   ensure the widget, element, and render trees are all built.
+void runApp(Widget app) {
+  flur.runAppInFlur(app);
 }
 
 /// Print a string representation of the currently running app.
@@ -337,7 +379,7 @@ void debugDumpApp() {}
 
 /// A concrete binding for applications based on the Widgets framework.
 /// This is the glue that binds the framework to the Flutter engine.
-class WidgetsFlutterBinding extends BindingBase {
+class WidgetsFlutterBinding extends WidgetsBinding {
   /// Returns an instance of the [WidgetsBinding], creating and
   /// initializing it if necessary. If one is created, it will be a
   /// [WidgetsFlutterBinding]. If one was previously initialized, then

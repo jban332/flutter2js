@@ -65,9 +65,7 @@ class Divider extends StatelessWidget {
           decoration: new BoxDecoration(
             border: new Border(
               bottom: new BorderSide(
-                color: color ?? Theme
-                    .of(context)
-                    .dividerColor,
+                color: color ?? Theme.of(context).dividerColor,
                 width: 0.0,
               ),
             ),

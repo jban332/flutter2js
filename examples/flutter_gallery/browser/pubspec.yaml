@@ -1,0 +1,28 @@
+name: flutter_gallery_browser
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+dependencies:
+  flutter_gallery:
+    path: "../flutter"
+  flur_html: any
+
+dependency_overrides:
+  flur:
+    path: "../../../packages/flur"
+  flur_react:
+    path: "../../../packages/flur_react"
+  flur_html:
+    path: "../../../packages/flur_html"
+  flutter:
+    path: "../../../packages/flutter"
+
+dev_dependencies:
+  browser: ^0.10.0
+  dart_to_js_script_rewriter: ^1.0.1
+
+transformers:
+- dart_to_js_script_rewriter
+- $dart2js: {}
+    # checked: true

@@ -79,10 +79,11 @@ class _DebugSize extends Size {
 /// [isSatisfiedBy].
 class BoxConstraints extends Constraints {
   /// Creates box constraints with the given constraints.
-  const BoxConstraints({this.minWidth: 0.0,
-    this.maxWidth: double.INFINITY,
-    this.minHeight: 0.0,
-    this.maxHeight: double.INFINITY});
+  const BoxConstraints(
+      {this.minWidth: 0.0,
+      this.maxWidth: double.INFINITY,
+      this.minHeight: 0.0,
+      this.maxHeight: double.INFINITY});
 
   /// The minimum width that satisfies the constraints.
   final double minWidth;
@@ -193,9 +194,9 @@ class BoxConstraints extends Constraints {
         minWidth: minWidth.clamp(constraints.minWidth, constraints.maxWidth),
         maxWidth: maxWidth.clamp(constraints.minWidth, constraints.maxWidth),
         minHeight:
-        minHeight.clamp(constraints.minHeight, constraints.maxHeight),
+            minHeight.clamp(constraints.minHeight, constraints.maxHeight),
         maxHeight:
-        maxHeight.clamp(constraints.minHeight, constraints.maxHeight));
+            maxHeight.clamp(constraints.minHeight, constraints.maxHeight));
   }
 
   /// Returns new box constraints with a tight width and/or height as close to
@@ -206,9 +207,9 @@ class BoxConstraints extends Constraints {
         minWidth: width == null ? minWidth : width.clamp(minWidth, maxWidth),
         maxWidth: width == null ? maxWidth : width.clamp(minWidth, maxWidth),
         minHeight:
-        height == null ? minHeight : height.clamp(minHeight, maxHeight),
+            height == null ? minHeight : height.clamp(minHeight, maxHeight),
         maxHeight:
-        height == null ? maxHeight : height.clamp(minHeight, maxHeight));
+            height == null ? maxHeight : height.clamp(minHeight, maxHeight));
   }
 
   /// A box constraints with the width and height constraints flipped.
@@ -260,7 +261,7 @@ class BoxConstraints extends Constraints {
   /// separately provided widths and heights.
   Size constrain(Size size) {
     Size result =
-    new Size(constrainWidth(size.width), constrainHeight(size.height));
+        new Size(constrainWidth(size.width), constrainHeight(size.height));
     assert(() {
       result = _debugPropagateDebugSize(size, result);
       return true;
@@ -464,8 +465,7 @@ class BoxConstraints extends Constraints {
         } else {
           whichFields = affectedFieldsList.single;
         }
-        throwError(
-            'BoxConstraints has ${affectedFieldsList.length == 1
+        throwError('BoxConstraints has ${affectedFieldsList.length == 1
                 ? 'a NaN value'
                 : 'NaN values' } in $whichFields.');
       }

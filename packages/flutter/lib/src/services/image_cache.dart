@@ -26,7 +26,7 @@ const int _kDefaultSize = 1000;
 /// subclasses automatically handle the caching of images.
 class ImageCache {
   final Map<Object, ImageStreamCompleter> _cache =
-  <Object, ImageStreamCompleter>{};
+      <Object, ImageStreamCompleter>{};
 
   /// Maximum number of entries to store in the cache.
   ///

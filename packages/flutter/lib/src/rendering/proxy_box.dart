@@ -10,11 +10,11 @@ import 'object.dart';
 
 export 'package:flutter/gestures.dart'
     show
-    PointerEvent,
-    PointerDownEvent,
-    PointerMoveEvent,
-    PointerUpEvent,
-    PointerCancelEvent;
+        PointerEvent,
+        PointerDownEvent,
+        PointerMoveEvent,
+        PointerUpEvent,
+        PointerCancelEvent;
 
 /// An interface for providing custom clips.
 ///
@@ -161,7 +161,7 @@ typedef void PointerCancelEventListener(PointerCancelEvent event);
 ///   void paint(Canvas canvas, Size size) {
 ///     var rect = Offset.zero & size;
 ///     var gradient = new RadialGradient(
-///       center: const FractionalOffset(0.7, 0.2),
+///       center: const Alignment(0.7, 0.2),
 ///       radius: 0.2,
 ///       colors: [const Color(0xFFFFFF00), const Color(0xFF0099FF)],
 ///       stops: [0.4, 1.0],

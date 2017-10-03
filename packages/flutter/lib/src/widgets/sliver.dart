@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:collection' show SplayTreeMap, HashMap;
-
 import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -14,9 +12,9 @@ import 'framework.dart';
 
 export 'package:flutter/rendering.dart'
     show
-    SliverGridDelegate,
-    SliverGridDelegateWithFixedCrossAxisCount,
-    SliverGridDelegateWithMaxCrossAxisExtent;
+        SliverGridDelegate,
+        SliverGridDelegateWithFixedCrossAxisCount,
+        SliverGridDelegateWithMaxCrossAxisExtent;
 
 /// A delegate that supplies children for slivers.
 ///
@@ -65,10 +63,12 @@ abstract class SliverChildDelegate {
   ///
   /// The default implementation returns null, which causes the caller to
   /// extrapolate the max scroll offset from the given parameters.
-  double estimateMaxScrollOffset(int firstIndex,
-      int lastIndex,
-      double leadingScrollOffset,
-      double trailingScrollOffset,) =>
+  double estimateMaxScrollOffset(
+    int firstIndex,
+    int lastIndex,
+    double leadingScrollOffset,
+    double trailingScrollOffset,
+  ) =>
       null;
 
   /// Called at the end of layout to indicate that layout is now complete.
@@ -134,7 +134,8 @@ class SliverChildBuilderDelegate extends SliverChildDelegate {
   ///
   /// The [builder], [addAutomaticKeepAlives], and [addRepaintBoundaries]
   /// arguments must not be null.
-  const SliverChildBuilderDelegate(this.builder, {
+  const SliverChildBuilderDelegate(
+    this.builder, {
     this.childCount,
     this.addAutomaticKeepAlives: true,
     this.addRepaintBoundaries: true,
@@ -190,6 +191,7 @@ class SliverChildBuilderDelegate extends SliverChildDelegate {
     Widget child = builder(context, index);
     if (child == null) return null;
     if (addRepaintBoundaries) child = new RepaintBoundary.wrap(child, index);
+    assert(child != null);
     if (addAutomaticKeepAlives) child = new AutomaticKeepAlive(child: child);
     return child;
   }
@@ -236,7 +238,8 @@ class SliverChildListDelegate extends SliverChildDelegate {
   ///
   /// The [children], [addAutomaticKeepAlives], and [addRepaintBoundaries]
   /// arguments must not be null.
-  const SliverChildListDelegate(this.children, {
+  const SliverChildListDelegate(
+    this.children, {
     this.addAutomaticKeepAlives: true,
     this.addRepaintBoundaries: true,
   });
@@ -276,6 +279,7 @@ class SliverChildListDelegate extends SliverChildDelegate {
     Widget child = children[index];
     assert(child != null);
     if (addRepaintBoundaries) child = new RepaintBoundary.wrap(child, index);
+    assert(child != null);
     if (addAutomaticKeepAlives) child = new AutomaticKeepAlive(child: child);
     return child;
   }
@@ -292,7 +296,8 @@ class SliverChildListDelegate extends SliverChildDelegate {
 /// A base class for sliver that have multiple box children.
 ///
 /// Helps subclasses build their children lazily using a [SliverChildDelegate].
-abstract class SliverMultiBoxAdaptorWidget extends RenderObjectWidget {
+abstract class SliverMultiBoxAdaptorWidget
+    extends flur.StatelessUIPluginWidget {
   /// Initializes fields for subclasses.
   const SliverMultiBoxAdaptorWidget({
     Key key,
@@ -312,10 +317,6 @@ abstract class SliverMultiBoxAdaptorWidget extends RenderObjectWidget {
   ///    callback and an explicit child list, respectively.
   final SliverChildDelegate delegate;
 
-  @override
-  SliverMultiBoxAdaptorElement createElement() =>
-      new SliverMultiBoxAdaptorElement(this);
-
   /// Returns an estimate of the max scroll extent for all the children.
   ///
   /// Subclasses should override this function if they have additional
@@ -323,11 +324,13 @@ abstract class SliverMultiBoxAdaptorWidget extends RenderObjectWidget {
   ///
   /// The default implementation returns calls
   /// [SliverChildDelegate.estimateMaxScrollOffset].
-  double estimateMaxScrollOffset(SliverConstraints constraints,
-      int firstIndex,
-      int lastIndex,
-      double leadingScrollOffset,
-      double trailingScrollOffset,) {
+  double estimateMaxScrollOffset(
+    SliverConstraints constraints,
+    int firstIndex,
+    int lastIndex,
+    double leadingScrollOffset,
+    double trailingScrollOffset,
+  ) {
     assert(lastIndex >= firstIndex);
     return delegate.estimateMaxScrollOffset(
       firstIndex,
@@ -376,6 +379,11 @@ class SliverList extends SliverMultiBoxAdaptorWidget {
     @required SliverChildDelegate delegate,
   })
       : super(key: key, delegate: delegate);
+
+  @override
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildSliverList(context, this);
+  }
 }
 
 /// A sliver that places multiple box children with the same main axis extent in
@@ -401,7 +409,7 @@ class SliverList extends SliverMultiBoxAdaptorWidget {
 ///   delegate: new SliverChildBuilderDelegate(
 ///     (BuildContext context, int index) {
 ///       return new Container(
-///         alignment: FractionalOffset.center,
+///         alignment: Alignment.center,
 ///         color: Colors.lightBlue[100 * (index % 9)],
 ///         child: new Text('list item $index'),
 ///       );
@@ -431,6 +439,11 @@ class SliverFixedExtentList extends SliverMultiBoxAdaptorWidget {
 
   /// The extent the children are forced to have in the main axis.
   final double itemExtent;
+
+  @override
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildSliverFixedExtentList(context, this);
+  }
 }
 
 /// A sliver that places multiple box children in a two dimensional arrangement.
@@ -458,7 +471,7 @@ class SliverFixedExtentList extends SliverMultiBoxAdaptorWidget {
 ///   delegate: new SliverChildBuilderDelegate(
 ///     (BuildContext context, int index) {
 ///       return new Container(
-///         alignment: FractionalOffset.center,
+///         alignment: Alignment.center,
 ///         color: Colors.teal[100 * (index % 9)],
 ///         child: new Text('grid item $index'),
 ///       );
@@ -504,11 +517,11 @@ class SliverGrid extends SliverMultiBoxAdaptorWidget {
     List<Widget> children: const <Widget>[],
   })
       : gridDelegate = new SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: crossAxisCount,
-    mainAxisSpacing: mainAxisSpacing,
-    crossAxisSpacing: crossAxisSpacing,
-    childAspectRatio: childAspectRatio,
-  ),
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing,
+          childAspectRatio: childAspectRatio,
+        ),
         super(key: key, delegate: new SliverChildListDelegate(children));
 
   /// Creates a sliver that places multiple box children in a two dimensional
@@ -529,32 +542,39 @@ class SliverGrid extends SliverMultiBoxAdaptorWidget {
     List<Widget> children: const <Widget>[],
   })
       : gridDelegate = new SliverGridDelegateWithMaxCrossAxisExtent(
-    maxCrossAxisExtent: maxCrossAxisExtent,
-    mainAxisSpacing: mainAxisSpacing,
-    crossAxisSpacing: crossAxisSpacing,
-    childAspectRatio: childAspectRatio,
-  ),
+          maxCrossAxisExtent: maxCrossAxisExtent,
+          mainAxisSpacing: mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing,
+          childAspectRatio: childAspectRatio,
+        ),
         super(key: key, delegate: new SliverChildListDelegate(children));
 
   /// The delegate that controls the size and position of the children.
   final SliverGridDelegate gridDelegate;
 
   @override
-  double estimateMaxScrollOffset(SliverConstraints constraints,
-      int firstIndex,
-      int lastIndex,
-      double leadingScrollOffset,
-      double trailingScrollOffset,) {
+  double estimateMaxScrollOffset(
+    SliverConstraints constraints,
+    int firstIndex,
+    int lastIndex,
+    double leadingScrollOffset,
+    double trailingScrollOffset,
+  ) {
     return super.estimateMaxScrollOffset(
-      constraints,
-      firstIndex,
-      lastIndex,
-      leadingScrollOffset,
-      trailingScrollOffset,
-    ) ??
+          constraints,
+          firstIndex,
+          lastIndex,
+          leadingScrollOffset,
+          trailingScrollOffset,
+        ) ??
         gridDelegate
             .getLayout(constraints)
             .estimateMaxScrollOffset(delegate.estimatedChildCount);
+  }
+
+  @override
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildSliverGrid(context, this);
   }
 }
 
@@ -588,103 +608,11 @@ class SliverFillViewport extends SliverMultiBoxAdaptorWidget {
   /// once. If this fraction is greater than 1.0, each child will be larger than
   /// the viewport in the main axis.
   final double viewportFraction;
-}
-
-/// An element that lazily builds children for a [SliverMultiBoxAdaptorWidget].
-///
-/// Implements [RenderSliverBoxChildManager], which lets this element manage
-/// the children of subclasses of [RenderSliverMultiBoxAdaptor].
-class SliverMultiBoxAdaptorElement extends RenderObjectElement {
-  /// Creates an element that lazily builds children for the given widget.
-  SliverMultiBoxAdaptorElement(SliverMultiBoxAdaptorWidget widget)
-      : super(widget);
 
   @override
-  SliverMultiBoxAdaptorWidget get widget => super.widget;
-
-  @override
-  void update(covariant SliverMultiBoxAdaptorWidget newWidget) {
-    final SliverMultiBoxAdaptorWidget oldWidget = widget;
-    super.update(newWidget);
-    final SliverChildDelegate newDelegate = newWidget.delegate;
-    final SliverChildDelegate oldDelegate = oldWidget.delegate;
-    if (newDelegate != oldDelegate &&
-        (newDelegate.runtimeType != oldDelegate.runtimeType ||
-            newDelegate.shouldRebuild(oldDelegate))) performRebuild();
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildSliverFillViewport(context, this);
   }
-
-  // We inflate widgets at two different times:
-  //  1. When we ourselves are told to rebuild (see performRebuild).
-  //  2. When our render object needs a new child (see createChild).
-  // In both cases, we cache the results of calling into our delegate to get the widget,
-  // so that if we do case 2 later, we don't call the builder again.
-  // Any time we do case 1, though, we reset the cache.
-
-  final Map<int, Widget> _childWidgets = new HashMap<int, Widget>();
-  final SplayTreeMap<int, Element> _childElements =
-  new SplayTreeMap<int, Element>();
-
-  @override
-  void performRebuild() {
-    _childWidgets.clear(); // Reset the cache, as described above.
-    super.performRebuild();
-    assert(_currentlyUpdatingChildIndex == null);
-    try {
-      int firstIndex = _childElements.firstKey();
-      int lastIndex = _childElements.lastKey();
-      if (_childElements.isEmpty) {
-        firstIndex = 0;
-        lastIndex = 0;
-      } else if (_didUnderflow) {
-        lastIndex += 1;
-      }
-      for (int index = firstIndex; index <= lastIndex; ++index) {
-        _currentlyUpdatingChildIndex = index;
-        final Element newChild =
-        updateChild(_childElements[index], _build(index), index);
-        if (newChild != null) {
-          _childElements[index] = newChild;
-        } else {
-          _childElements.remove(index);
-        }
-      }
-    } finally {
-      _currentlyUpdatingChildIndex = null;
-    }
-  }
-
-  Widget _build(int index) {
-    return _childWidgets.putIfAbsent(
-        index, () => widget.delegate.build(this, index));
-  }
-
-  int _currentlyUpdatingChildIndex;
-
-  bool _didUnderflow = false;
-
-  @override
-  void moveChildRenderObject(covariant RenderObject child, int slot) {
-    // TODO(ianh): At some point we should be better about noticing when a
-    // particular LocalKey changes slot, and handle moving the nodes around.
-    assert(false);
-  }
-
-  @override
-  void visitChildren(ElementVisitor visitor) {
-    // The toList() is to make a copy so that the underlying list can be modified by
-    // the visitor:
-    assert(!_childElements.values.any((Element child) => child == null));
-    _childElements.values.toList().forEach(visitor);
-  }
-
-  @override
-  void forgetChild(Element child) {}
-
-  @override
-  void insertChildRenderObject(RenderObject child, dynamic slot) {}
-
-  @override
-  void removeChildRenderObject(RenderObject child) {}
 }
 
 /// A sliver that contains a single box child that fills the remaining space in
@@ -702,13 +630,18 @@ class SliverMultiBoxAdaptorElement extends RenderObjectElement {
 ///    size of the viewport, regardless of what else is in the scroll view.
 ///  * [SliverList], which shows a list of variable-sized children in a
 ///    viewport.
-class SliverFillRemaining extends SingleChildRenderObjectWidget {
+class SliverFillRemaining extends flur.SingleChildUIPluginWidget {
   /// Creates a sliver that fills the remaining space in the viewport.
   const SliverFillRemaining({
     Key key,
     Widget child,
   })
       : super(key: key, child: child);
+
+  @override
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildSliverFillRemaining(context, this);
+  }
 }
 
 /// Mark a child as needing to stay alive even when it's in a lazy list that
@@ -716,7 +649,7 @@ class SliverFillRemaining extends SingleChildRenderObjectWidget {
 ///
 /// This widget is for use in [SliverMultiBoxAdaptorWidget]s, such as
 /// [SliverGrid] or [SliverList].
-class KeepAlive extends ParentDataWidget<SliverMultiBoxAdaptorWidget> {
+class KeepAlive extends flur.SingleChildUIPluginWidget {
   /// Marks a child as needing to remain alive.
   ///
   /// The [child] and [keepAlive] arguments must not be null.
@@ -731,13 +664,6 @@ class KeepAlive extends ParentDataWidget<SliverMultiBoxAdaptorWidget> {
   ///
   /// If this is false, it is as if this widget was omitted.
   final bool keepAlive;
-
-  // We only return true if [keepAlive] is true, because turning _off_ keep
-  // alive requires a layout to do the garbage collection (but turning it on
-  // requires nothing, since by definition the widget is already alive and won't
-  // go away _unless_ we do a layout).
-  @override
-  bool debugCanApplyOutOfTurn() => keepAlive;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {

@@ -37,12 +37,13 @@ class ButtonTheme extends InheritedWidget {
   /// Creates a button theme.
   ///
   /// The child argument is required.
-  const ButtonTheme({Key key,
-    this.textTheme: ButtonTextTheme.normal,
-    this.minWidth: 88.0,
-    this.height: 36.0,
-    this.padding: const EdgeInsets.symmetric(horizontal: 16.0),
-    Widget child})
+  const ButtonTheme(
+      {Key key,
+      this.textTheme: ButtonTextTheme.normal,
+      this.minWidth: 88.0,
+      this.height: 36.0,
+      this.padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      Widget child})
       : super(key: key, child: child);
 
   /// Creates a button theme that is appropriate for button bars, as used in
@@ -59,12 +60,13 @@ class ButtonTheme extends InheritedWidget {
   ///
   /// For example, buttons at the bottom of [Dialog] or [Card] widgets use this
   /// button theme.
-  const ButtonTheme.bar({Key key,
-    this.textTheme: ButtonTextTheme.accent,
-    this.minWidth: 64.0,
-    this.height: 36.0,
-    this.padding: const EdgeInsets.symmetric(horizontal: 8.0),
-    Widget child})
+  const ButtonTheme.bar(
+      {Key key,
+      this.textTheme: ButtonTextTheme.accent,
+      this.minWidth: 64.0,
+      this.height: 36.0,
+      this.padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      Widget child})
       : super(key: key, child: child);
 
   /// The button color that this subtree should use.
@@ -94,7 +96,7 @@ class ButtonTheme extends InheritedWidget {
   /// ```
   static ButtonTheme of(BuildContext context) {
     final ButtonTheme result =
-    context.inheritFromWidgetOfExactType(ButtonTheme);
+        context.inheritFromWidgetOfExactType(ButtonTheme);
     return result ?? const ButtonTheme();
   }
 
@@ -127,20 +129,21 @@ class MaterialButton extends flur.StatelessUIPluginWidget {
   ///
   /// Rather than creating a material button directly, consider using
   /// [FlatButton] or [RaisedButton].
-  const MaterialButton({Key key,
-    this.colorBrightness,
-    this.textTheme,
-    this.textColor,
-    this.color,
-    this.highlightColor,
-    this.splashColor,
-    this.elevation,
-    this.highlightElevation,
-    this.minWidth,
-    this.height,
-    this.padding,
-    @required this.onPressed,
-    this.child})
+  const MaterialButton(
+      {Key key,
+      this.colorBrightness,
+      this.textTheme,
+      this.textColor,
+      this.color,
+      this.highlightColor,
+      this.splashColor,
+      this.elevation,
+      this.highlightElevation,
+      this.minWidth,
+      this.height,
+      this.padding,
+      @required this.onPressed,
+      this.child})
       : super(key: key);
 
   /// The theme brightness to use for this button.

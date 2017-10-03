@@ -1,46 +1,64 @@
 import 'dart:async';
 
+import 'package:flur/flur_for_modified_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-
-import 'internal/dialog.dart' as internal;
 
 abstract class UIPlugin {
   static UIPlugin current;
 
+  Widget buildAbsorbPointer(BuildContext context, AbsorbPointer widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
   Widget buildAlign(BuildContext context, Align widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildAnimatedSize(BuildContext context, AnimatedSize widget) {
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildAppBar(BuildContext context, AppBar widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildAspectRatio(BuildContext context, AspectRatio widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildBackdropFilter(BuildContext context, BackdropFilter widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildBanner(BuildContext context, Banner widget) {
-    return widget.child;
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildBaseline(BuildContext context, Baseline widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildBlockSemantics(BuildContext context, BlockSemantics widget) {
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildBottomNavigationBar(
       BuildContext context, BottomNavigationBar widget);
 
+  Widget buildBottomSheet(BuildContext context, BottomSheet widget) {
+    return unimplementedWidget(context, widget);
+  }
+
   Widget buildCard(BuildContext context, Card widget);
 
   Widget buildCheckbox(BuildContext context, Checkbox widget);
+
+  Widget buildCheckedPopupMenuItem(BuildContext context, CheckedPopupMenuItem widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildChip(BuildContext context, Chip widget);
 
@@ -50,23 +68,23 @@ abstract class UIPlugin {
   }
 
   Widget buildClipOval(BuildContext context, ClipOval widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildClipPath(BuildContext context, ClipPath widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildClipRect(BuildContext context, ClipRect widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildClipRRect(BuildContext context, ClipRRect widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildConstrainedBox(BuildContext context, ConstrainedBox widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildCupertinoButton(BuildContext context, CupertinoButton widget) {
@@ -94,12 +112,30 @@ abstract class UIPlugin {
     return new BottomNavigationBar(items: widget.items);
   }
 
+  Widget buildCustomMultiChildLayout(
+      BuildContext context, CustomMultiChildLayout widget) {
+    return unimplementedWidget(context, widget);
+  }
+
   Widget buildCustomPaint(BuildContext context, CustomPaint widget);
+
+  Widget buildCustomSingleChildLayout(
+      BuildContext context, CustomSingleChildLayout widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildDayPicker(BuildContext context, DayPicker widget);
 
+  Widget buildDecoratedBox(BuildContext context, DecoratedBox widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildDismissible(BuildContext context, Dismissible widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
   Widget buildDraggable(BuildContext context, Draggable widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildDragTarget(BuildContext context, DragTarget widget) {
@@ -107,23 +143,40 @@ abstract class UIPlugin {
   }
 
   Widget buildDrawer(BuildContext context, Drawer widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildDropdownButton(BuildContext context, DropdownButton widget);
 
   Widget buildDropdownMenuItem(BuildContext context, DropdownMenuItem widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildEditableText(BuildContext context, EditableText widget);
 
   Widget buildErrorWidget(BuildContext context, ErrorWidget widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildExcludeSemantics(BuildContext context, ExcludeSemantics widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildExpandIcon(BuildContext context, ExpandIcon widget) {
+    bool value = widget.isExpanded;
+    return new IconButton(
+        icon: const Icon(Icons.expand_more),
+        onPressed: () {
+          value = !value;
+          final f = widget.onPressed;
+          if (f != null) {
+            f(value);
+          }
+        });
   }
 
   Widget buildFittedBox(BuildContext context, FittedBox widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildFlatButton(BuildContext context, FlatButton widget);
@@ -131,33 +184,35 @@ abstract class UIPlugin {
   Widget buildFlex(BuildContext context, Flex widget);
 
   Widget buildFlexible(BuildContext context, Flexible widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildFloatingActionButton(
       BuildContext context, FloatingActionButton widget);
 
   Widget buildFlow(BuildContext context, Flow widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildFractionallySizedBox(
       BuildContext context, FractionallySizedBox widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildFractionalTranslation(
       BuildContext context, FractionalTranslation widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildGestureDetector(BuildContext context, GestureDetector widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildGridView(BuildContext context, GridView widget);
 
-  Widget buildHero(BuildContext context, Hero widget) => widget.child;
+  Widget buildHero(BuildContext context, Hero widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
 
   Widget buildIcon(BuildContext context, Icon widget) {
     final icon = widget.icon;
@@ -168,29 +223,34 @@ abstract class UIPlugin {
 
   Widget buildIconButton(BuildContext context, IconButton widget);
 
+  Widget buildIgnorePointer(BuildContext context, IgnorePointer widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
   Widget buildImage(BuildContext context, Image widget);
 
-  Widget buildInputDecorator(BuildContext context, InputDecorator widget) =>
-      widget.child;
+  Widget buildInputDecorator(BuildContext context, InputDecorator widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildIntrinsicHeight(BuildContext context, IntrinsicHeight widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildIntrinsicWidth(BuildContext context, IntrinsicWidth widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildKeepAlive(BuildContext context, KeepAlive widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildLayoutId(BuildContext context, LayoutId widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildLimitedBox(BuildContext context, LimitedBox widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildLinearProgressIndicator(
@@ -199,40 +259,14 @@ abstract class UIPlugin {
   }
 
   Widget buildListBody(BuildContext context, ListBody widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildListener(BuildContext context, Listener widget) {
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildListView(BuildContext context, ListView widget);
-
-  Widget buildMaterialApp(BuildContext context, MaterialApp widget) {
-    return new WidgetsApp(
-        key: new GlobalObjectKey(this),
-        title: widget.title,
-        onGenerateTitle: widget.onGenerateTitle,
-        textStyle: const TextStyle(),
-        // blue is the primary color of the default theme
-        color: widget.color ?? widget.theme?.primaryColor ?? Colors.blue,
-        navigatorObservers:
-            new List<NavigatorObserver>.from(widget.navigatorObservers),
-        initialRoute: widget.initialRoute,
-        onGenerateRoute: widget.onGenerateRoute ??
-            (route) {
-              print("Generating route: ${route.name}");
-            },
-        onUnknownRoute: widget.onUnknownRoute ??
-            (route) {
-              print("Unknown route: ${route.name}");
-            },
-        locale: widget.locale ?? new Locale("en", "US"),
-        localizationsDelegates: widget.localizationsDelegates,
-        localeResolutionCallback: widget.localeResolutionCallback,
-        supportedLocales: widget.supportedLocales,
-        showPerformanceOverlay: widget.showPerformanceOverlay,
-        checkerboardRasterCacheImages: widget.checkerboardRasterCacheImages,
-        checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers,
-        showSemanticsDebugger: widget.showSemanticsDebugger,
-        debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner);
-  }
 
   Widget buildMaterialButton(BuildContext context, MaterialButton widget);
 
@@ -241,16 +275,24 @@ abstract class UIPlugin {
     final children = widget.children
         .map((item) {
           if (item is MaterialSlice) {
-            throw new UnimplementedError();
+            return unimplementedWidget(context, widget);
           }
           if (item is MaterialGap) {
-            throw new UnimplementedError();
+            return unimplementedWidget(context, widget);
           }
-          throw new UnimplementedError();
+          return unimplementedWidget(context, widget);
         })
         .where((item) => item != null)
         .toList();
     return new Flex(direction: widget.mainAxis, children: children);
+  }
+
+  Widget buildMergeSemantics(BuildContext context, MergeSemantics widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildMetaData(BuildContext context, MetaData widget) {
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildMonthPicker(BuildContext context, MonthPicker widget);
@@ -258,17 +300,17 @@ abstract class UIPlugin {
   Widget buildNavigationToolbar(BuildContext context, NavigationToolbar widget);
 
   Widget buildNestedScrollView(BuildContext context, NestedScrollView widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildOffstage(BuildContext context, Offstage widget);
 
   Widget buildOpacity(BuildContext context, Opacity widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildOverflowBox(BuildContext context, OverflowBox widget) {
-    throw new UnimplementedError();
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildOverlay(BuildContext context, Overlay widget) {
@@ -276,19 +318,27 @@ abstract class UIPlugin {
   }
 
   Widget buildPadding(BuildContext context, Padding widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildPhysicalModel(BuildContext context, PhysicalModel widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildPopupMenuButton(BuildContext context, PopupMenuButton widget);
 
+  Widget buildPopupMenuDivider(BuildContext context, PopupMenuDivider widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildPopupMenuItem(BuildContext context, PopupMenuItem widget) {
+    return unimplementedWidget(context, widget);
+  }
+
   Widget buildPositioned(BuildContext context, Positioned widget);
 
   Widget buildPreferredSize(BuildContext context, PreferredSize widget) {
-    return widget.child;
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildProgressIndicator(BuildContext context, ProgressIndicator widget);
@@ -298,7 +348,7 @@ abstract class UIPlugin {
   Widget buildRaisedButton(BuildContext context, RaisedButton widget);
 
   Widget buildRawImage(BuildContext context, RawImage widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildRefreshProgressIndicator(
@@ -306,41 +356,82 @@ abstract class UIPlugin {
     return buildProgressIndicator(context, widget);
   }
 
+  Widget buildRepaintBoundary(BuildContext context, RepaintBoundary widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
   Widget buildRichText(BuildContext context, RichText widget);
 
   Widget buildRotatedBox(BuildContext context, RotatedBox widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildScaffold(BuildContext context, Scaffold widget);
 
   Widget buildScrollView(BuildContext context, ScrollView widget);
 
+  Widget buildSemantics(BuildContext context, Semantics widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
+
   Widget buildShaderMask(BuildContext context, ShaderMask widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildShrinkWrappingViewport(
       BuildContext context, ShrinkWrappingViewport widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildSingleChildScrollView(
-          BuildContext context, SingleChildScrollView widget) =>
-      widget.child;
+          BuildContext context, SingleChildScrollView widget) {
+    return unimplementedSingleChildWidget(context, widget);
+  }
 
   Widget buildSizedBox(BuildContext context, SizedBox widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildSizedOverflowBox(BuildContext context, SizedOverflowBox widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildSlider(BuildContext context, Slider widget);
 
   Widget buildSliverAppBar(BuildContext context, SliverAppBar widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverFillRemaining(
+      BuildContext context, SliverFillRemaining widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverFillViewport(
+      BuildContext context, SliverFillViewport widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverFixedExtentList(
+      BuildContext context, SliverFixedExtentList widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverGrid(BuildContext context, SliverGrid widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverList(BuildContext context, SliverList widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverPadding(BuildContext context, SliverPadding widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildSliverToBoxAdapter(
+      BuildContext context, SliverToBoxAdapter widget) {
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildSnackBar(BuildContext context, SnackBar widget);
@@ -362,7 +453,7 @@ abstract class UIPlugin {
   Widget buildTable(BuildContext context, Table widget);
 
   Widget buildTableCell(BuildContext context, TableCell widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildText(BuildContext context, Text widget);
@@ -370,28 +461,17 @@ abstract class UIPlugin {
   Widget buildTextField(BuildContext context, TextField widget);
 
   Widget buildTitle(BuildContext context, Title widget) {
-    return widget.child;
+    return unimplementedSingleChildWidget(context, widget);
   }
 
   Widget buildTooltip(BuildContext context, Tooltip widget);
 
   Widget buildTransform(BuildContext context, Transform widget) {
-    throw new UnimplementedError();
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildViewport(BuildContext context, Viewport widget) {
-    throw new UnimplementedError();
-  }
-
-  Widget builWidgetsApp(BuildContext context, WidgetsApp widget) {
-    final navigatorKey = new GlobalObjectKey<NavigatorState>(this);
-    return new Navigator(
-      key: navigatorKey,
-      initialRoute: widget.initialRoute ?? ui.window.defaultRouteName,
-      onGenerateRoute: widget.onGenerateRoute ?? new MaterialPageRoute<Null>(builder:(c)=>new Text("No routes defines")),
-      onUnknownRoute: widget.onUnknownRoute ?? new MaterialPageRoute<Null>(builder:(c)=>new Text("Unknown route")),
-      observers: widget.navigatorObservers,
-    );
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildWrap(BuildContext context, Wrap widget);
@@ -415,8 +495,7 @@ abstract class UIPlugin {
     bool barrierDismissible: true,
     @required Widget child,
   }) {
-    return internal.showDialog(
-        context: context, barrierDismissible: barrierDismissible, child: child);
+    throw new UnimplementedError();
   }
 
   Future<T> showMenu<T>(
@@ -426,8 +505,33 @@ abstract class UIPlugin {
       T initialValue,
       double elevation: 8.0});
 
+  Future<T> showModalBottomSheet<T>({
+    @required BuildContext context,
+    @required WidgetBuilder builder,
+  }) {
+    throw new UnimplementedError();
+  }
+
   Future<TimeOfDay> showTimePicker(
       {@required BuildContext context, @required TimeOfDay initialTime}) {
     throw new UnimplementedError();
+  }
+
+  Widget unimplementedSingleChildWidget(BuildContext context, SingleChildUIPluginWidget widget) {
+    assert(() {
+      print("Ignoring unsupported widget '${widget.runtimeType}' with child '${widget.child.runtimeType}'");
+      return true;
+    }());
+    return widget.child;
+  }
+
+  Widget unimplementedWidget(BuildContext context, Widget widget) {
+    assert(() {
+      print("Encounted unsupported widget '${widget.runtimeType}': ${context.toString()}");
+      return true;
+    }());
+    return new ErrorWidget(
+        "Widget '${widget.runtimeType}' is not implemented by '${this
+            .runtimeType}'.");
   }
 }

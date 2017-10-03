@@ -13,7 +13,7 @@ import 'theme.dart';
 ///
 /// The type `T` is the type of the value the entry represents. All the entries
 /// in a given menu must represent values with consistent types.
-class DropdownMenuItem<T> extends flur.StatelessUIPluginWidget {
+class DropdownMenuItem<T> extends flur.SingleChildUIPluginWidget {
   /// Creates an item for a dropdown menu.
   ///
   /// The [child] argument is required.

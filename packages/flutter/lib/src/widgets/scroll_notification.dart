@@ -15,10 +15,6 @@ import 'scroll_metrics.dart';
 ///
 /// This is used by [ScrollNotification] and [OverscrollIndicatorNotification].
 abstract class ViewportNotificationMixin extends Notification {
-  // This class is intended to be used as a mixin, and should not be
-  // extended directly.
-  factory ViewportNotificationMixin._() => null;
-
   /// The number of viewports that this notification has bubbled through.
   ///
   /// Typically listeners only respond to notifications with a [depth] of zero.
@@ -28,6 +24,13 @@ abstract class ViewportNotificationMixin extends Notification {
   /// has bubbled.
   int get depth => _depth;
   int _depth = 0;
+
+  @override
+  bool visitAncestor(Element element) {
+    if (element is RenderObjectElement &&
+        element.renderObject is RenderAbstractViewport) _depth += 1;
+    return super.visitAncestor(element);
+  }
 
   @override
   void debugFillDescription(List<String> description) {
@@ -62,7 +65,7 @@ abstract class ViewportNotificationMixin extends Notification {
 /// [Scrollable] widgets. To focus on notifications from the nearest
 /// [Scrollable] descendant, check that the [depth] property of the notification
 /// is zero.
-abstract class ScrollNotification extends LayoutChangedNotification {
+abstract class ScrollNotification extends ViewportNotificationMixin {
   /// Initializes fields for subclasses.
   ScrollNotification({
     @required this.metrics,

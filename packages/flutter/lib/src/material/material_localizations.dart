@@ -9,6 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'i18n/localizations.dart';
+import 'time.dart';
+import 'typography.dart';
 
 /// Defines the localized resource values used by the Material widgets.
 ///
@@ -32,10 +34,10 @@ abstract class MaterialLocalizations {
   /// The tooltip for the [MonthPicker]'s "previous month" button.
   String get previousMonthTooltip;
 
-  /// The tooltip for the [PaginatedDataTables]'s "next page" button.
+  /// The tooltip for the [PaginatedDataTable]'s "next page" button.
   String get nextPageTooltip;
 
-  /// The tooltip for the [PaginatedDataTables]'s "previous page" button.
+  /// The tooltip for the [PaginatedDataTable]'s "previous page" button.
   String get previousPageTooltip;
 
   /// The default [PopupMenuButton] tooltip.
@@ -48,13 +50,13 @@ abstract class MaterialLocalizations {
   String get licensesPageTitle;
 
   /// Title for the [PaginatedDataTable]'s row info footer.
-  String pageRowsInfoTitle(int firstRow, int lastRow, int rowCount,
-      bool rowCountIsApproximate);
+  String pageRowsInfoTitle(
+      int firstRow, int lastRow, int rowCount, bool rowCountIsApproximate);
 
   /// Title for the [PaginatedDataTable]'s "rows per page" footer.
   String get rowsPerPageTitle;
 
-  /// Title for the PaginatedDataTable's selected row count header.
+  /// Title for the [PaginatedDataTable]'s selected row count header.
   String selectedRowCountTitle(int selectedRowCount);
 
   /// Label for "cancel" buttons and menu items.
@@ -81,7 +83,7 @@ abstract class MaterialLocalizations {
   /// Label for "select all" edit buttons and menu items.
   String get selectAllButtonLabel;
 
-  /// Label for the [AboutBox] button that shows the [LicensePage].
+  /// Label for the [AboutDialog] button that shows the [LicensePage].
   String get viewLicensesButtonLabel;
 
   /// The abbreviation for ante meridiem (before noon) shown in the time picker.
@@ -95,6 +97,30 @@ abstract class MaterialLocalizations {
   /// The documentation for [TimeOfDayFormat] enum values provides details on
   /// each supported layout.
   TimeOfDayFormat get timeOfDayFormat;
+
+  /// Provides geometric text preferences for the current locale.
+  ///
+  /// This text theme is incomplete. For example, it lacks text color
+  /// information. This theme must be merged with another text theme that
+  /// provides the missing values. The text styles provided by this theme have
+  /// their [TextStyle.inherit] property set to true.
+  ///
+  /// Typically a complete theme is obtained via [Theme.of], which can be
+  /// localized using the [Localizations] widget.
+  ///
+  /// See also: https://material.io/guidelines/style/typography.html
+  TextTheme get localTextGeometry;
+
+  /// Formats [TimeOfDay.hour] in the given time of day according to the value
+  /// of [timeOfDayFormat].
+  String formatHour(TimeOfDay timeOfDay);
+
+  /// Formats [TimeOfDay.minute] in the given time of day according to the value
+  /// of [timeOfDayFormat].
+  String formatMinute(TimeOfDay timeOfDay);
+
+  /// Formats [timeOfDay] according to the value of [timeOfDayFormat].
+  String formatTimeOfDay(TimeOfDay timeOfDay);
 
   /// The `MaterialLocalizations` from the closest [Localizations] instance
   /// that encloses the given context.
@@ -121,24 +147,49 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
   ///
   /// [LocalizationsDelegate] implementations typically call the static [load]
   /// function, rather than constructing this class directly.
-  DefaultMaterialLocalizations(this.locale) {
+  DefaultMaterialLocalizations(this.locale)
+      : this._localeName = _computeLocaleName(locale) {
     assert(locale != null);
-
     if (localizations.containsKey(locale.languageCode))
       _nameToValue.addAll(localizations[locale.languageCode]);
     if (localizations.containsKey(_localeName))
       _nameToValue.addAll(localizations[_localeName]);
+
+    if (intl.NumberFormat.localeExists(_localeName)) {
+      _decimalFormat = new intl.NumberFormat.decimalPattern(_localeName);
+      _twoDigitZeroPaddedFormat = new intl.NumberFormat('00', _localeName);
+    } else if (intl.NumberFormat.localeExists(locale.languageCode)) {
+      _decimalFormat =
+          new intl.NumberFormat.decimalPattern(locale.languageCode);
+      _twoDigitZeroPaddedFormat =
+          new intl.NumberFormat('00', locale.languageCode);
+    } else {
+      _decimalFormat = new intl.NumberFormat.decimalPattern();
+      _twoDigitZeroPaddedFormat = new intl.NumberFormat('00');
+    }
   }
 
   /// The locale for which the values of this class's localized resources
   /// have been translated.
   final Locale locale;
 
+  final String _localeName;
+
   final Map<String, String> _nameToValue = <String, String>{};
 
-  String get _localeName {
+  /// Formats numbers using variable length format with no zero padding.
+  ///
+  /// See also [_twoDigitZeroPaddedFormat].
+  intl.NumberFormat _decimalFormat;
+
+  /// Formats numbers as two-digits.
+  ///
+  /// If the number is less than 10, zero-pads it.
+  intl.NumberFormat _twoDigitZeroPaddedFormat;
+
+  static String _computeLocaleName(Locale locale) {
     final String localeName =
-    locale.countryCode.isEmpty ? locale.languageCode : locale.toString();
+        locale.countryCode.isEmpty ? locale.languageCode : locale.toString();
     return intl.Intl.canonicalizedLocale(localeName);
   }
 
@@ -159,10 +210,67 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
     return text;
   }
 
-  String _formatInteger(int n) {
-    final String localeName = _localeName;
-    if (!intl.NumberFormat.localeExists(localeName)) return n.toString();
-    return new intl.NumberFormat.decimalPattern(localeName).format(n);
+  @override
+  String formatHour(TimeOfDay timeOfDay) {
+    switch (hourFormat(of: timeOfDayFormat)) {
+      case HourFormat.HH:
+        return _twoDigitZeroPaddedFormat.format(timeOfDay.hour);
+      case HourFormat.H:
+        return formatDecimal(timeOfDay.hour);
+      case HourFormat.h:
+        final int hour = timeOfDay.hourOfPeriod;
+        return formatDecimal(hour == 0 ? 12 : hour);
+    }
+    return null;
+  }
+
+  @override
+  String formatMinute(TimeOfDay timeOfDay) {
+    return _twoDigitZeroPaddedFormat.format(timeOfDay.minute);
+  }
+
+  /// Formats a [number] using local decimal number format.
+  ///
+  /// Inserts locale-appropriate thousands separator, if necessary.
+  String formatDecimal(int number) {
+    return _decimalFormat.format(number);
+  }
+
+  @override
+  String formatTimeOfDay(TimeOfDay timeOfDay) {
+    // Not using intl.DateFormat for two reasons:
+    //
+    // - DateFormat supports more formats than our material time picker does,
+    //   and we want to be consistent across time picker format and the string
+    //   formatting of the time of day.
+    // - DateFormat operates on DateTime, which is sensitive to time eras and
+    //   time zones, while here we want to format hour and minute within one day
+    //   no matter what date the day falls on.
+    switch (timeOfDayFormat) {
+      case TimeOfDayFormat.h_colon_mm_space_a:
+        return '${formatHour(timeOfDay)}:${formatMinute(timeOfDay)} ${_formatDayPeriod(timeOfDay)}';
+      case TimeOfDayFormat.H_colon_mm:
+      case TimeOfDayFormat.HH_colon_mm:
+        return '${formatHour(timeOfDay)}:${formatMinute(timeOfDay)}';
+      case TimeOfDayFormat.HH_dot_mm:
+        return '${formatHour(timeOfDay)}.${formatMinute(timeOfDay)}';
+      case TimeOfDayFormat.a_space_h_colon_mm:
+        return '${_formatDayPeriod(timeOfDay)} ${formatHour(timeOfDay)}:${formatMinute(timeOfDay)}';
+      case TimeOfDayFormat.frenchCanadian:
+        return '${formatHour(timeOfDay)} h ${formatMinute(timeOfDay)}';
+    }
+
+    return null;
+  }
+
+  String _formatDayPeriod(TimeOfDay timeOfDay) {
+    switch (timeOfDay.period) {
+      case DayPeriod.am:
+        return anteMeridiemAbbreviation;
+      case DayPeriod.pm:
+        return postMeridiemAbbreviation;
+    }
+    return null;
   }
 
   @override
@@ -199,19 +307,19 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
   String get licensesPageTitle => _nameToValue['licensesPageTitle'];
 
   @override
-  String pageRowsInfoTitle(int firstRow, int lastRow, int rowCount,
-      bool rowCountIsApproximate) {
+  String pageRowsInfoTitle(
+      int firstRow, int lastRow, int rowCount, bool rowCountIsApproximate) {
     String text = rowCountIsApproximate
         ? _nameToValue['pageRowsInfoTitleApproximate']
         : null;
     text ??= _nameToValue['pageRowsInfoTitle'];
     assert(text != null,
-    'A $locale localization was not found for pageRowsInfoTitle or pageRowsInfoTitleApproximate');
+        'A $locale localization was not found for pageRowsInfoTitle or pageRowsInfoTitleApproximate');
     // TODO(hansmuller): this could be more efficient.
     return text
-        .replaceFirst(r'$firstRow', _formatInteger(firstRow))
-        .replaceFirst(r'$lastRow', _formatInteger(lastRow))
-        .replaceFirst(r'$rowCount', _formatInteger(rowCount));
+        .replaceFirst(r'$firstRow', formatDecimal(firstRow))
+        .replaceFirst(r'$lastRow', formatDecimal(lastRow))
+        .replaceFirst(r'$rowCount', formatDecimal(rowCount));
   }
 
   @override
@@ -220,8 +328,8 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
   @override
   String selectedRowCountTitle(int selectedRowCount) {
     return _nameToPluralValue(
-        selectedRowCount, 'selectedRowCountTitle') // asserts on no match
-        .replaceFirst(r'$selectedRowCount', _formatInteger(selectedRowCount));
+            selectedRowCount, 'selectedRowCountTitle') // asserts on no match
+        .replaceFirst(r'$selectedRowCount', formatDecimal(selectedRowCount));
   }
 
   @override
@@ -288,10 +396,15 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
                 _icuTimeOfDayToEnum.keys.join('\n  '));
       }
       return true;
-    });
+    }());
 
     return _icuTimeOfDayToEnum[icuShortTimePattern];
   }
+
+  /// Looks up text geometry defined in [MaterialTextGeometry].
+  @override
+  TextTheme get localTextGeometry =>
+      MaterialTextGeometry.forScriptCategory(_nameToValue["scriptCategory"]);
 
   /// Creates an object that provides localized resource values for the
   /// for the widgets of the material library.
@@ -305,7 +418,7 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
 }
 
 const Map<String, TimeOfDayFormat> _icuTimeOfDayToEnum =
-const <String, TimeOfDayFormat>{
+    const <String, TimeOfDayFormat>{
   'HH:mm': TimeOfDayFormat.HH_colon_mm,
   'HH.mm': TimeOfDayFormat.HH_dot_mm,
   "HH 'h' mm": TimeOfDayFormat.frenchCanadian,
@@ -315,55 +428,3 @@ const <String, TimeOfDayFormat>{
   'a h:mm': TimeOfDayFormat.a_space_h_colon_mm,
   'ah:mm': TimeOfDayFormat.a_space_h_colon_mm,
 };
-
-/// Determines how the time picker invoked using [showTimePicker] formats and
-/// lays out the time controls.
-///
-/// The time picker provides layout configurations optimized for each of the
-/// enum values.
-enum TimeOfDayFormat {
-  /// Corresponds to the ICU 'HH:mm' pattern.
-  ///
-  /// This format uses 24-hour two-digit zero-padded hours. Controls are always
-  /// laid out horizontally. Hours are separated from minutes by one colon
-  /// character.
-  HH_colon_mm,
-
-  /// Corresponds to the ICU 'HH.mm' pattern.
-  ///
-  /// This format uses 24-hour two-digit zero-padded hours. Controls are always
-  /// laid out horizontally. Hours are separated from minutes by one dot
-  /// character.
-  HH_dot_mm,
-
-  /// Corresponds to the ICU "HH 'h' mm" pattern used in Canadian French.
-  ///
-  /// This format uses 24-hour two-digit zero-padded hours. Controls are always
-  /// laid out horizontally. Hours are separated from minutes by letter 'h'.
-  frenchCanadian,
-
-  /// Corresponds to the ICU 'H:mm' pattern.
-  ///
-  /// This format uses 24-hour non-padded variable-length hours. Controls are
-  /// always laid out horizontally. Hours are separated from minutes by one
-  /// colon character.
-  H_colon_mm,
-
-  /// Corresponds to the ICU 'h:mm a' pattern.
-  ///
-  /// This format uses 12-hour non-padded variable-length hours with a day
-  /// period. Controls are laid out horizontally in portrait mode. In landscape
-  /// mode, the day period appears vertically after (consistent with the ambient
-  /// [TextDirection]) hour-minute indicator. Hours are separated from minutes
-  /// by one colon character.
-  h_colon_mm_space_a,
-
-  /// Corresponds to the ICU 'a h:mm' pattern.
-  ///
-  /// This format uses 12-hour non-padded variable-length hours with a day
-  /// period. Controls are laid out horizontally in portrait mode. In landscape
-  /// mode, the day period appears vertically before (consistent with the
-  /// ambient [TextDirection]) hour-minute indicator. Hours are separated from
-  /// minutes by one colon character.
-  a_space_h_colon_mm,
-}

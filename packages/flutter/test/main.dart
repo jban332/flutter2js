@@ -7,9 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:test/test.dart';
-import 'src/constructor_list.dart';
 import 'package:mockito/mockito.dart';
+import 'package:test/test.dart';
+
+import 'src/constructor_list.dart';
 
 void main() {
   MockUIPlugin uiPlugin;

@@ -19,8 +19,8 @@ import 'scroll_physics.dart';
 /// [SliverAppBar.forceElevated] property to ensure that the app bar shows a
 /// shadow, since it would otherwise not necessarily be aware that it had
 /// content ostensibly below it.
-typedef List<Widget> NestedScrollViewHeaderSliversBuilder(BuildContext context,
-    bool innerBoxIsScrolled);
+typedef List<Widget> NestedScrollViewHeaderSliversBuilder(
+    BuildContext context, bool innerBoxIsScrolled);
 
 class NestedScrollView extends flur.StatelessUIPluginWidget {
   /// Creates a nested scroll view.
@@ -34,8 +34,8 @@ class NestedScrollView extends flur.StatelessUIPluginWidget {
     this.physics,
     @required this.headerSliverBuilder,
     @required this.body,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// An object that can be used to control the position to which the outer
   /// scroll view is scrolled.

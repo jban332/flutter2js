@@ -25,15 +25,16 @@ class FloatingActionButton extends flur.StatelessUIPluginWidget {
   /// Creates a floating action button.
   ///
   /// Most commonly used in the [Scaffold.floatingActionButton] field.
-  const FloatingActionButton({Key key,
-    @required this.child,
-    this.tooltip,
-    this.backgroundColor,
-    this.heroTag,
-    this.elevation: 6.0,
-    this.highlightElevation: 12.0,
-    @required this.onPressed,
-    this.mini: false})
+  const FloatingActionButton(
+      {Key key,
+      @required this.child,
+      this.tooltip,
+      this.backgroundColor,
+      this.heroTag,
+      this.elevation: 6.0,
+      this.highlightElevation: 12.0,
+      @required this.onPressed,
+      this.mini: false})
       : super(key: key);
 
   /// The widget below this widget in the tree.

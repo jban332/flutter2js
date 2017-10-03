@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
 
 import 'basic.dart';
 import 'framework.dart';
@@ -59,12 +59,12 @@ abstract class ScrollView extends flur.StatelessUIPluginWidget {
     this.shrinkWrap: false,
   })
       : primary =
-      primary ?? controller == null && scrollDirection == Axis.vertical,
+            primary ?? controller == null && scrollDirection == Axis.vertical,
         physics = physics ??
             (primary == true ||
-                (primary == null &&
-                    controller == null &&
-                    scrollDirection == Axis.vertical)
+                    (primary == null &&
+                        controller == null &&
+                        scrollDirection == Axis.vertical)
                 ? const AlwaysScrollableScrollPhysics()
                 : null),
         super(key: key);
@@ -186,7 +186,7 @@ abstract class ScrollView extends flur.StatelessUIPluginWidget {
         final TextDirection textDirection = Directionality.of(context);
         assert(textDirection != null);
         final AxisDirection axisDirection =
-        textDirectionToAxisDirection(textDirection);
+            textDirectionToAxisDirection(textDirection);
         return reverse ? flipAxisDirection(axisDirection) : axisDirection;
       case Axis.vertical:
         return reverse ? AxisDirection.up : AxisDirection.down;
@@ -260,7 +260,7 @@ abstract class ScrollView extends flur.StatelessUIPluginWidget {
 ///       delegate: new SliverChildBuilderDelegate(
 ///         (BuildContext context, int index) {
 ///           return new Container(
-///             alignment: FractionalOffset.center,
+///             alignment: Alignment.center,
 ///             color: Colors.teal[100 * (index % 9)],
 ///             child: new Text('grid item $index'),
 ///           );
@@ -273,7 +273,7 @@ abstract class ScrollView extends flur.StatelessUIPluginWidget {
 ///       delegate: new SliverChildBuilderDelegate(
 ///         (BuildContext context, int index) {
 ///           return new Container(
-///             alignment: FractionalOffset.center,
+///             alignment: Alignment.center,
 ///             color: Colors.lightBlue[100 * (index % 9)],
 ///             child: new Text('list item $index'),
 ///           );
@@ -311,14 +311,14 @@ class CustomScrollView extends ScrollView {
     this.slivers: const <Widget>[],
   })
       : super(
-    key: key,
-    scrollDirection: scrollDirection,
-    reverse: reverse,
-    controller: controller,
-    primary: primary,
-    physics: physics,
-    shrinkWrap: shrinkWrap,
-  );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+        );
 
   /// The slivers to place inside the viewport.
   final List<Widget> slivers;
@@ -350,14 +350,14 @@ abstract class BoxScrollView extends ScrollView {
     this.padding,
   })
       : super(
-    key: key,
-    scrollDirection: scrollDirection,
-    reverse: reverse,
-    controller: controller,
-    primary: primary,
-    physics: physics,
-    shrinkWrap: shrinkWrap,
-  );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+        );
 
   /// The amount of space by which to inset the children.
   final EdgeInsetsGeometry padding;
@@ -547,20 +547,20 @@ class ListView extends BoxScrollView {
     List<Widget> children: const <Widget>[],
   })
       : childrenDelegate = new SliverChildListDelegate(
-    children,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-    addRepaintBoundaries: addRepaintBoundaries,
-  ),
+          children,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+        ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, linear array of widgets that are created on demand.
   ///
@@ -602,21 +602,21 @@ class ListView extends BoxScrollView {
     bool addRepaintBoundaries: true,
   })
       : childrenDelegate = new SliverChildBuilderDelegate(
-    itemBuilder,
-    childCount: itemCount,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-    addRepaintBoundaries: addRepaintBoundaries,
-  ),
+          itemBuilder,
+          childCount: itemCount,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+        ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, linear array of widgets with a custom child model.
   ///
@@ -635,15 +635,15 @@ class ListView extends BoxScrollView {
     @required this.childrenDelegate,
   })
       : super(
-    key: key,
-    scrollDirection: scrollDirection,
-    reverse: reverse,
-    controller: controller,
-    primary: primary,
-    physics: physics,
-    shrinkWrap: shrinkWrap,
-    padding: padding,
-  );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// If non-null, forces the children to have the given extent in the scroll
   /// direction.
@@ -837,20 +837,20 @@ class GridView extends BoxScrollView {
     List<Widget> children: const <Widget>[],
   })
       : childrenDelegate = new SliverChildListDelegate(
-    children,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-    addRepaintBoundaries: addRepaintBoundaries,
-  ),
+          children,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+        ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, 2D array of widgets that are created on demand.
   ///
@@ -887,21 +887,21 @@ class GridView extends BoxScrollView {
     bool addRepaintBoundaries: true,
   })
       : childrenDelegate = new SliverChildBuilderDelegate(
-    itemBuilder,
-    childCount: itemCount,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-    addRepaintBoundaries: addRepaintBoundaries,
-  ),
+          itemBuilder,
+          childCount: itemCount,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+          addRepaintBoundaries: addRepaintBoundaries,
+        ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, 2D array of widgets with both a custom
   /// [SliverGridDelegate] and a custom [SliverChildDelegate].
@@ -923,15 +923,15 @@ class GridView extends BoxScrollView {
     @required this.childrenDelegate,
   })
       : super(
-    key: key,
-    scrollDirection: scrollDirection,
-    reverse: reverse,
-    controller: controller,
-    primary: primary,
-    physics: physics,
-    shrinkWrap: shrinkWrap,
-    padding: padding,
-  );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, 2D array of widgets with a fixed number of tiles in
   /// the cross axis.
@@ -965,26 +965,26 @@ class GridView extends BoxScrollView {
     List<Widget> children: const <Widget>[],
   })
       : gridDelegate = new SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: crossAxisCount,
-    mainAxisSpacing: mainAxisSpacing,
-    crossAxisSpacing: crossAxisSpacing,
-    childAspectRatio: childAspectRatio,
-  ),
+          crossAxisCount: crossAxisCount,
+          mainAxisSpacing: mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing,
+          childAspectRatio: childAspectRatio,
+        ),
         childrenDelegate = new SliverChildListDelegate(
           children,
           addAutomaticKeepAlives: addAutomaticKeepAlives,
           addRepaintBoundaries: addRepaintBoundaries,
         ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// Creates a scrollable, 2D array of widgets with tiles that each have a
   /// maximum cross-axis extent.
@@ -1018,26 +1018,26 @@ class GridView extends BoxScrollView {
     List<Widget> children: const <Widget>[],
   })
       : gridDelegate = new SliverGridDelegateWithMaxCrossAxisExtent(
-    maxCrossAxisExtent: maxCrossAxisExtent,
-    mainAxisSpacing: mainAxisSpacing,
-    crossAxisSpacing: crossAxisSpacing,
-    childAspectRatio: childAspectRatio,
-  ),
+          maxCrossAxisExtent: maxCrossAxisExtent,
+          mainAxisSpacing: mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing,
+          childAspectRatio: childAspectRatio,
+        ),
         childrenDelegate = new SliverChildListDelegate(
           children,
           addAutomaticKeepAlives: addAutomaticKeepAlives,
           addRepaintBoundaries: addRepaintBoundaries,
         ),
         super(
-        key: key,
-        scrollDirection: scrollDirection,
-        reverse: reverse,
-        controller: controller,
-        primary: primary,
-        physics: physics,
-        shrinkWrap: shrinkWrap,
-        padding: padding,
-      );
+          key: key,
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          controller: controller,
+          primary: primary,
+          physics: physics,
+          shrinkWrap: shrinkWrap,
+          padding: padding,
+        );
 
   /// A delegate that controls the layout of the children within the [GridView].
   ///

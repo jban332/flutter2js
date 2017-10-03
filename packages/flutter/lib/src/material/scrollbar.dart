@@ -25,7 +25,8 @@ class Scrollbar extends StatelessWidget {
   const Scrollbar({
     Key key,
     @required this.child,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// The subtree to place inside the [Scrollbar].
   ///

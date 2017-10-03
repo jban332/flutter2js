@@ -127,8 +127,7 @@ abstract class BindingBase {
             }
             return <String, String>{
               'value': defaultTargetPlatform
-                  .toString()
-                  .substring('$TargetPlatform.'.length),
+                  .toString(),
             };
           });
       return true;
@@ -164,7 +163,7 @@ abstract class BindingBase {
     _lockCount += 1;
     final Future<Null> future = callback();
     assert(future != null,
-    'The lockEvents() callback returned null; it should return a Future<Null> that completes when the lock is to expire.');
+        'The lockEvents() callback returned null; it should return a Future<Null> that completes when the lock is to expire.');
     future.whenComplete(() {
       _lockCount -= 1;
       if (!locked) unlocked();
@@ -251,9 +250,10 @@ abstract class BindingBase {
   /// Calls the `setter` callback with the new value when the
   /// service extension method is called with a new value.
   @protected
-  void registerBoolServiceExtension({@required String name,
-    @required AsyncValueGetter<bool> getter,
-    @required AsyncValueSetter<bool> setter}) {
+  void registerBoolServiceExtension(
+      {@required String name,
+      @required AsyncValueGetter<bool> getter,
+      @required AsyncValueSetter<bool> setter}) {
     assert(name != null);
     assert(getter != null);
     assert(setter != null);
@@ -278,9 +278,10 @@ abstract class BindingBase {
   /// Calls the `setter` callback with the new value when the
   /// service extension method is called with a new value.
   @protected
-  void registerNumericServiceExtension({@required String name,
-    @required AsyncValueGetter<double> getter,
-    @required AsyncValueSetter<double> setter}) {
+  void registerNumericServiceExtension(
+      {@required String name,
+      @required AsyncValueGetter<double> getter,
+      @required AsyncValueSetter<double> setter}) {
     assert(name != null);
     assert(getter != null);
     assert(setter != null);
@@ -304,9 +305,10 @@ abstract class BindingBase {
   /// Calls the `setter` callback with the new value when the
   /// service extension method is called with a new value.
   @protected
-  void registerStringServiceExtension({@required String name,
-    @required AsyncValueGetter<String> getter,
-    @required AsyncValueSetter<String> setter}) {
+  void registerStringServiceExtension(
+      {@required String name,
+      @required AsyncValueGetter<String> getter,
+      @required AsyncValueSetter<String> setter}) {
     assert(name != null);
     assert(getter != null);
     assert(setter != null);

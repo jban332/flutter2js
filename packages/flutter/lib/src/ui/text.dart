@@ -72,7 +72,7 @@ class FontWeight {
   /// nearest weight.
   static FontWeight lerp(FontWeight begin, FontWeight end, double t) {
     return values[lerpDouble(begin?.index ?? normal.index,
-        end?.index ?? normal.index, t.clamp(0.0, 1.0))
+            end?.index ?? normal.index, t.clamp(0.0, 1.0))
         .round()];
   }
 
@@ -140,8 +140,7 @@ class TextDecoration {
   /// Creates a decoration that paints the union of all the given decorations.
   factory TextDecoration.combine(List<TextDecoration> decorations) {
     int mask = 0;
-    for (TextDecoration decoration in decorations)
-      mask |= decoration._mask;
+    for (TextDecoration decoration in decorations) mask |= decoration._mask;
     return new TextDecoration._(mask);
   }
 
@@ -227,7 +226,8 @@ enum TextDecorationStyle {
 //
 //  - Element 7: The enum index of the |textBaseline|.
 //
-Int32List _encodeTextStyle(Color color,
+Int32List _encodeTextStyle(
+    Color color,
     TextDecoration decoration,
     Color decorationColor,
     TextDecorationStyle decorationStyle,
@@ -307,31 +307,32 @@ class TextStyle {
   /// * `wordSpacing`: The amount of space (in logical pixels) to add at each sequence of white-space (i.e. between each word).
   /// * `textBaseline`: The common baseline that should be aligned between this text span and its parent text span, or, for the root text spans, with the line box.
   /// * `height`: The height of this text span, as a multiple of the font size.
-  TextStyle({Color color,
-    TextDecoration decoration,
-    Color decorationColor,
-    TextDecorationStyle decorationStyle,
-    FontWeight fontWeight,
-    FontStyle fontStyle,
-    TextBaseline textBaseline,
-    String fontFamily,
-    double fontSize,
-    double letterSpacing,
-    double wordSpacing,
-    double height})
+  TextStyle(
+      {Color color,
+      TextDecoration decoration,
+      Color decorationColor,
+      TextDecorationStyle decorationStyle,
+      FontWeight fontWeight,
+      FontStyle fontStyle,
+      TextBaseline textBaseline,
+      String fontFamily,
+      double fontSize,
+      double letterSpacing,
+      double wordSpacing,
+      double height})
       : _encoded = _encodeTextStyle(
-      color,
-      decoration,
-      decorationColor,
-      decorationStyle,
-      fontWeight,
-      fontStyle,
-      textBaseline,
-      fontFamily,
-      fontSize,
-      letterSpacing,
-      wordSpacing,
-      height),
+            color,
+            decoration,
+            decorationColor,
+            decorationStyle,
+            fontWeight,
+            fontStyle,
+            textBaseline,
+            fontFamily,
+            fontSize,
+            letterSpacing,
+            wordSpacing,
+            height),
         _fontFamily = fontFamily ?? '',
         _fontSize = fontSize,
         _letterSpacing = letterSpacing,
@@ -360,9 +361,8 @@ class TextStyle {
     return true;
   }
 
-  int get hashCode =>
-      hashValues(hashList(_encoded), _fontFamily, _fontSize,
-          _letterSpacing, _wordSpacing, _height);
+  int get hashCode => hashValues(hashList(_encoded), _fontFamily, _fontSize,
+      _letterSpacing, _wordSpacing, _height);
 
   String toString() {
     return 'TextStyle('
@@ -417,7 +417,8 @@ class TextStyle {
 //
 //  - Element 4: The value of |maxLines|.
 //
-Int32List _encodeParagraphStyle(TextAlign textAlign,
+Int32List _encodeParagraphStyle(
+    TextAlign textAlign,
     TextDirection textDirection,
     FontWeight fontWeight,
     FontStyle fontStyle,
@@ -523,16 +524,8 @@ class ParagraphStyle {
     double lineHeight,
     String ellipsis,
   })
-      : _encoded = _encodeParagraphStyle(
-      textAlign,
-      textDirection,
-      fontWeight,
-      fontStyle,
-      maxLines,
-      fontFamily,
-      fontSize,
-      lineHeight,
-      ellipsis),
+      : _encoded = _encodeParagraphStyle(textAlign, textDirection, fontWeight,
+            fontStyle, maxLines, fontFamily, fontSize, lineHeight, ellipsis),
         _fontFamily = fontFamily,
         _fontSize = fontSize,
         _lineHeight = lineHeight,
@@ -558,9 +551,8 @@ class ParagraphStyle {
     return true;
   }
 
-  int get hashCode =>
-      hashValues(
-          hashList(_encoded), _fontFamily, _fontSize, _lineHeight, _ellipsis);
+  int get hashCode => hashValues(
+      hashList(_encoded), _fontFamily, _fontSize, _lineHeight, _ellipsis);
 
   String toString() {
     return '$runtimeType('
@@ -603,17 +595,21 @@ enum TextDirection {
 
 /// A rectangle enclosing a run of text.
 class TextBox {
-  const TextBox.fromLTRBD(this.left,
-      this.top,
-      this.right,
-      this.bottom,
-      this.direction,);
+  const TextBox.fromLTRBD(
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    this.direction,
+  );
 
-  TextBox._(this.left,
-      this.top,
-      this.right,
-      this.bottom,
-      int directionIndex,)
+  TextBox._(
+    this.left,
+    this.top,
+    this.right,
+    this.bottom,
+    int directionIndex,
+  )
       : direction = TextDirection.values[directionIndex];
 
   /// The left edge of the text box, irrespective of direction.

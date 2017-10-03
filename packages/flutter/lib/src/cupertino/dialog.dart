@@ -63,7 +63,8 @@ class CupertinoDialog extends StatelessWidget {
   const CupertinoDialog({
     Key key,
     this.child,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -113,7 +114,8 @@ class CupertinoAlertDialog extends StatelessWidget {
     this.title,
     this.content,
     this.actions,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// The (optional) title of the dialog is displayed in a large font at the top
   /// of the dialog.
@@ -182,7 +184,6 @@ class CupertinoAlertDialog extends StatelessWidget {
   }
 }
 
-
 /// A button typically used in a [CupertinoAlertDialog].
 ///
 /// See also:
@@ -225,14 +226,12 @@ class CupertinoDialogAction extends StatelessWidget {
   Widget build(BuildContext context) {
     TextStyle style = _kCupertinoDialogActionStyle;
 
-    if (isDefaultAction)
-      style = style.copyWith(fontWeight: FontWeight.w600);
+    if (isDefaultAction) style = style.copyWith(fontWeight: FontWeight.w600);
 
     if (isDestructiveAction)
       style = style.copyWith(color: CupertinoColors.destructiveRed);
 
-    if (!enabled)
-      style = style.copyWith(color: style.color.withOpacity(0.5));
+    if (!enabled) style = style.copyWith(color: style.color.withOpacity(0.5));
 
     return new GestureDetector(
       onTap: onPressed,
@@ -257,7 +256,8 @@ class _CupertinoButtonBar extends StatelessWidget {
   const _CupertinoButtonBar({
     Key key,
     this.children,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   final List<Widget> children;
 
@@ -276,10 +276,8 @@ class _CupertinoButtonBar extends StatelessWidget {
           height: _kButtonBarHeight,
           child: new Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: buttons
-          ),
-        )
-    );
+              children: buttons),
+        ));
   }
 }
 
@@ -290,8 +288,7 @@ class _CupertinoButtonBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = new Paint()
-      ..color = _kButtonDividerColor;
+    final Paint paint = new Paint()..color = _kButtonDividerColor;
 
     canvas.drawLine(Offset.zero, new Offset(size.width, 0.0), paint);
     for (int i = 1; i < count; ++i) {

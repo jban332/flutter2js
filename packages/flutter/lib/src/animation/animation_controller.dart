@@ -28,7 +28,7 @@ enum _AnimationDirection {
 }
 
 final SpringDescription _kFlingSpringDescription =
-new SpringDescription.withDampingRatio(
+    new SpringDescription.withDampingRatio(
   mass: 1.0,
   stiffness: 500.0,
   ratio: 1.0,
@@ -279,8 +279,8 @@ class AnimationController extends Animation<double>
       if (duration == null) {
         throw new FlutterError(
             'AnimationController.forward() called with no default Duration.\n'
-                'The "duration" property should be set, either in the constructor or later, before '
-                'calling the forward() function.');
+            'The "duration" property should be set, either in the constructor or later, before '
+            'calling the forward() function.');
       }
       return true;
     });
@@ -305,8 +305,8 @@ class AnimationController extends Animation<double>
       if (duration == null) {
         throw new FlutterError(
             'AnimationController.reverse() called with no default Duration.\n'
-                'The "duration" property should be set, either in the constructor or later, before '
-                'calling the reverse() function.');
+            'The "duration" property should be set, either in the constructor or later, before '
+            'calling the reverse() function.');
       }
       return true;
     });
@@ -341,15 +341,15 @@ class AnimationController extends Animation<double>
         if (this.duration == null) {
           throw new FlutterError(
               'AnimationController.animateTo() called with no explicit Duration and no default Duration.\n'
-                  'Either the "duration" argument to the animateTo() method should be provided, or the '
-                  '"duration" property should be set, either in the constructor or later, before '
-                  'calling the animateTo() function.');
+              'Either the "duration" argument to the animateTo() method should be provided, or the '
+              '"duration" property should be set, either in the constructor or later, before '
+              'calling the animateTo() function.');
         }
         return true;
       });
       final double range = upperBound - lowerBound;
       final double remainingFraction =
-      range.isFinite ? (target - _value).abs() / range : 1.0;
+          range.isFinite ? (target - _value).abs() / range : 1.0;
       simulationDuration = this.duration * remainingFraction;
     } else if (target == value) {
       // Already at target, don't animate.
@@ -392,9 +392,9 @@ class AnimationController extends Animation<double>
       if (period == null) {
         throw new FlutterError(
             'AnimationController.repeat() called without an explicit period and with no default Duration.\n'
-                'Either the "period" argument to the repeat() method should be provided, or the '
-                '"duration" property should be set, either in the constructor or later, before '
-                'calling the repeat() function.');
+            'Either the "period" argument to the repeat() method should be provided, or the '
+            '"duration" property should be set, either in the constructor or later, before '
+            'calling the repeat() function.');
       }
       return true;
     });
@@ -420,8 +420,8 @@ class AnimationController extends Animation<double>
         ? lowerBound - _kFlingTolerance.distance
         : upperBound + _kFlingTolerance.distance;
     final Simulation simulation =
-    new SpringSimulation(_kFlingSpringDescription, value, target, velocity)
-      ..tolerance = _kFlingTolerance;
+        new SpringSimulation(_kFlingSpringDescription, value, target, velocity)
+          ..tolerance = _kFlingTolerance;
     return animateWith(simulation);
   }
 
@@ -479,9 +479,9 @@ class AnimationController extends Animation<double>
       if (_ticker == null) {
         throw new FlutterError(
             'AnimationController.dispose() called more than once.\n'
-                'A given $runtimeType cannot be disposed more than once.\n'
-                'The following $runtimeType object was disposed multiple times:\n'
-                '  $this');
+            'A given $runtimeType cannot be disposed more than once.\n'
+            'The following $runtimeType object was disposed multiple times:\n'
+            '  $this');
       }
       return true;
     });
@@ -520,7 +520,7 @@ class AnimationController extends Animation<double>
   String toStringDetails() {
     final String paused = isAnimating ? '' : '; paused';
     final String ticker =
-    _ticker == null ? '; DISPOSED' : (_ticker.muted ? '; silenced' : '');
+        _ticker == null ? '; DISPOSED' : (_ticker.muted ? '; silenced' : '');
     final String label = debugLabel == null ? '' : '; for $debugLabel';
     final String more =
         '${super.toStringDetails()} ${value.toStringAsFixed(3)}';
@@ -529,10 +529,10 @@ class AnimationController extends Animation<double>
 }
 
 class _InterpolationSimulation extends Simulation {
-  _InterpolationSimulation(this._begin, this._end, Duration duration,
-      this._curve)
+  _InterpolationSimulation(
+      this._begin, this._end, Duration duration, this._curve)
       : _durationInSeconds =
-      duration.inMicroseconds / Duration.MICROSECONDS_PER_SECOND;
+            duration.inMicroseconds / Duration.MICROSECONDS_PER_SECOND;
 
   final double _durationInSeconds;
   final double _begin;
@@ -564,7 +564,7 @@ class _InterpolationSimulation extends Simulation {
 class _RepeatingSimulation extends Simulation {
   _RepeatingSimulation(this.min, this.max, Duration period)
       : _periodInSeconds =
-      period.inMicroseconds / Duration.MICROSECONDS_PER_SECOND {
+            period.inMicroseconds / Duration.MICROSECONDS_PER_SECOND {
     assert(_periodInSeconds > 0.0);
   }
 

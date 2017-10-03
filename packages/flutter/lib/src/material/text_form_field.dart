@@ -46,23 +46,23 @@ class TextFormField extends FormField<String> {
     List<TextInputFormatter> inputFormatters,
   })
       : super(
-    key: key,
-    initialValue: controller != null ? controller.value.text : '',
-    onSaved: onSaved,
-    validator: validator,
-    builder: (FormFieldState<String> field) {
-      return new TextField(
-        controller: controller,
-        focusNode: focusNode,
-        decoration: decoration.copyWith(errorText: field.errorText),
-        keyboardType: keyboardType,
-        style: style,
-        autofocus: autofocus,
-        obscureText: obscureText,
-        maxLines: maxLines,
-        onChanged: field.onChanged,
-        inputFormatters: inputFormatters,
-      );
-    },
-  );
+          key: key,
+          initialValue: controller != null ? controller.value.text : '',
+          onSaved: onSaved,
+          validator: validator,
+          builder: (FormFieldState<String> field) {
+            return new TextField(
+              controller: controller,
+              focusNode: focusNode,
+              decoration: decoration.copyWith(errorText: field.errorText),
+              keyboardType: keyboardType,
+              style: style,
+              autofocus: autofocus,
+              obscureText: obscureText,
+              maxLines: maxLines,
+              onChanged: field.onChanged,
+              inputFormatters: inputFormatters,
+            );
+          },
+        );
 }

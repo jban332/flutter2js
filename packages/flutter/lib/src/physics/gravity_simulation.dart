@@ -47,8 +47,8 @@ class GravitySimulation extends Simulation {
   /// that must be used for the velocity and acceleration arguments: L/T and
   /// L/T² respectively. The same units of velocity are used for the velocity
   /// obtained from [dx].
-  GravitySimulation(double acceleration, double distance, double endDistance,
-      double velocity)
+  GravitySimulation(
+      double acceleration, double distance, double endDistance, double velocity)
       : _a = acceleration,
         _x = distance,
         _v = velocity,

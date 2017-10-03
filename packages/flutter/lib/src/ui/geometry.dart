@@ -840,9 +840,8 @@ class Radius {
   /// Returns a radius whose coordinates are the coordinates of the
   /// left-hand-side operand (a radius) divided by the scalar right-hand-side
   /// operand (a double), rounded towards zero.
-  Radius operator ~/(double operand) =>
-      new Radius.elliptical(
-          (x ~/ operand).toDouble(), (y ~/ operand).toDouble());
+  Radius operator ~/(double operand) => new Radius.elliptical(
+      (x ~/ operand).toDouble(), (y ~/ operand).toDouble());
 
   /// Modulo (remainder) operator.
   ///
@@ -911,8 +910,8 @@ class RRect {
 
   /// Construct a rounded rectangle from its left, top, right, and bottom edges,
   /// and the same radius in each corner.
-  RRect.fromLTRBR(double left, double top, double right, double bottom,
-      Radius radius) {
+  RRect.fromLTRBR(
+      double left, double top, double right, double bottom, Radius radius) {
     _value
       ..[0] = left
       ..[1] = top
@@ -968,15 +967,16 @@ class RRect {
   /// and topLeft, topRight, bottomRight, and bottomLeft radii.
   ///
   /// The corner radii default to [Radius.zero], i.e. right-angled corners.
-  RRect.fromLTRBAndCorners(double left,
-      double top,
-      double right,
-      double bottom, {
-        Radius topLeft: Radius.zero,
-        Radius topRight: Radius.zero,
-        Radius bottomRight: Radius.zero,
-        Radius bottomLeft: Radius.zero,
-      }) {
+  RRect.fromLTRBAndCorners(
+    double left,
+    double top,
+    double right,
+    double bottom, {
+    Radius topLeft: Radius.zero,
+    Radius topRight: Radius.zero,
+    Radius bottomRight: Radius.zero,
+    Radius bottomLeft: Radius.zero,
+  }) {
     _value
       ..[0] = left
       ..[1] = top
@@ -998,9 +998,9 @@ class RRect {
   /// The corner radii default to [Radius.zero], i.e. right-angled corners
   RRect.fromRectAndCorners(Rect rect,
       {Radius topLeft: Radius.zero,
-        Radius topRight: Radius.zero,
-        Radius bottomRight: Radius.zero,
-        Radius bottomLeft: Radius.zero}) {
+      Radius topRight: Radius.zero,
+      Radius bottomRight: Radius.zero,
+      Radius bottomLeft: Radius.zero}) {
     _value
       ..[0] = rect.left
       ..[1] = rect.top
@@ -1017,8 +1017,7 @@ class RRect {
   }
 
   RRect._fromList(List<double> list) {
-    for (int i = 0; i < _kDataSize; i += 1)
-      _value[i] = list[i];
+    for (int i = 0; i < _kDataSize; i += 1) _value[i] = list[i];
   }
 
   static const int _kDataSize = 12;
@@ -1094,9 +1093,9 @@ class RRect {
         topLeft: new Radius.elliptical(_value[4] + delta, _value[5] + delta),
         topRight: new Radius.elliptical(_value[6] + delta, _value[7] + delta),
         bottomRight:
-        new Radius.elliptical(_value[8] + delta, _value[9] + delta),
+            new Radius.elliptical(_value[8] + delta, _value[9] + delta),
         bottomLeft:
-        new Radius.elliptical(_value[10] + delta, _value[11] + delta));
+            new Radius.elliptical(_value[10] + delta, _value[11] + delta));
   }
 
   /// Returns a new [RRect] with edges and radii moved inwards by the given delta.
@@ -1240,8 +1239,7 @@ class RRect {
       scale = _getMin(scale, scaled[8], scaled[10], width);
 
       if (scale < 1.0) {
-        for (int i = 4; i < _kDataSize; i += 1)
-          scaled[i] *= scale;
+        for (int i = 4; i < _kDataSize; i += 1) scaled[i] *= scale;
       }
 
       _scaled = new RRect._fromList(scaled);
@@ -1451,12 +1449,13 @@ class RSTransform {
   /// (which are computed each time this constructor is called) and reuse them
   /// over multiple [RSTransform] objects, it may be more efficient to directly
   /// use the more direct [new RSTransform] constructor instead.
-  factory RSTransform.fromComponents({double rotation,
-    double scale,
-    double anchorX,
-    double anchorY,
-    double translateX,
-    double translateY}) {
+  factory RSTransform.fromComponents(
+      {double rotation,
+      double scale,
+      double anchorX,
+      double anchorY,
+      double translateX,
+      double translateY}) {
     final double scos = math.cos(rotation) * scale;
     final double ssin = math.sin(rotation) * scale;
     final double tx = translateX + -scos * anchorX + ssin * anchorY;

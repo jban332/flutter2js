@@ -17,7 +17,8 @@ class _AccountPictures extends StatelessWidget {
     Key key,
     this.currentAccountPicture,
     this.otherAccountsPictures,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   final Widget currentAccountPicture;
   final List<Widget> otherAccountsPictures;
@@ -30,24 +31,21 @@ class _AccountPictures extends StatelessWidget {
           top: 0.0,
           end: 0.0,
           child: new Row(
-            children: (otherAccountsPictures ?? <Widget>[]).take(3).map((
-                Widget picture) {
+            children: (otherAccountsPictures ?? <Widget>[])
+                .take(3)
+                .map((Widget picture) {
               return new Container(
                   margin: const EdgeInsetsDirectional.only(start: 16.0),
                   width: 40.0,
                   height: 40.0,
-                  child: picture
-              );
+                  child: picture);
             }).toList(),
           ),
         ),
         new Positioned(
           top: 0.0,
           child: new SizedBox(
-              width: 72.0,
-              height: 72.0,
-              child: currentAccountPicture
-          ),
+              width: 72.0, height: 72.0, child: currentAccountPicture),
         ),
       ],
     );
@@ -61,7 +59,8 @@ class _AccountDetails extends StatelessWidget {
     @required this.accountEmail,
     this.onTap,
     this.isOpen,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   final Widget accountName;
   final Widget accountEmail;
@@ -71,11 +70,9 @@ class _AccountDetails extends StatelessWidget {
   Widget addDropdownIcon(Widget line) {
     final Widget icon = new Expanded(
       child: new Align(
-        alignment: FractionalOffsetDirectional.centerEnd,
-        child: new Icon(
-            isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-            color: Colors.white
-        ),
+        alignment: AlignmentDirectional.centerEnd,
+        child: new Icon(isOpen ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+            color: Colors.white),
       ),
     );
     return new Row(
@@ -87,16 +84,18 @@ class _AccountDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    Widget accountNameLine = accountName == null ? null : new DefaultTextStyle(
-      style: theme.primaryTextTheme.body2,
-      child: accountName,
-    );
+    Widget accountNameLine = accountName == null
+        ? null
+        : new DefaultTextStyle(
+            style: theme.primaryTextTheme.body2,
+            child: accountName,
+          );
     Widget accountEmailLine = accountEmail == null
         ? null
         : new DefaultTextStyle(
-      style: theme.primaryTextTheme.body1,
-      child: accountEmail,
-    );
+            style: theme.primaryTextTheme.body1,
+            child: accountEmail,
+          );
     if (onTap != null) {
       if (accountEmailLine != null)
         accountEmailLine = addDropdownIcon(accountEmailLine);
@@ -113,8 +112,7 @@ class _AccountDetails extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: (accountEmailLine != null && accountNameLine != null)
                 ? <Widget>[accountNameLine, accountEmailLine]
-                : <Widget>[accountNameLine ?? accountEmailLine]
-        ),
+                : <Widget>[accountNameLine ?? accountEmailLine]),
       );
     }
 
@@ -140,16 +138,16 @@ class UserAccountsDrawerHeader extends StatefulWidget {
   /// Creates a material design drawer header.
   ///
   /// Requires one of its ancestors to be a [Material] widget.
-  const UserAccountsDrawerHeader({
-    Key key,
-    this.decoration,
-    this.margin: const EdgeInsets.only(bottom: 8.0),
-    this.currentAccountPicture,
-    this.otherAccountsPictures,
-    @required this.accountName,
-    @required this.accountEmail,
-    this.onDetailsPressed
-  }) : super(key: key);
+  const UserAccountsDrawerHeader(
+      {Key key,
+      this.decoration,
+      this.margin: const EdgeInsets.only(bottom: 8.0),
+      this.currentAccountPicture,
+      this.otherAccountsPictures,
+      @required this.accountName,
+      @required this.accountEmail,
+      this.onDetailsPressed})
+      : super(key: key);
 
   /// The header's background. If decoration is null then a [BoxDecoration]
   /// with its background color set to the current theme's primaryColor is used.
@@ -198,28 +196,25 @@ class _UserAccountsDrawerHeaderState extends State<UserAccountsDrawerHeader> {
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
     return new DrawerHeader(
-      decoration: widget.decoration ?? new BoxDecoration(
-        color: Theme
-            .of(context)
-            .primaryColor,
-      ),
+      decoration: widget.decoration ??
+          new BoxDecoration(
+            color: Theme.of(context).primaryColor,
+          ),
       margin: widget.margin,
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           new Expanded(
               child: new _AccountPictures(
-                currentAccountPicture: widget.currentAccountPicture,
-                otherAccountsPictures: widget.otherAccountsPictures,
-              )
-          ),
+            currentAccountPicture: widget.currentAccountPicture,
+            otherAccountsPictures: widget.otherAccountsPictures,
+          )),
           new _AccountDetails(
             accountName: widget.accountName,
             accountEmail: widget.accountEmail,
             isOpen: _isOpen,
-            onTap: widget.onDetailsPressed == null
-                ? null
-                : _handleDetailsPressed,
+            onTap:
+                widget.onDetailsPressed == null ? null : _handleDetailsPressed,
           ),
         ],
       ),

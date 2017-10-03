@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flur/flur.dart' as flur;
+
 /// The platform that user interaction should adapt to target.
 ///
 /// The [defaultTargetPlatform] getter returns the current platform.
@@ -26,7 +28,21 @@ enum TargetPlatform {
 /// platform override APIs (such as [ThemeData.platform] in the material
 /// library) or by setting [debugDefaultTargetPlatformOverride]. The value
 /// can only be explicitly set in debug mode.
-TargetPlatform defaultTargetPlatform = TargetPlatform.android;
+TargetPlatform get defaultTargetPlatform {
+  final result = debugDefaultTargetPlatformOverride;
+  if (result != null) {
+    return result;
+  }
+  final deviceInfo = flur.DeviceInfo.current;
+  switch (deviceInfo.operatingSystemType) {
+    case flur.OperatingSystemType.ios:
+      return TargetPlatform.iOS;
+    case flur.OperatingSystemType.fuchsia:
+      return TargetPlatform.fuchsia;
+    default:
+      return TargetPlatform.android;
+  }
+}
 
 /// Override the [defaultTargetPlatform].
 ///

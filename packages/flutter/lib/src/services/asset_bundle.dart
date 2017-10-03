@@ -121,8 +121,8 @@ class NetworkAssetBundle extends AssetBundle {
   /// The result is not cached. The parser is run each time the resource is
   /// fetched.
   @override
-  Future<T> loadStructuredData<T>(String key,
-      Future<T> parser(String value)) async {
+  Future<T> loadStructuredData<T>(
+      String key, Future<T> parser(String value)) async {
     assert(key != null);
     assert(parser != null);
     return parser(await loadString(key));
@@ -147,7 +147,7 @@ abstract class CachingAssetBundle extends AssetBundle {
   // TODO(ianh): Replace this with an intelligent cache, see https://github.com/flutter/flutter/issues/3568
   final Map<String, Future<String>> _stringCache = <String, Future<String>>{};
   final Map<String, Future<dynamic>> _structuredDataCache =
-  <String, Future<dynamic>>{};
+      <String, Future<dynamic>>{};
 
   @override
   Future<String> loadString(String key, {bool cache: true}) {
@@ -212,7 +212,7 @@ class PlatformAssetBundle extends CachingAssetBundle {
   @override
   Future<ByteData> load(String key) async {
     final uri =
-    await Isolate.resolvePackageUri(Uri.parse("package:flutter/${key}"));
+        await Isolate.resolvePackageUri(Uri.parse("package:flutter/${key}"));
     final resp = await http.get(uri.toString());
     final bytes = resp.bodyBytes;
     return new ByteData.view(

@@ -8,13 +8,10 @@ import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'constants.dart';
 import 'divider.dart';
 import 'icon_button.dart';
 import 'icons.dart';
-import 'ink_well.dart';
 import 'list_tile.dart';
-import 'material.dart';
 import 'theme.dart';
 
 // Examples can assume:
@@ -54,7 +51,7 @@ const double _kMenuScreenPadding = 8.0;
 ///  * [showMenu], a method to dynamically show a popup menu at a given location.
 ///  * [PopupMenuButton], an [IconButton] that automatically shows a menu when
 ///    it is tapped.
-abstract class PopupMenuEntry<T> extends StatefulWidget {
+abstract class PopupMenuEntry<T> extends flur.StatelessUIPluginWidget {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const PopupMenuEntry({Key key}) : super(key: key);
@@ -109,12 +106,9 @@ class PopupMenuDivider extends PopupMenuEntry<Null> {
   bool represents(dynamic value) => false;
 
   @override
-  _PopupMenuDividerState createState() => new _PopupMenuDividerState();
-}
-
-class _PopupMenuDividerState extends State<PopupMenuDivider> {
-  @override
-  Widget build(BuildContext context) => new Divider(height: widget.height);
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildPopupMenuDivider(context, this);
+  }
 }
 
 /// An item in a material design popup menu.
@@ -196,49 +190,8 @@ class PopupMenuItem<T> extends PopupMenuEntry<T> {
   bool represents(T value) => value == this.value;
 
   @override
-  _PopupMenuItemState<PopupMenuItem<T>> createState() =>
-      new _PopupMenuItemState<PopupMenuItem<T>>();
-}
-
-class _PopupMenuItemState<T extends PopupMenuItem<dynamic>> extends State<T> {
-  // Override this to put something else in the menu entry.
-  Widget buildChild() => widget.child;
-
-  void handleTap() {
-    Navigator.pop(context, widget.value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    TextStyle style = theme.textTheme.subhead;
-    if (!widget.enabled) style = style.copyWith(color: theme.disabledColor);
-
-    Widget item = new AnimatedDefaultTextStyle(
-        style: style,
-        duration: kThemeChangeDuration,
-        child: new Baseline(
-          baseline: widget.height - _kBaselineOffsetFromBottom,
-          baselineType: TextBaseline.alphabetic,
-          child: buildChild(),
-        ));
-    if (!widget.enabled) {
-      final bool isDark = theme.brightness == Brightness.dark;
-      item = IconTheme.merge(
-        data: new IconThemeData(opacity: isDark ? 0.5 : 0.38),
-        child: item,
-      );
-    }
-
-    return new InkWell(
-        onTap: widget.enabled ? handleTap : null,
-        child: new MergeSemantics(
-            child: new Container(
-              height: widget.height,
-              padding:
-              const EdgeInsets.symmetric(horizontal: _kMenuHorizontalPadding),
-              child: item,
-            )));
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildPopupMenuItem(context, this);
   }
 }
 
@@ -317,11 +270,11 @@ class CheckedPopupMenuItem<T> extends PopupMenuItem<T> {
     Widget child,
   })
       : super(
-    key: key,
-    value: value,
-    enabled: enabled,
-    child: child,
-  );
+          key: key,
+          value: value,
+          enabled: enabled,
+          child: child,
+        );
 
   /// Whether to display a checkmark next to the menu item.
   ///
@@ -344,222 +297,8 @@ class CheckedPopupMenuItem<T> extends PopupMenuItem<T> {
   Widget get child => super.child;
 
   @override
-  _CheckedPopupMenuItemState<T> createState() =>
-      new _CheckedPopupMenuItemState<T>();
-}
-
-class _CheckedPopupMenuItemState<T>
-    extends _PopupMenuItemState<CheckedPopupMenuItem<T>>
-    with SingleTickerProviderStateMixin<CheckedPopupMenuItem<T>> {
-  static const Duration _kFadeDuration = const Duration(milliseconds: 150);
-  AnimationController _controller;
-
-  Animation<double> get _opacity => _controller.view;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = new AnimationController(duration: _kFadeDuration, vsync: this)
-      ..value = widget.checked ? 1.0 : 0.0
-      ..addListener(() =>
-          setState(() {
-            /* animation changed */
-          }));
-  }
-
-  @override
-  void handleTap() {
-    // This fades the checkmark in or out when tapped.
-    if (widget.checked)
-      _controller.reverse();
-    else
-      _controller.forward();
-    super.handleTap();
-  }
-
-  @override
-  Widget buildChild() {
-    return new ListTile(
-      enabled: widget.enabled,
-      leading: new FadeTransition(
-          opacity: _opacity,
-          child: new Icon(_controller.isDismissed ? null : Icons.done)),
-      title: widget.child,
-    );
-  }
-}
-
-class _PopupMenu<T> extends StatelessWidget {
-  const _PopupMenu({Key key, this.route}) : super(key: key);
-
-  final _PopupMenuRoute<T> route;
-
-  @override
-  Widget build(BuildContext context) {
-    final double unit = 1.0 /
-        (route.items.length +
-            1.5); // 1.0 for the width and 0.5 for the last item's fade.
-    final List<Widget> children = <Widget>[];
-
-    for (int i = 0; i < route.items.length; i += 1) {
-      final double start = (i + 1) * unit;
-      final double end = (start + 1.5 * unit).clamp(0.0, 1.0);
-      final CurvedAnimation opacity = new CurvedAnimation(
-          parent: route.animation, curve: new Interval(start, end));
-      Widget item = route.items[i];
-      if (route.initialValue != null &&
-          route.items[i].represents(route.initialValue)) {
-        item = new Container(
-          color: Theme
-              .of(context)
-              .highlightColor,
-          child: item,
-        );
-      }
-      children.add(new FadeTransition(
-        opacity: opacity,
-        child: item,
-      ));
-    }
-
-    final CurveTween opacity =
-    new CurveTween(curve: const Interval(0.0, 1.0 / 3.0));
-    final CurveTween width = new CurveTween(curve: new Interval(0.0, unit));
-    final CurveTween height =
-    new CurveTween(curve: new Interval(0.0, unit * route.items.length));
-
-    final Widget child = new ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: _kMenuMinWidth,
-          maxWidth: _kMenuMaxWidth,
-        ),
-        child: new IntrinsicWidth(
-            stepWidth: _kMenuWidthStep,
-            child: new SingleChildScrollView(
-              padding:
-              const EdgeInsets.symmetric(vertical: _kMenuVerticalPadding),
-              child: new ListBody(children: children),
-            )));
-
-    return new AnimatedBuilder(
-      animation: route.animation,
-      builder: (BuildContext context, Widget child) {
-        return new Opacity(
-          opacity: opacity.evaluate(route.animation),
-          child: new Material(
-            type: MaterialType.card,
-            elevation: route.elevation,
-            child: new Align(
-              alignment: FractionalOffset.topRight,
-              widthFactor: width.evaluate(route.animation),
-              heightFactor: height.evaluate(route.animation),
-              child: child,
-            ),
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-}
-
-class _PopupMenuRouteLayout extends SingleChildLayoutDelegate {
-  _PopupMenuRouteLayout(this.position, this.selectedItemOffset);
-
-  final RelativeRect position;
-  final double selectedItemOffset;
-
-  @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return constraints.loosen();
-  }
-
-  // Put the child wherever position specifies, so long as it will fit within the
-  // specified parent size padded (inset) by 8. If necessary, adjust the child's
-  // position so that it fits.
-  @override
-  Offset getPositionForChild(Size size, Size childSize) {
-    double x = position?.left ??
-        (position?.right != null
-            ? size.width - (position.right + childSize.width)
-            : _kMenuScreenPadding);
-    double y = position?.top ??
-        (position?.bottom != null
-            ? size.height - (position.bottom - childSize.height)
-            : _kMenuScreenPadding);
-
-    if (selectedItemOffset != null)
-      y -= selectedItemOffset + _kMenuVerticalPadding;
-
-    if (x < _kMenuScreenPadding)
-      x = _kMenuScreenPadding;
-    else if (x + childSize.width > size.width - 2 * _kMenuScreenPadding)
-      x = size.width - childSize.width - _kMenuScreenPadding;
-    if (y < _kMenuScreenPadding)
-      y = _kMenuScreenPadding;
-    else if (y + childSize.height > size.height - 2 * _kMenuScreenPadding)
-      y = size.height - childSize.height - _kMenuScreenPadding;
-    return new Offset(x, y);
-  }
-
-  @override
-  bool shouldRelayout(_PopupMenuRouteLayout oldDelegate) {
-    return position != oldDelegate.position;
-  }
-}
-
-class _PopupMenuRoute<T> extends PopupRoute<T> {
-  _PopupMenuRoute({this.position,
-    this.items,
-    this.initialValue,
-    this.elevation,
-    this.theme});
-
-  final RelativeRect position;
-  final List<PopupMenuEntry<T>> items;
-  final dynamic initialValue;
-  final double elevation;
-  final ThemeData theme;
-
-  @override
-  Animation<double> createAnimation() {
-    return new CurvedAnimation(
-        parent: super.createAnimation(),
-        curve: Curves.linear,
-        reverseCurve: const Interval(0.0, _kMenuCloseIntervalEnd));
-  }
-
-  @override
-  Duration get transitionDuration => _kMenuDuration;
-
-  @override
-  bool get barrierDismissible => true;
-
-  @override
-  Color get barrierColor => null;
-
-  @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
-    double selectedItemOffset;
-    if (initialValue != null) {
-      selectedItemOffset = 0.0;
-      for (PopupMenuEntry<T> entry in items) {
-        if (entry.represents(initialValue)) {
-          selectedItemOffset += entry.height / 2.0;
-          break;
-        }
-        selectedItemOffset += entry.height;
-      }
-    }
-
-    Widget menu = new _PopupMenu<T>(route: this);
-    if (theme != null) menu = new Theme(data: theme, child: menu);
-
-    return new CustomSingleChildLayout(
-      delegate: new _PopupMenuRouteLayout(position, selectedItemOffset),
-      child: menu,
-    );
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildCheckedPopupMenuItem(context, this);
   }
 }
 
@@ -589,14 +328,16 @@ class _PopupMenuRoute<T> extends PopupRoute<T> {
 ///  * [CheckedPopupMenuItem], a popup menu item with a checkmark.
 ///  * [PopupMenuButton], which provides an [IconButton] that shows a menu by
 ///    calling this method automatically.
-Future<T> showMenu<T>({@required BuildContext context,
-  RelativeRect position,
-  @required List<PopupMenuEntry<T>> items,
-  T initialValue,
-  double elevation: 8.0}) {
+Future<T> showMenu<T>(
+    {@required BuildContext context,
+    RelativeRect position,
+    @required List<PopupMenuEntry<T>> items,
+    T initialValue,
+    double elevation: 8.0}) {
   assert(context != null);
   assert(items != null && items.isNotEmpty);
-  return flur.UIPlugin.current.showMenu(context: context,
+  return flur.UIPlugin.current.showMenu(
+      context: context,
       position: position,
       items: items,
       initialValue: initialValue,

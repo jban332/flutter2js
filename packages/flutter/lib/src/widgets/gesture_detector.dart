@@ -11,29 +11,29 @@ import 'framework.dart';
 
 export 'package:flutter/gestures.dart'
     show
-    DragDownDetails,
-    DragStartDetails,
-    DragUpdateDetails,
-    DragEndDetails,
-    GestureTapDownCallback,
-    GestureTapUpCallback,
-    GestureTapCallback,
-    GestureTapCancelCallback,
-    GestureLongPressCallback,
-    GestureDragDownCallback,
-    GestureDragStartCallback,
-    GestureDragUpdateCallback,
-    GestureDragEndCallback,
-    GestureDragCancelCallback,
-    GestureScaleStartCallback,
-    GestureScaleUpdateCallback,
-    GestureScaleEndCallback,
-    ScaleStartDetails,
-    ScaleUpdateDetails,
-    ScaleEndDetails,
-    TapDownDetails,
-    TapUpDetails,
-    Velocity;
+        DragDownDetails,
+        DragStartDetails,
+        DragUpdateDetails,
+        DragEndDetails,
+        GestureTapDownCallback,
+        GestureTapUpCallback,
+        GestureTapCallback,
+        GestureTapCancelCallback,
+        GestureLongPressCallback,
+        GestureDragDownCallback,
+        GestureDragStartCallback,
+        GestureDragUpdateCallback,
+        GestureDragEndCallback,
+        GestureDragCancelCallback,
+        GestureScaleStartCallback,
+        GestureScaleUpdateCallback,
+        GestureScaleEndCallback,
+        ScaleStartDetails,
+        ScaleUpdateDetails,
+        ScaleEndDetails,
+        TapDownDetails,
+        TapUpDetails,
+        Velocity;
 
 /// A widget that detects gestures.
 ///
@@ -68,7 +68,7 @@ export 'package:flutter/gestures.dart'
 ///   ),
 /// )
 /// ```
-class GestureDetector extends flur.StatelessUIPluginWidget {
+class GestureDetector extends flur.SingleChildUIPluginWidget {
   /// Creates a widget that detects gestures.
   ///
   /// Pan and scale callbacks cannot be used simultaneously because scale is a
@@ -80,34 +80,35 @@ class GestureDetector extends flur.StatelessUIPluginWidget {
   ///
   /// By default, gesture detectors contribute semantic information to the tree
   /// that is used by assistive technology.
-  GestureDetector({Key key,
-    this.child,
-    this.onTapDown,
-    this.onTapUp,
-    this.onTap,
-    this.onTapCancel,
-    this.onDoubleTap,
-    this.onLongPress,
-    this.onVerticalDragDown,
-    this.onVerticalDragStart,
-    this.onVerticalDragUpdate,
-    this.onVerticalDragEnd,
-    this.onVerticalDragCancel,
-    this.onHorizontalDragDown,
-    this.onHorizontalDragStart,
-    this.onHorizontalDragUpdate,
-    this.onHorizontalDragEnd,
-    this.onHorizontalDragCancel,
-    this.onPanDown,
-    this.onPanStart,
-    this.onPanUpdate,
-    this.onPanEnd,
-    this.onPanCancel,
-    this.onScaleStart,
-    this.onScaleUpdate,
-    this.onScaleEnd,
-    this.behavior,
-    this.excludeFromSemantics: false})
+  GestureDetector(
+      {Key key,
+      this.child,
+      this.onTapDown,
+      this.onTapUp,
+      this.onTap,
+      this.onTapCancel,
+      this.onDoubleTap,
+      this.onLongPress,
+      this.onVerticalDragDown,
+      this.onVerticalDragStart,
+      this.onVerticalDragUpdate,
+      this.onVerticalDragEnd,
+      this.onVerticalDragCancel,
+      this.onHorizontalDragDown,
+      this.onHorizontalDragStart,
+      this.onHorizontalDragUpdate,
+      this.onHorizontalDragEnd,
+      this.onHorizontalDragCancel,
+      this.onPanDown,
+      this.onPanStart,
+      this.onPanUpdate,
+      this.onPanEnd,
+      this.onPanCancel,
+      this.onScaleStart,
+      this.onScaleUpdate,
+      this.onScaleEnd,
+      this.behavior,
+      this.excludeFromSemantics: false})
       : super(key: key);
 
   /// The widget below this widget in the tree.

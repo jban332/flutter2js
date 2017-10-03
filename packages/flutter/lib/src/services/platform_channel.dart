@@ -147,7 +147,8 @@ class MethodChannel {
   ///   for how to access method call arguments on Android.
   Future<dynamic> invokeMethod(String method, [dynamic arguments]) async {
     assert(method != null);
-    return flur.PlatformPlugin.current.sendMethodChannelMessage(method, arguments);
+    return flur.PlatformPlugin.current
+        .sendMethodChannelMessage(method, arguments);
   }
 
   /// Sets a callback for receiving method calls on this channel.
@@ -195,8 +196,8 @@ class MethodChannel {
     );
   }
 
-  Future<ByteData> _handleAsMethodCall(ByteData message,
-      Future<dynamic> handler(MethodCall call)) async {
+  Future<ByteData> _handleAsMethodCall(
+      ByteData message, Future<dynamic> handler(MethodCall call)) async {
     final MethodCall call = codec.decodeMethodCall(message);
     try {
       return codec.encodeSuccessEnvelope(await handler(call));
@@ -278,6 +279,7 @@ class EventChannel {
   /// stream listener count changes from 0 to 1. Stream deactivation happens
   /// only when stream listener count changes from 1 to 0.
   Stream<dynamic> receiveBroadcastStream([dynamic arguments]) {
-    return flur.PlatformPlugin.current.receiveEventChannelStream(this, arguments);
+    return flur.PlatformPlugin.current
+        .receiveEventChannelStream(this, arguments);
   }
 }

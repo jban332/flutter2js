@@ -7,8 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 // Fractional offset from 1/4 screen below the top to fully on screen.
-final FractionalOffsetTween _kBottomUpTween = new FractionalOffsetTween(
-    begin: FractionalOffset.bottomLeft, end: FractionalOffset.topLeft);
+final AlignmentTween _kBottomUpTween = new AlignmentTween(
+    begin: Alignment.bottomLeft, end: Alignment.topLeft);
 
 // Used for Android and Fuchsia.
 class _MountainViewPageTransition extends StatelessWidget {
@@ -18,12 +18,12 @@ class _MountainViewPageTransition extends StatelessWidget {
     @required this.child,
   })
       : _positionAnimation = _kBottomUpTween.animate(new CurvedAnimation(
-    parent: routeAnimation, // The route's linear 0.0 - 1.0 animation.
-    curve: Curves.fastOutSlowIn,
-  )),
+          parent: routeAnimation, // The route's linear 0.0 - 1.0 animation.
+          curve: Curves.fastOutSlowIn,
+        )),
         super(key: key);
 
-  final Animation<FractionalOffset> _positionAnimation;
+  final Animation<Alignment> _positionAnimation;
   final Widget child;
 
   @override
@@ -102,7 +102,7 @@ class MaterialPageRoute<T> extends PageRoute<T> {
       if (result == null) {
         throw new FlutterError(
             'The builder for route "${settings.name}" returned null.\n'
-                'Route builders must never return null.');
+            'Route builders must never return null.');
       }
       return true;
     });

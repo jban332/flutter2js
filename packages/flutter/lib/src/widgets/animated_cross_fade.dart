@@ -58,8 +58,8 @@ enum CrossFadeState {
 ///   );
 /// }
 /// ```
-typedef Widget AnimatedCrossFadeBuilder(Widget topChild, Key topChildKey,
-    Widget bottomChild, Key bottomChildKey);
+typedef Widget AnimatedCrossFadeBuilder(
+    Widget topChild, Key topChildKey, Widget bottomChild, Key bottomChildKey);
 
 /// A widget that cross-fades between two given children and animates itself
 /// between their sizes.
@@ -116,12 +116,12 @@ class AnimatedCrossFade extends StatefulWidget {
     this.firstCurve: Curves.linear,
     this.secondCurve: Curves.linear,
     this.sizeCurve: Curves.linear,
-    this.alignment: FractionalOffset.topCenter,
+    this.alignment: Alignment.topCenter,
     @required this.crossFadeState,
     @required this.duration,
     this.layoutBuilder: defaultLayoutBuilder,
-  }) :
-        super(key: key);
+  })
+      : super(key: key);
 
   /// The child that is visible when [crossFadeState] is
   /// [CrossFadeState.showFirst]. It fades out when transitioning
@@ -158,8 +158,8 @@ class AnimatedCrossFade extends StatefulWidget {
 
   /// How the children should be aligned while the size is animating.
   ///
-  /// Defaults to [FractionalOffset.topCenter].
-  final FractionalOffsetGeometry alignment;
+  /// Defaults to [Alignment.topCenter].
+  final AlignmentGeometry alignment;
 
   /// A builder that positions the [firstChild] and [secondChild] widgets.
   ///
@@ -213,13 +213,14 @@ class AnimatedCrossFade extends StatefulWidget {
     super.debugFillProperties(description);
     description.add(
         new EnumProperty<CrossFadeState>('crossFadeState', crossFadeState));
-    description.add(new DiagnosticsProperty<FractionalOffsetGeometry>(
-        'alignment', alignment, defaultValue: FractionalOffset.topCenter));
+    description.add(new DiagnosticsProperty<AlignmentGeometry>(
+        'alignment', alignment,
+        defaultValue: Alignment.topCenter));
   }
 }
 
-class _AnimatedCrossFadeState extends State<AnimatedCrossFade>
-    with TickerProviderStateMixin<AnimatedCrossFade> {
+class _AnimatedCrossFadeState
+    extends TickerProviderStateMixin<AnimatedCrossFade> {
   AnimationController _controller;
   Animation<double> _firstAnimation;
   Animation<double> _secondAnimation;
@@ -228,7 +229,7 @@ class _AnimatedCrossFadeState extends State<AnimatedCrossFade>
   void initState() {
     super.initState();
     _controller =
-    new AnimationController(duration: widget.duration, vsync: this);
+        new AnimationController(duration: widget.duration, vsync: this);
     if (widget.crossFadeState == CrossFadeState.showSecond)
       _controller.value = 1.0;
     _firstAnimation = _initAnimation(widget.firstCurve, true);
@@ -236,16 +237,11 @@ class _AnimatedCrossFadeState extends State<AnimatedCrossFade>
   }
 
   Animation<double> _initAnimation(Curve curve, bool inverted) {
-    Animation<double> animation = new CurvedAnimation(
-        parent: _controller,
-        curve: curve
-    );
+    Animation<double> animation =
+        new CurvedAnimation(parent: _controller, curve: curve);
 
     if (inverted) {
-      animation = new Tween<double>(
-          begin: 1.0,
-          end: 0.0
-      ).animate(animation);
+      animation = new Tween<double>(begin: 1.0, end: 0.0).animate(animation);
     }
 
     animation.addStatusListener((AnimationStatus status) {
@@ -288,17 +284,17 @@ class _AnimatedCrossFadeState extends State<AnimatedCrossFade>
   /// Whether we're in the middle of cross-fading this frame.
   bool get _isTransitioning =>
       _controller.status == AnimationStatus.forward ||
-          _controller.status == AnimationStatus.reverse;
+      _controller.status == AnimationStatus.reverse;
 
   @override
   Widget build(BuildContext context) {
-    const Key kFirstChildKey = const ValueKey<CrossFadeState>(
-        CrossFadeState.showFirst);
-    const Key kSecondChildKey = const ValueKey<CrossFadeState>(
-        CrossFadeState.showSecond);
-    final bool transitioningForwards = _controller.status ==
-        AnimationStatus.completed ||
-        _controller.status == AnimationStatus.forward;
+    const Key kFirstChildKey =
+        const ValueKey<CrossFadeState>(CrossFadeState.showFirst);
+    const Key kSecondChildKey =
+        const ValueKey<CrossFadeState>(CrossFadeState.showSecond);
+    final bool transitioningForwards =
+        _controller.status == AnimationStatus.completed ||
+            _controller.status == AnimationStatus.forward;
 
     Key topKey;
     Widget topChild;
@@ -363,9 +359,10 @@ class _AnimatedCrossFadeState extends State<AnimatedCrossFade>
     description.add(new EnumProperty<CrossFadeState>(
         'crossFadeState', widget.crossFadeState));
     description.add(new DiagnosticsProperty<AnimationController>(
-        'controller', _controller, showName: false));
-    description.add(new DiagnosticsProperty<FractionalOffsetGeometry>(
+        'controller', _controller,
+        showName: false));
+    description.add(new DiagnosticsProperty<AlignmentGeometry>(
         'alignment', widget.alignment,
-        defaultValue: FractionalOffset.topCenter));
+        defaultValue: Alignment.topCenter));
   }
 }

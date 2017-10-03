@@ -108,10 +108,10 @@ class CircleAvatar extends StatelessWidget {
       ),
       child: child != null
           ? new Center(
-          child: new DefaultTextStyle(
-            style: textStyle.copyWith(color: foregroundColor),
-            child: child,
-          ))
+              child: new DefaultTextStyle(
+              style: textStyle.copyWith(color: foregroundColor),
+              child: child,
+            ))
           : null,
     );
   }

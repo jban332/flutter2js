@@ -9,7 +9,7 @@ import 'basic.dart';
 import 'framework.dart';
 
 /// A widget that describes this app in the operating system.
-class Title extends flur.StatelessUIPluginWidget {
+class Title extends flur.SingleChildUIPluginWidget {
   /// Creates a widget that describes this app to the operating system.
   Title({
     Key key,

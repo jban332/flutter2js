@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
@@ -24,7 +25,7 @@ import 'framework.dart';
 /// new DecoratedBox(
 ///   decoration: new BoxDecoration(
 ///     gradient: new RadialGradient(
-///       center: const FractionalOffset(0.25, 0.3),
+///       center: const Alignment(0.25, 0.3),
 ///       radius: 0.15,
 ///       colors: <Color>[
 ///         const Color(0xFFEEEEEE),
@@ -43,15 +44,16 @@ import 'framework.dart';
 ///  * [Decoration], which you can extend to provide other effects with
 ///    [DecoratedBox].
 ///  * [CustomPaint], another way to draw custom effects from the widget layer.
-class DecoratedBox extends SingleChildRenderObjectWidget {
+class DecoratedBox extends flur.SingleChildUIPluginWidget {
   /// Creates a widget that paints a [Decoration].
   ///
   /// The [decoration] and [position] arguments must not be null. By default the
   /// decoration paints behind the child.
-  const DecoratedBox({Key key,
-    @required this.decoration,
-    this.position: DecorationPosition.background,
-    Widget child})
+  const DecoratedBox(
+      {Key key,
+      @required this.decoration,
+      this.position: DecorationPosition.background,
+      Widget child})
       : super(key: key, child: child);
 
   /// What decoration to paint.
@@ -80,13 +82,18 @@ class DecoratedBox extends SingleChildRenderObjectWidget {
     }
     description.add(new EnumProperty<DecorationPosition>('position', position,
         level:
-        position != null ? DiagnosticLevel.hidden : DiagnosticLevel.info));
+            position != null ? DiagnosticLevel.hidden : DiagnosticLevel.info));
     description.add(new DiagnosticsProperty<Decoration>(
       label,
       decoration,
       ifNull: 'no decoration',
       showName: decoration != null,
     ));
+  }
+
+  @override
+  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
+    return plugin.buildDecoratedBox(context, this);
   }
 }
 
@@ -188,7 +195,7 @@ class DecoratedBox extends SingleChildRenderObjectWidget {
 ///   ),
 ///   padding: const EdgeInsets.all(8.0),
 ///   color: Colors.teal.shade700,
-///   alignment: FractionalOffset.center,
+///   alignment: Alignment.center,
 ///   child: new Text('Hello World', style: Theme.of(context).textTheme.display1.copyWith(color: Colors.white)),
 ///   foregroundDecoration: new BoxDecoration(
 ///     image: new DecorationImage(
@@ -230,10 +237,10 @@ class Container extends StatelessWidget {
     this.child,
   })
       : decoration = decoration ??
-      (color != null ? new BoxDecoration(color: color) : null),
+            (color != null ? new BoxDecoration(color: color) : null),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
-            new BoxConstraints.tightFor(width: width, height: height)
+                new BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
 
@@ -252,7 +259,7 @@ class Container extends StatelessWidget {
   /// constraints are unbounded, then the child will be shrink-wrapped instead.
   ///
   /// Ignored if [child] is null.
-  final FractionalOffsetGeometry alignment;
+  final AlignmentGeometry alignment;
 
   /// Empty space to inscribe inside the [decoration]. The [child], if any, is
   /// placed inside this padding.
@@ -298,7 +305,7 @@ class Container extends StatelessWidget {
           maxWidth: 0.0,
           maxHeight: 0.0,
           child:
-          new ConstrainedBox(constraints: const BoxConstraints.expand()));
+              new ConstrainedBox(constraints: const BoxConstraints.expand()));
     }
 
     if (alignment != null)
@@ -332,7 +339,7 @@ class Container extends StatelessWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<FractionalOffsetGeometry>(
+    description.add(new DiagnosticsProperty<AlignmentGeometry>(
         'alignment', alignment,
         showName: false, defaultValue: null));
     description.add(new DiagnosticsProperty<EdgeInsetsGeometry>(

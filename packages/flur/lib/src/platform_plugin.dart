@@ -23,6 +23,8 @@ abstract class PlatformPlugin {
 
   String get defaultRouteName => "/";
 
+  ui.Locale locale = new ui.Locale("en", "US");
+
   /// Invoked by implementation of Flutter's [Clipboard].
   Future<ClipboardData> clipboardGetData(String format) {
     throw new UnimplementedError();

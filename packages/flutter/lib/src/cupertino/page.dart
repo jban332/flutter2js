@@ -10,21 +10,21 @@ const double _kBackGestureWidth = 20.0;
 const double _kMinFlingVelocity = 1.0; // Screen widths per second.
 
 // Fractional offset from offscreen to the right to fully on screen.
-final FractionalOffsetTween _kRightMiddleTween = new FractionalOffsetTween(
-  begin: FractionalOffset.topRight,
-  end: FractionalOffset.topLeft,
+final AlignmentTween _kRightMiddleTween = new AlignmentTween(
+  begin: Alignment.topRight,
+  end: Alignment.topLeft,
 );
 
 // Fractional offset from fully on screen to 1/3 offscreen to the left.
-final FractionalOffsetTween _kMiddleLeftTween = new FractionalOffsetTween(
-  begin: FractionalOffset.topLeft,
-  end: const FractionalOffset(-1.0 / 3.0, 0.0),
+final AlignmentTween _kMiddleLeftTween = new AlignmentTween(
+  begin: Alignment.topLeft,
+  end: const Alignment(-1.0 / 3.0, 0.0),
 );
 
 // Fractional offset from offscreen below to fully on screen.
-final FractionalOffsetTween _kBottomUpTween = new FractionalOffsetTween(
-  begin: FractionalOffset.bottomLeft,
-  end: FractionalOffset.topLeft,
+final AlignmentTween _kBottomUpTween = new AlignmentTween(
+  begin: Alignment.bottomLeft,
+  end: Alignment.topLeft,
 );
 
 /// A modal route that replaces the entire screen with an iOS transition.
@@ -100,7 +100,7 @@ class CupertinoPageRoute<T> extends PageRoute<T> {
       if (hostRoute == null) return true;
       throw new FlutterError(
           'Cannot install a subsidiary route (one with a hostRoute).\n'
-              'This route ($this) cannot be installed, because it has a host route ($hostRoute).');
+          'This route ($this) cannot be installed, because it has a host route ($hostRoute).');
     });
     super.install(insertionPoint);
   }
@@ -154,7 +154,7 @@ class CupertinoPageRoute<T> extends PageRoute<T> {
       if (result == null) {
         throw new FlutterError(
             'The builder for route "${settings.name}" returned null.\n'
-                'Route builders must never return null.');
+            'Route builders must never return null.');
       }
       return true;
     });
@@ -206,14 +206,14 @@ class CupertinoPageTransition extends StatelessWidget {
     bool linearTransition,
   })
       : _primaryPositionAnimation = linearTransition
-      ? _kRightMiddleTween.animate(primaryRouteAnimation)
-      : _kRightMiddleTween.animate(new CurvedAnimation(
-    parent: primaryRouteAnimation,
-    curve: Curves.easeOut,
-    reverseCurve: Curves.easeIn,
-  )),
+            ? _kRightMiddleTween.animate(primaryRouteAnimation)
+            : _kRightMiddleTween.animate(new CurvedAnimation(
+                parent: primaryRouteAnimation,
+                curve: Curves.easeOut,
+                reverseCurve: Curves.easeIn,
+              )),
         _secondaryPositionAnimation =
-        _kMiddleLeftTween.animate(new CurvedAnimation(
+            _kMiddleLeftTween.animate(new CurvedAnimation(
           parent: secondaryRouteAnimation,
           curve: Curves.easeOut,
           reverseCurve: Curves.easeIn,
@@ -221,10 +221,10 @@ class CupertinoPageTransition extends StatelessWidget {
         super(key: key);
 
   // When this page is coming in to cover another page.
-  final Animation<FractionalOffset> _primaryPositionAnimation;
+  final Animation<Alignment> _primaryPositionAnimation;
 
   // When this page is becoming covered by another page.
-  final Animation<FractionalOffset> _secondaryPositionAnimation;
+  final Animation<Alignment> _secondaryPositionAnimation;
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -255,12 +255,12 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
     @required this.child,
   })
       : _positionAnimation = _kBottomUpTween.animate(new CurvedAnimation(
-    parent: animation,
-    curve: Curves.easeInOut,
-  )),
+          parent: animation,
+          curve: Curves.easeInOut,
+        )),
         super(key: key);
 
-  final Animation<FractionalOffset> _positionAnimation;
+  final Animation<Alignment> _positionAnimation;
 
   /// The widget below this widget in the tree.
   final Widget child;

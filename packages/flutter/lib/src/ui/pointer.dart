@@ -50,25 +50,26 @@ enum PointerDeviceKind {
 /// Information about the state of a pointer.
 class PointerData {
   /// Creates an object that represents the state of a pointer.
-  const PointerData({this.timeStamp: Duration.ZERO,
-    this.change: PointerChange.cancel,
-    this.kind: PointerDeviceKind.touch,
-    this.device: 0,
-    this.physicalX: 0.0,
-    this.physicalY: 0.0,
-    this.buttons: 0,
-    this.obscured: false,
-    this.pressure: 0.0,
-    this.pressureMin: 0.0,
-    this.pressureMax: 0.0,
-    this.distance: 0.0,
-    this.distanceMax: 0.0,
-    this.radiusMajor: 0.0,
-    this.radiusMinor: 0.0,
-    this.radiusMin: 0.0,
-    this.radiusMax: 0.0,
-    this.orientation: 0.0,
-    this.tilt: 0.0});
+  const PointerData(
+      {this.timeStamp: Duration.ZERO,
+      this.change: PointerChange.cancel,
+      this.kind: PointerDeviceKind.touch,
+      this.device: 0,
+      this.physicalX: 0.0,
+      this.physicalY: 0.0,
+      this.buttons: 0,
+      this.obscured: false,
+      this.pressure: 0.0,
+      this.pressureMin: 0.0,
+      this.pressureMax: 0.0,
+      this.distance: 0.0,
+      this.distanceMax: 0.0,
+      this.radiusMajor: 0.0,
+      this.radiusMinor: 0.0,
+      this.radiusMin: 0.0,
+      this.radiusMax: 0.0,
+      this.orientation: 0.0,
+      this.tilt: 0.0});
 
   /// Time of event dispatch, relative to an arbitrary timeline.
   final Duration timeStamp;

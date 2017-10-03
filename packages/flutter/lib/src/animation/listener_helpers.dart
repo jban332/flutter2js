@@ -78,7 +78,7 @@ abstract class AnimationLocalListenersMixin implements _ListenerMixin {
   factory AnimationLocalListenersMixin._() => null;
 
   final ObserverList<VoidCallback> _listeners =
-  new ObserverList<VoidCallback>();
+      new ObserverList<VoidCallback>();
 
   /// Calls the listener every time the value of the animation changes.
   ///
@@ -102,7 +102,7 @@ abstract class AnimationLocalListenersMixin implements _ListenerMixin {
   /// will not change which listeners are called during this iteration.
   void notifyListeners() {
     final List<VoidCallback> localListeners =
-    new List<VoidCallback>.from(_listeners);
+        new List<VoidCallback>.from(_listeners);
     for (VoidCallback listener in localListeners) {
       try {
         if (_listeners.contains(listener)) listener();
@@ -130,7 +130,7 @@ abstract class AnimationLocalStatusListenersMixin implements _ListenerMixin {
   factory AnimationLocalStatusListenersMixin._() => null;
 
   final ObserverList<AnimationStatusListener> _statusListeners =
-  new ObserverList<AnimationStatusListener>();
+      new ObserverList<AnimationStatusListener>();
 
   /// Calls listener every time the status of the animation changes.
   ///
@@ -154,7 +154,7 @@ abstract class AnimationLocalStatusListenersMixin implements _ListenerMixin {
   /// will not change which listeners are called during this iteration.
   void notifyStatusListeners(AnimationStatus status) {
     final List<AnimationStatusListener> localListeners =
-    new List<AnimationStatusListener>.from(_statusListeners);
+        new List<AnimationStatusListener>.from(_statusListeners);
     for (AnimationStatusListener listener in localListeners) {
       try {
         if (_statusListeners.contains(listener)) listener(status);

@@ -119,7 +119,8 @@ class AssetImage extends AssetBundleImageProvider {
   /// from the set of images to choose from. The [package] argument must be
   /// non-null when fetching an asset that is included in package. See the
   /// documentation for the [AssetImage] class itself for details.
-  const AssetImage(this.assetName, {
+  const AssetImage(
+    this.assetName, {
     this.bundle,
     this.package,
   });
@@ -165,7 +166,7 @@ class AssetImage extends AssetBundleImageProvider {
     Future<AssetBundleImageKey> result;
     chosenBundle
         .loadStructuredData<Map<String, List<String>>>(
-        _kAssetManifestFileName, _manifestParser)
+            _kAssetManifestFileName, _manifestParser)
         .then<Null>((Map<String, List<String>> manifest) {
       final String chosenName = _chooseVariant(
           keyName, configuration, manifest == null ? null : manifest[keyName]);
@@ -210,12 +211,12 @@ class AssetImage extends AssetBundleImageProvider {
     return new Future<Map<String, List<String>>>.value(parsedManifest);
   }
 
-  String _chooseVariant(String main, ImageConfiguration config,
-      List<String> candidates) {
+  String _chooseVariant(
+      String main, ImageConfiguration config, List<String> candidates) {
     if (candidates == null || candidates.isEmpty) return main;
     // TODO(ianh): Consider moving this parsing logic into _manifestParser.
     final SplayTreeMap<double, String> mapping =
-    new SplayTreeMap<double, String>();
+        new SplayTreeMap<double, String>();
     for (String candidate in candidates)
       mapping[_parseScale(candidate)] = candidate;
     // TODO(ianh): implement support for config.locale, config.size, config.platform

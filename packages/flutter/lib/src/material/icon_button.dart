@@ -65,17 +65,18 @@ class IconButton extends flur.StatelessUIPluginWidget {
   ///
   /// The [icon] argument must be specified, and is typically either an [Icon]
   /// or an [ImageIcon].
-  const IconButton({Key key,
-    this.iconSize: 24.0,
-    this.padding: const EdgeInsets.all(8.0),
-    this.alignment: FractionalOffset.center,
-    @required this.icon,
-    this.color,
-    this.highlightColor,
-    this.splashColor,
-    this.disabledColor,
-    @required this.onPressed,
-    this.tooltip})
+  const IconButton(
+      {Key key,
+      this.iconSize: 24.0,
+      this.padding: const EdgeInsets.all(8.0),
+      this.alignment: Alignment.center,
+      @required this.icon,
+      this.color,
+      this.highlightColor,
+      this.splashColor,
+      this.disabledColor,
+      @required this.onPressed,
+      this.tooltip})
       : super(key: key);
 
   /// The size of the icon inside the button.
@@ -98,8 +99,8 @@ class IconButton extends flur.StatelessUIPluginWidget {
 
   /// Defines how the icon is positioned within the IconButton.
   ///
-  /// This property must not be null. It defaults to [FractionalOffset.center].
-  final FractionalOffsetGeometry alignment;
+  /// This property must not be null. It defaults to [Alignment.center].
+  final AlignmentGeometry alignment;
 
   /// The icon to display inside the button.
   ///

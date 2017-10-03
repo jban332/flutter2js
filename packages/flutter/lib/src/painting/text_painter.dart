@@ -7,11 +7,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/ui.dart' as ui
     show
-    Paragraph,
-    ParagraphBuilder,
-    ParagraphConstraints,
-    ParagraphStyle,
-    TextBox;
+        Paragraph,
+        ParagraphBuilder,
+        ParagraphConstraints,
+        ParagraphStyle,
+        TextBox;
 
 import 'basic_types.dart';
 import 'text_span.dart';
@@ -118,7 +118,7 @@ class TextPainter {
     _textDirection = value;
     _paragraph = null;
     _layoutTemplate =
-    null; // Shouldn't really matter, but for strict correctness...
+        null; // Shouldn't really matter, but for strict correctness...
     _needsLayout = true;
   }
 
@@ -193,14 +193,14 @@ class TextPainter {
     // textDirection hasn't yet been set.
     assert(textAlign != null);
     assert(textDirection != null || defaultTextDirection != null,
-    'TextPainter.textDirection must be set to a non-null value before using the TextPainter.');
+        'TextPainter.textDirection must be set to a non-null value before using the TextPainter.');
     return _text.style?.getParagraphStyle(
-      textAlign: textAlign,
-      textDirection: textDirection ?? defaultTextDirection,
-      textScaleFactor: textScaleFactor,
-      maxLines: _maxLines,
-      ellipsis: _ellipsis,
-    ) ??
+          textAlign: textAlign,
+          textDirection: textDirection ?? defaultTextDirection,
+          textScaleFactor: textScaleFactor,
+          maxLines: _maxLines,
+          ellipsis: _ellipsis,
+        ) ??
         new ui.ParagraphStyle(
           textAlign: textAlign,
           textDirection: textDirection ?? defaultTextDirection,
@@ -333,15 +333,15 @@ class TextPainter {
   /// called.
   void layout({double minWidth: 0.0, double maxWidth: double.INFINITY}) {
     assert(text != null,
-    'TextPainter.text must be set to a non-null value before using the TextPainter.');
+        'TextPainter.text must be set to a non-null value before using the TextPainter.');
     assert(textDirection != null,
-    'TextPainter.textDirection must be set to a non-null value before using the TextPainter.');
+        'TextPainter.textDirection must be set to a non-null value before using the TextPainter.');
     if (!_needsLayout && minWidth == _lastMinWidth && maxWidth == _lastMaxWidth)
       return;
     _needsLayout = false;
     if (_paragraph == null) {
       final ui.ParagraphBuilder builder =
-      new ui.ParagraphBuilder(_createParagraphStyle());
+          new ui.ParagraphBuilder(_createParagraphStyle());
       _text.build(builder, textScaleFactor: textScaleFactor);
       _paragraph = builder.build();
     }
@@ -372,7 +372,7 @@ class TextPainter {
       if (_needsLayout) {
         throw new FlutterError(
             'TextPainter.paint called when text geometry was not yet calculated.\n'
-                'Please call layout() before paint() to position the text before painting it.');
+            'Please call layout() before paint() to position the text before painting it.');
       }
       return true;
     });
@@ -387,9 +387,9 @@ class TextPainter {
     final int prevCodeUnit = _text.codeUnitAt(offset - 1);
     if (prevCodeUnit == null) return null;
     final int prevRuneOffset =
-    _isUtf16Surrogate(prevCodeUnit) ? offset - 2 : offset - 1;
+        _isUtf16Surrogate(prevCodeUnit) ? offset - 2 : offset - 1;
     final List<ui.TextBox> boxes =
-    _paragraph.getBoxesForRange(prevRuneOffset, offset);
+        _paragraph.getBoxesForRange(prevRuneOffset, offset);
     if (boxes.isEmpty) return null;
     final ui.TextBox box = boxes[0];
     final double caretEnd = box.end;
@@ -403,9 +403,9 @@ class TextPainter {
     final int nextCodeUnit = _text.codeUnitAt(offset + 1);
     if (nextCodeUnit == null) return null;
     final int nextRuneOffset =
-    _isUtf16Surrogate(nextCodeUnit) ? offset + 2 : offset + 1;
+        _isUtf16Surrogate(nextCodeUnit) ? offset + 2 : offset + 1;
     final List<ui.TextBox> boxes =
-    _paragraph.getBoxesForRange(offset, nextRuneOffset);
+        _paragraph.getBoxesForRange(offset, nextRuneOffset);
     if (boxes.isEmpty) return null;
     final ui.TextBox box = boxes[0];
     final double caretStart = box.start;

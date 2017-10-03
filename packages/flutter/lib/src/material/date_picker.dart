@@ -229,13 +229,13 @@ Future<DateTime> showDatePicker({
   SelectableDayPredicate selectableDayPredicate,
 }) async {
   assert(!initialDate.isBefore(firstDate),
-  'initialDate must be on or after firstDate');
+      'initialDate must be on or after firstDate');
   assert(!initialDate.isAfter(lastDate),
-  'initialDate must be on or before lastDate');
+      'initialDate must be on or before lastDate');
   assert(
-  !firstDate.isAfter(lastDate), 'lastDate must be on or after firstDate');
+      !firstDate.isAfter(lastDate), 'lastDate must be on or after firstDate');
   assert(selectableDayPredicate == null || selectableDayPredicate(initialDate),
-  'Provided initialDate must satisfy provided selectableDayPredicate');
+      'Provided initialDate must satisfy provided selectableDayPredicate');
   return await flur.UIPlugin.current.showDatePicker(
       context: context,
       initialDate: initialDate,

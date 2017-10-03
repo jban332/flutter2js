@@ -88,22 +88,22 @@ abstract class MultiChildLayoutDelegate {
       if (child == null) {
         throw new FlutterError(
             'The $this custom multichild layout delegate tried to lay out a non-existent child.\n'
-                'There is no child with the id "$childId".');
+            'There is no child with the id "$childId".');
       }
       if (!_debugChildrenNeedingLayout.remove(child)) {
         throw new FlutterError(
             'The $this custom multichild layout delegate tried to lay out the child with id "$childId" more than once.\n'
-                'Each child must be laid out exactly once.');
+            'Each child must be laid out exactly once.');
       }
       try {
         assert(constraints.debugAssertIsValid(isAppliedConstraint: true));
       } on AssertionError catch (exception) {
         throw new FlutterError(
             'The $this custom multichild layout delegate provided invalid box constraints for the child with id "$childId".\n'
-                '$exception\n'
-                'The minimum width and height must be greater than or equal to zero.\n'
-                'The maximum width must be greater than or equal to the minimum width.\n'
-                'The maximum height must be greater than or equal to the minimum height.');
+            '$exception\n'
+            'The minimum width and height must be greater than or equal to zero.\n'
+            'The maximum width must be greater than or equal to the minimum width.\n'
+            'The maximum height must be greater than or equal to the minimum height.');
       }
       return true;
     });
@@ -123,7 +123,7 @@ abstract class MultiChildLayoutDelegate {
       if (child == null) {
         throw new FlutterError(
             'The $this custom multichild layout delegate tried to position out a non-existent child:\n'
-                'There is no child with the id "$childId".');
+            'There is no child with the id "$childId".');
       }
       if (offset == null) {
         throw new FlutterError(

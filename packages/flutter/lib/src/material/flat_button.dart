@@ -49,17 +49,18 @@ class FlatButton extends flur.StatelessUIPluginWidget {
   ///
   /// The [child] argument is required and is typically a [Text] widget in all
   /// caps.
-  const FlatButton({Key key,
-    @required this.onPressed,
-    this.textColor,
-    this.disabledTextColor,
-    this.color,
-    this.highlightColor,
-    this.splashColor,
-    this.disabledColor,
-    this.textTheme,
-    this.colorBrightness,
-    @required this.child})
+  const FlatButton(
+      {Key key,
+      @required this.onPressed,
+      this.textColor,
+      this.disabledTextColor,
+      this.color,
+      this.highlightColor,
+      this.splashColor,
+      this.disabledColor,
+      this.textTheme,
+      this.colorBrightness,
+      @required this.child})
       : super(key: key);
 
   /// The callback that is called when the button is tapped or otherwise activated.

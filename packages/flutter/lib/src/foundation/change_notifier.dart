@@ -122,7 +122,7 @@ class ChangeNotifier extends Listenable {
     assert(_debugAssertNotDisposed);
     if (_listeners != null) {
       final List<VoidCallback> localListeners =
-      new List<VoidCallback>.from(_listeners);
+          new List<VoidCallback>.from(_listeners);
       for (VoidCallback listener in localListeners) {
         try {
           if (_listeners.contains(listener)) listener();
@@ -145,16 +145,14 @@ class ChangeNotifier extends Listenable {
 
 class _MergingListenable extends ChangeNotifier {
   _MergingListenable(this._children) {
-    for (Listenable child in _children)
-      child?.addListener(notifyListeners);
+    for (Listenable child in _children) child?.addListener(notifyListeners);
   }
 
   final List<Listenable> _children;
 
   @override
   void dispose() {
-    for (Listenable child in _children)
-      child?.removeListener(notifyListeners);
+    for (Listenable child in _children) child?.removeListener(notifyListeners);
     super.dispose();
   }
 

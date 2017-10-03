@@ -3,14 +3,17 @@
 // found in the LICENSE file.
 
 import 'dart:collection';
-import 'dart:developer' show Timeline;
+import 'dart:developer'
+    show Timeline;
 
 import 'package:flutter/foundation.dart';
 
+import 'basic.dart';
 import 'framework.dart';
 import 'media_query.dart';
 import 'table.dart';
 // to disambiguate reference in dartdocs below
+
 
 // Any changes to this file should be reflected in the debugAssertAllWidgetVarsUnset()
 // function below.
@@ -110,7 +113,7 @@ bool debugChildrenHaveDuplicateKeys(Widget parent, Iterable<Widget> children) {
           '$parent has multiple children with key $nonUniqueKey.');
     }
     return true;
-  });
+  }());
   return false;
 }
 
@@ -132,7 +135,7 @@ bool debugItemsHaveDuplicateKeys(Iterable<Widget> items) {
     if (nonUniqueKey != null)
       throw new FlutterError('Duplicate key found: $nonUniqueKey.');
     return true;
-  });
+  }());
   return false;
 }
 
@@ -154,15 +157,14 @@ bool debugCheckHasTable(BuildContext context) {
         context.ancestorWidgetOfExactType(Table) == null) {
       final Element element = context;
       throw new FlutterError('No Table widget found.\n'
-          '${context.widget
-          .runtimeType} widgets require a Table widget ancestor.\n'
+          '${context.widget.runtimeType} widgets require a Table widget ancestor.\n'
           'The specific widget that could not find a Table ancestor was:\n'
           '  ${context.widget}\n'
           'The ownership chain for the affected widget is:\n'
           '  ${element.debugGetCreatorChain(10)}');
     }
     return true;
-  });
+  }());
   return true;
 }
 
@@ -185,8 +187,7 @@ bool debugCheckHasMediaQuery(BuildContext context) {
         context.ancestorWidgetOfExactType(MediaQuery) == null) {
       final Element element = context;
       throw new FlutterError('No MediaQuery widget found.\n'
-          '${context.widget
-          .runtimeType} widgets require a MediaQuery widget ancestor.\n'
+          '${context.widget.runtimeType} widgets require a MediaQuery widget ancestor.\n'
           'The specific widget that could not find a MediaQuery ancestor was:\n'
           '  ${context.widget}\n'
           'The ownership chain for the affected widget is:\n'
@@ -195,7 +196,43 @@ bool debugCheckHasMediaQuery(BuildContext context) {
           'WidgetsApp widget at the top of your application widget tree.');
     }
     return true;
-  });
+  }());
+  return true;
+}
+
+/// Asserts that the given context has a [Directionality] ancestor.
+///
+/// Used by various widgets to make sure that they are only used in an
+/// appropriate context.
+///
+/// To invoke this function, use the following pattern, typically in the
+/// relevant Widget's build method:
+///
+/// ```dart
+/// assert(debugCheckHasDirectionality(context));
+/// ```
+///
+/// Does nothing if asserts are disabled. Always returns true.
+bool debugCheckHasDirectionality(BuildContext context) {
+  assert(() {
+    if (context.widget is! Directionality &&
+        context.ancestorWidgetOfExactType(Directionality) == null) {
+      final Element element = context;
+      throw new FlutterError('No Directionality widget found.\n'
+          '${context.widget.runtimeType} widgets require a Directionality widget ancestor.\n'
+          'The specific widget that could not find a Directionality ancestor was:\n'
+          '  ${context.widget}\n'
+          'The ownership chain for the affected widget is:\n'
+          '  ${element.debugGetCreatorChain(10)}\n'
+          'Typically, the Directionality widget is introduced by the MaterialApp '
+          'or WidgetsApp widget at the top of your application widget tree. It '
+          'determines the ambient reading direction and is used, for example, to '
+          'determine how to lay out text, how to interpret "start" and "end" '
+          'values, and to resolve EdgeInsetsDirectional, '
+          'AlignmentDirectional, and other *Directional objects.');
+    }
+    return true;
+  }());
   return true;
 }
 
@@ -215,7 +252,7 @@ void debugWidgetBuilderValue(Widget widget, Widget built) {
           'To return an empty space that takes as little room as possible, return "new Container(width: 0.0, height: 0.0)".');
     }
     return true;
-  });
+  }());
 }
 
 /// Returns true if none of the widget library debug variables have been changed.
@@ -236,6 +273,6 @@ bool debugAssertAllWidgetVarsUnset(String reason) {
       throw new FlutterError(reason);
     }
     return true;
-  });
+  }());
   return true;
 }

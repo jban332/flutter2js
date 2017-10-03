@@ -413,8 +413,8 @@ class SliverGridDelegateWithMaxCrossAxisExtent extends SliverGridDelegate {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
     final int crossAxisCount =
-    (constraints.crossAxisExtent / (maxCrossAxisExtent + crossAxisSpacing))
-        .ceil();
+        (constraints.crossAxisExtent / (maxCrossAxisExtent + crossAxisSpacing))
+            .ceil();
     final double usableCrossAxisExtent =
         constraints.crossAxisExtent - crossAxisSpacing * (crossAxisCount - 1);
     final double childCrossAxisExtent = usableCrossAxisExtent / crossAxisCount;

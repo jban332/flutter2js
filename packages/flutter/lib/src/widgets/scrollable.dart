@@ -167,13 +167,14 @@ class Scrollable extends StatefulWidget {
   /// ```
   static ScrollableState of(BuildContext context) {
     final _ScrollableScope widget =
-    context.inheritFromWidgetOfExactType(_ScrollableScope);
+        context.inheritFromWidgetOfExactType(_ScrollableScope);
     return widget?.scrollable;
   }
 
   /// Scrolls the scrollables that enclose the given context so as to make the
   /// given context visible.
-  static Future<Null> ensureVisible(BuildContext context, {
+  static Future<Null> ensureVisible(
+    BuildContext context, {
     double alignment: 0.0,
     Duration duration: Duration.ZERO,
     Curve curve: Curves.ease,
@@ -202,10 +203,11 @@ class Scrollable extends StatefulWidget {
 // Enable Scrollable.of() to work as if ScrollableState was an inherited widget.
 // ScrollableState.build() always rebuilds its _ScrollableScope.
 class _ScrollableScope extends InheritedWidget {
-  const _ScrollableScope({Key key,
-    @required this.scrollable,
-    @required this.position,
-    @required Widget child})
+  const _ScrollableScope(
+      {Key key,
+      @required this.scrollable,
+      @required this.position,
+      @required Widget child})
       : super(key: key, child: child);
 
   final ScrollableState scrollable;
@@ -227,8 +229,7 @@ class _ScrollableScope extends InheritedWidget {
 ///
 /// This class is not intended to be subclassed. To specialize the behavior of a
 /// [Scrollable], provide it with a [ScrollPhysics].
-class ScrollableState extends State<Scrollable>
-    with TickerProviderStateMixin
+class ScrollableState extends TickerProviderStateMixin<Scrollable>
     implements ScrollContext {
   /// The manager for this [Scrollable] widget's viewport position.
   ///
@@ -261,10 +262,6 @@ class ScrollableState extends State<Scrollable>
   }
 
   // SEMANTICS ACTIONS
-
-  @override
-  @protected
-  void setSemanticsActions(Set<SemanticsAction> actions) {}
 
   @override
   @protected

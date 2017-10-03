@@ -18,8 +18,7 @@ class _GridPaperPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint linePaint = new Paint()
-      ..color = color;
+    final Paint linePaint = new Paint()..color = color;
     final double allDivisions = (divisions * subdivisions).toDouble();
     for (double x = 0.0; x <= size.width; x += interval / allDivisions) {
       linePaint.strokeWidth = (x % interval == 0.0)

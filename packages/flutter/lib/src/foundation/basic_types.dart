@@ -187,51 +187,37 @@ class CachingIterable<E> extends IterableBase<E> {
 
   @override
   Iterable<T> map<T>(T f(E e)) {
-    return new CachingIterable<T>(super
-        .map<T>(f)
-        .iterator);
+    return new CachingIterable<T>(super.map<T>(f).iterator);
   }
 
   @override
   Iterable<E> where(bool f(E element)) {
-    return new CachingIterable<E>(super
-        .where(f)
-        .iterator);
+    return new CachingIterable<E>(super.where(f).iterator);
   }
 
   @override
   Iterable<T> expand<T>(Iterable<T> f(E element)) {
-    return new CachingIterable<T>(super
-        .expand<T>(f)
-        .iterator);
+    return new CachingIterable<T>(super.expand<T>(f).iterator);
   }
 
   @override
   Iterable<E> take(int count) {
-    return new CachingIterable<E>(super
-        .take(count)
-        .iterator);
+    return new CachingIterable<E>(super.take(count).iterator);
   }
 
   @override
   Iterable<E> takeWhile(bool test(E value)) {
-    return new CachingIterable<E>(super
-        .takeWhile(test)
-        .iterator);
+    return new CachingIterable<E>(super.takeWhile(test).iterator);
   }
 
   @override
   Iterable<E> skip(int count) {
-    return new CachingIterable<E>(super
-        .skip(count)
-        .iterator);
+    return new CachingIterable<E>(super.skip(count).iterator);
   }
 
   @override
   Iterable<E> skipWhile(bool test(E value)) {
-    return new CachingIterable<E>(super
-        .skipWhile(test)
-        .iterator);
+    return new CachingIterable<E>(super.skipWhile(test).iterator);
   }
 
   @override

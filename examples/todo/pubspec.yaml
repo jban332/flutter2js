@@ -18,6 +18,8 @@ dependency_overrides:
     path: "../../packages/flur"
   flur_react:
     path: "../../packages/flur_react"
+  flur_html:
+    path: "../../packages/flur_html"
   flutter:
     path: "../../packages/flutter"
 

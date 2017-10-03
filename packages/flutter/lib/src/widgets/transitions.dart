@@ -100,7 +100,7 @@ class SlideTransition extends AnimatedWidget {
   /// The [position] argument must not be null.
   const SlideTransition({
     Key key,
-    @required Animation<FractionalOffsetGeometry> position,
+    @required Animation<AlignmentGeometry> position,
     this.transformHitTests: true,
     this.child,
   })
@@ -110,7 +110,7 @@ class SlideTransition extends AnimatedWidget {
   ///
   /// If the current value of the position animation is (dx, dy), the child will
   /// be translated horizontally by width * dx and vertically by height * dy.
-  Animation<FractionalOffsetGeometry> get position => listenable;
+  Animation<AlignmentGeometry> get position => listenable;
 
   /// Whether hit testing should be affected by the slide animation.
   ///
@@ -138,11 +138,11 @@ class ScaleTransition extends AnimatedWidget {
   /// Creates a scale transition.
   ///
   /// The [scale] argument must not be null. The [alignment] argument defaults
-  /// to [FractionalOffset.center].
+  /// to [Alignment.center].
   const ScaleTransition({
     Key key,
     @required Animation<double> scale,
-    this.alignment: FractionalOffset.center,
+    this.alignment: Alignment.center,
     this.child,
   })
       : super(key: key, listenable: scale);
@@ -158,7 +158,7 @@ class ScaleTransition extends AnimatedWidget {
   ///
   /// For example, to set the origin of the scale to bottom middle, you can use
   /// an alignment of (0.5, 1.0).
-  final FractionalOffset alignment;
+  final Alignment alignment;
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -203,7 +203,7 @@ class RotationTransition extends AnimatedWidget {
     final Matrix4 transform = new Matrix4.rotationZ(turnsValue * math.PI * 2.0);
     return new Transform(
       transform: transform,
-      alignment: FractionalOffset.center,
+      alignment: Alignment.center,
       child: child,
     );
   }
@@ -244,18 +244,18 @@ class SizeTransition extends AnimatedWidget {
 
   @override
   Widget build(BuildContext context) {
-    FractionalOffsetDirectional alignment;
+    AlignmentDirectional alignment;
     if (axis == Axis.vertical)
-      alignment = new FractionalOffsetDirectional(0.0, axisAlignment);
+      alignment = new AlignmentDirectional(0.0, axisAlignment);
     else
-      alignment = new FractionalOffsetDirectional(axisAlignment, 0.0);
+      alignment = new AlignmentDirectional(axisAlignment, 0.0);
     return new ClipRect(
         child: new Align(
-          alignment: alignment,
-          heightFactor: axis == Axis.vertical ? sizeFactor.value : null,
-          widthFactor: axis == Axis.horizontal ? sizeFactor.value : null,
-          child: child,
-        ));
+      alignment: alignment,
+      heightFactor: axis == Axis.vertical ? sizeFactor.value : null,
+      widthFactor: axis == Axis.horizontal ? sizeFactor.value : null,
+      child: child,
+    ));
   }
 }
 

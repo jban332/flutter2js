@@ -54,7 +54,7 @@ class RelativeRect {
 
   /// A rect that covers the entire container.
   static final RelativeRect fill =
-  const RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
+      const RelativeRect.fromLTRB(0.0, 0.0, 0.0, 0.0);
 
   /// Distance from the left side of the container to the left side of this rectangle.
   final double left;
@@ -135,8 +135,7 @@ class RelativeRect {
   int get hashCode => hashValues(left, top, right, bottom);
 
   @override
-  String toString() =>
-      "RelativeRect.fromLTRB(${left?.toStringAsFixed(1)}, ${top
+  String toString() => "RelativeRect.fromLTRB(${left?.toStringAsFixed(1)}, ${top
           ?.toStringAsFixed(1)}, ${right?.toStringAsFixed(1)}, ${bottom
           ?.toStringAsFixed(1)})";
 }

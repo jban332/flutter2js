@@ -92,8 +92,7 @@ enum SystemUiOverlayStyle {
 
 List<String> _stringify(List<dynamic> list) {
   final List<String> result = <String>[];
-  for (dynamic item in list)
-    result.add(item.toString());
+  for (dynamic item in list) result.add(item.toString());
   return result;
 }
 

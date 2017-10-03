@@ -3,14 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import 'basic_types.dart';
 import 'edge_insets.dart';
 
 export 'package:flutter/services.dart' show ImageConfiguration;
-
-export 'basic_types.dart' show Offset, Size;
-export 'edge_insets.dart' show EdgeInsets;
 
 // This group of classes is intended for painting in cartesian coordinates.
 
@@ -94,6 +92,30 @@ abstract class BoxPainter {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   BoxPainter([this._onChanged]);
+
+  /// Paints the [Decoration] for which this object was created on the
+  /// given canvas using the given configuration.
+  ///
+  /// The [ImageConfiguration] object passed as the third argument must, at a
+  /// minimum, have a non-null [Size].
+  ///
+  /// If this object caches resources for painting (e.g. [Paint] objects), the
+  /// cache may be flushed when [paint] is called with a new configuration. For
+  /// this reason, it may be more efficient to call
+  /// [Decoration.createBoxPainter] for each different rectangle that is being
+  /// painted in a particular frame.
+  ///
+  /// For example, if a decoration's owner wants to paint a particular
+  /// decoration once for its whole size, and once just in the bottom
+  /// right, it might get two [BoxPainter] instances, one for each.
+  /// However, when its size changes, it could continue using those
+  /// same instances, since the previous resources would no longer be
+  /// relevant and thus losing them would not be an issue.
+  ///
+  /// Implementations should paint their decorations on the canvas in a
+  /// rectangle whose top left corner is at the given `offset` and whose size is
+  /// given by `configuration.size`.
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration);
 
   /// Callback that is invoked if an asynchronously-loading resource used by the
   /// decoration finishes loading. For example, an image. When this is invoked,

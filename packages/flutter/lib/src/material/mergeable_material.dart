@@ -38,8 +38,8 @@ class MaterialSlice extends MergeableMaterialItem {
   const MaterialSlice({
     @required LocalKey key,
     @required this.child,
-  }) :
-        super(key);
+  })
+      : super(key);
 
   /// The contents of this slice.
   final Widget child;
@@ -55,11 +55,7 @@ class MaterialSlice extends MergeableMaterialItem {
 /// All [MaterialGap] objects need a [LocalKey].
 class MaterialGap extends MergeableMaterialItem {
   /// Creates a Material gap with a given size.
-  const MaterialGap({
-    @required LocalKey key,
-    this.size: 16.0
-  }) :
-        super(key);
+  const MaterialGap({@required LocalKey key, this.size: 16.0}) : super(key);
 
   /// The main axis extent of this gap. For example, if the [MergeableMaterial]
   /// is vertical, then this is the height of the gap.
@@ -94,13 +90,13 @@ class MaterialGap extends MergeableMaterialItem {
 ///    but otherwise looks the same.
 class MergeableMaterial extends flur.StatelessUIPluginWidget {
   /// Creates a mergeable Material list of items.
-  const MergeableMaterial({
-    Key key,
-    this.mainAxis: Axis.vertical,
-    this.elevation: 2,
-    this.hasDividers: false,
-    this.children: const <MergeableMaterialItem>[]
-  }) : super(key: key);
+  const MergeableMaterial(
+      {Key key,
+      this.mainAxis: Axis.vertical,
+      this.elevation: 2,
+      this.hasDividers: false,
+      this.children: const <MergeableMaterialItem>[]})
+      : super(key: key);
 
   /// The children of the [MergeableMaterial].
   final List<MergeableMaterialItem> children;

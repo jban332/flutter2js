@@ -18,11 +18,12 @@ class FrictionSimulation extends Simulation {
   /// drag coefficient, a unitless value; the initial position, in the same
   /// length units as used for [x]; and the initial velocity, in the same
   /// velocity units as used for [dx].
-  FrictionSimulation(double drag,
-      double position,
-      double velocity, {
-        Tolerance tolerance: Tolerance.defaultTolerance,
-      })
+  FrictionSimulation(
+    double drag,
+    double position,
+    double velocity, {
+    Tolerance tolerance: Tolerance.defaultTolerance,
+  })
       : _drag = drag,
         _dragLog = math.log(drag),
         _x = position,
@@ -107,8 +108,8 @@ class BoundedFrictionSimulation extends FrictionSimulation {
   /// the maximum value for the position. The minimum and maximum values must be
   /// in the same units as the initial position, and the initial position must
   /// be within the given range.
-  BoundedFrictionSimulation(double drag, double position, double velocity,
-      this._minX, this._maxX)
+  BoundedFrictionSimulation(
+      double drag, double position, double velocity, this._minX, this._maxX)
       : super(drag, position, velocity);
 
   final double _minX;

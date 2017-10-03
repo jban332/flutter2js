@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:collection';
-
 import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -13,15 +11,15 @@ import 'framework.dart';
 
 export 'package:flutter/rendering.dart'
     show
-    FixedColumnWidth,
-    FlexColumnWidth,
-    FractionColumnWidth,
-    IntrinsicColumnWidth,
-    MaxColumnWidth,
-    MinColumnWidth,
-    TableBorder,
-    TableCellVerticalAlignment,
-    TableColumnWidth;
+        FixedColumnWidth,
+        FlexColumnWidth,
+        FractionColumnWidth,
+        IntrinsicColumnWidth,
+        MaxColumnWidth,
+        MinColumnWidth,
+        TableBorder,
+        TableCellVerticalAlignment,
+        TableColumnWidth;
 
 /// A horizontal group of cells in a [Table].
 ///
@@ -69,13 +67,6 @@ class TableRow {
   }
 }
 
-class _TableElementRow {
-  const _TableElementRow({this.key, this.children});
-
-  final LocalKey key;
-  final List<Element> children;
-}
-
 /// A widget that uses the table layout algorithm for its children.
 ///
 /// If you only have one row, the [Row] widget is more appropriate. If you only
@@ -87,18 +78,19 @@ class _TableElementRow {
 ///
 /// For more details about the table layout algorithm, see [RenderTable].
 /// To control the alignment of children, see [TableCell].
-class Table extends RenderObjectWidget implements flur.UIPluginWidget {
+class Table extends flur.StatelessUIPluginWidget {
   /// Creates a table.
   ///
   /// The [children], [defaultColumnWidth], and [defaultVerticalAlignment]
   /// arguments must not be null.
-  Table({Key key,
-    this.children: const <TableRow>[],
-    this.columnWidths,
-    this.defaultColumnWidth: const FlexColumnWidth(1.0),
-    this.border,
-    this.defaultVerticalAlignment: TableCellVerticalAlignment.top,
-    this.textBaseline})
+  Table(
+      {Key key,
+      this.children: const <TableRow>[],
+      this.columnWidths,
+      this.defaultColumnWidth: const FlexColumnWidth(1.0),
+      this.border,
+      this.defaultVerticalAlignment: TableCellVerticalAlignment.top,
+      this.textBaseline})
       : super(key: key) {
     assert(() {
       final List<Widget> flatChildren = children
@@ -107,9 +99,9 @@ class Table extends RenderObjectWidget implements flur.UIPluginWidget {
       if (debugChildrenHaveDuplicateKeys(this, flatChildren)) {
         throw new FlutterError(
             'Two or more cells in this Table contain widgets with the same key.\n'
-                'Every widget child of every TableRow in a Table must have different keys. The cells of a Table are '
-                'flattened out for processing, so separate cells cannot have duplicate keys even if they are in '
-                'different rows.');
+            'Every widget child of every TableRow in a Table must have different keys. The cells of a Table are '
+            'flattened out for processing, so separate cells cannot have duplicate keys even if they are in '
+            'different rows.');
       }
       return true;
     });
@@ -152,135 +144,8 @@ class Table extends RenderObjectWidget implements flur.UIPluginWidget {
   final TextBaseline textBaseline;
 
   @override
-  _TableElement createElement() => new _TableElement(this);
-
-  @override
   Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
     return plugin.buildTable(context, this);
-  }
-}
-
-class _TableElement extends RenderObjectElement {
-  _TableElement(Table widget) : super(widget);
-
-  @override
-  Table get widget => super.widget;
-
-  // This class ignores the child's slot entirely.
-  // Instead of doing incremental updates to the child list, it replaces the entire list each frame.
-
-  List<_TableElementRow> _children = const <_TableElementRow>[];
-
-  bool _debugWillReattachChildren = false;
-
-  @override
-  void mount(Element parent, dynamic newSlot) {
-    super.mount(parent, newSlot);
-    assert(!_debugWillReattachChildren);
-    assert(() {
-      _debugWillReattachChildren = true;
-      return true;
-    });
-    _children = widget.children.map((TableRow row) {
-      return new _TableElementRow(
-          key: row.key,
-          children: row.children.map<Element>((Widget child) {
-            assert(child != null);
-            return inflateWidget(child, null);
-          }).toList(growable: false));
-    }).toList(growable: false);
-    assert(() {
-      _debugWillReattachChildren = false;
-      return true;
-    });
-  }
-
-  @override
-  void insertChildRenderObject(RenderObject child, Element slot) {
-    assert(_debugWillReattachChildren);
-    renderObject.setupParentData(child);
-  }
-
-  @override
-  void moveChildRenderObject(RenderObject child, dynamic slot) {
-    assert(_debugWillReattachChildren);
-  }
-
-  @override
-  void removeChildRenderObject(RenderObject child) {
-    assert(() {
-      if (_debugWillReattachChildren) return true;
-      for (Element forgottenChild in _forgottenChildren) {
-        if (forgottenChild.renderObject == child) return true;
-      }
-      return false;
-    });
-  }
-
-  final Set<Element> _forgottenChildren = new HashSet<Element>();
-
-  @override
-  void update(Table newWidget) {
-    assert(!_debugWillReattachChildren);
-    assert(() {
-      _debugWillReattachChildren = true;
-      return true;
-    });
-    final Map<LocalKey, List<Element>> oldKeyedRows =
-    new Map<LocalKey, List<Element>>.fromIterable(
-        _children.where((_TableElementRow row) => row.key != null),
-        key: (_TableElementRow row) => row.key,
-        value: (_TableElementRow row) => row.children);
-    final Iterator<_TableElementRow> oldUnkeyedRows =
-        _children
-            .where((_TableElementRow row) => row.key == null)
-            .iterator;
-    final List<_TableElementRow> newChildren = <_TableElementRow>[];
-    final Set<List<Element>> taken = new Set<List<Element>>();
-    for (TableRow row in newWidget.children) {
-      List<Element> oldChildren;
-      if (row.key != null && oldKeyedRows.containsKey(row.key)) {
-        oldChildren = oldKeyedRows[row.key];
-        taken.add(oldChildren);
-      } else if (row.key == null && oldUnkeyedRows.moveNext()) {
-        oldChildren = oldUnkeyedRows.current.children;
-      } else {
-        oldChildren = const <Element>[];
-      }
-      newChildren.add(new _TableElementRow(
-          key: row.key,
-          children: updateChildren(oldChildren, row.children,
-              forgottenChildren: _forgottenChildren)));
-    }
-    while (oldUnkeyedRows.moveNext())
-      updateChildren(oldUnkeyedRows.current.children, const <Widget>[],
-          forgottenChildren: _forgottenChildren);
-    for (List<Element> oldChildren in oldKeyedRows.values
-        .where((List<Element> list) => !taken.contains(list)))
-      updateChildren(oldChildren, const <Widget>[],
-          forgottenChildren: _forgottenChildren);
-    assert(() {
-      _debugWillReattachChildren = false;
-      return true;
-    });
-    _children = newChildren;
-    _forgottenChildren.clear();
-    super.update(newWidget);
-    assert(widget == newWidget);
-  }
-
-  @override
-  void visitChildren(ElementVisitor visitor) {
-    for (Element child
-    in _children.expand((_TableElementRow row) => row.children)) {
-      if (!_forgottenChildren.contains(child)) visitor(child);
-    }
-  }
-
-  @override
-  bool forgetChild(Element child) {
-    _forgottenChildren.add(child);
-    return true;
   }
 }
 
@@ -290,10 +155,12 @@ class _TableElement extends RenderObjectElement {
 /// the [TableCell] widget to its enclosing [Table] must contain only
 /// [TableRow]s, [StatelessWidget]s, or [StatefulWidget]s (not
 /// other kinds of widgets, like [RenderObjectWidget]s).
-class TableCell extends ParentDataWidget<Table> {
+class TableCell extends flur.SingleChildUIPluginWidget {
+  final Widget child;
+
   /// Creates a widget that controls how a child of a [Table] is aligned.
-  const TableCell({Key key, this.verticalAlignment, @required Widget child})
-      : super(key: key, child: child);
+  const TableCell({Key key, this.verticalAlignment, @required this.child})
+      : super(key: key);
 
   /// How this cell is aligned vertically.
   final TableCellVerticalAlignment verticalAlignment;
