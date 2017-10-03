@@ -1,4 +1,4 @@
-# What is this?
+# Flur [![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Flur is an experiment to make [Flutter](https://flutter.io) apps run in browser.
 
@@ -20,14 +20,14 @@ Most Flutter widgets and features do not work adequately.
   * jban332 <jban332@gmail.com>
   * Contributor? Add your name/email here.
 
-# How it works?
+## How it works?
 We modified _"package:flutter"_ so that fundamental built-in widgets (_Text_, _TextInput_, _CupertinoTabBar_, etc.) delegate building to an instance of _UIPlugin_.
 
 The framework contains _HtmlElementWidget_, which allows you to render HTML elements. In Flur, it will render a HTML element. Outside Flur, it will render an error message.
 
 When you compile your Flutter app to Javascript, you just tell package manager to use the Flur version of Flutter.
 
-## UIPlugin
+### UIPlugin
 By overriding methods of [UIPlugin](https://github.com/jban332/flur/blob/master/packages/flur/lib/src/ui_plugin.dart), we can define how built-in widgets are rendered.
 
 For example:
@@ -50,8 +50,8 @@ Flur comes with the following _UIPlugin_ implementations:
   * [HtmlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/src/html_ui_plugin.dart) - Base class for HTML-based user interfaces.
   * [MdlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/mdl.dart) - Uses [Material Design Lite](https://getmdl.io/) CSS framework.
 
-# Useful information for contributors
-## Package "flutter"
+## Useful information for contributors
+### Package "flutter"
 * The package contains nearly all of [original flutter package](https://github.com/flutter/flutter/tree/master/packages/flutter).
 * We also had to add a modified version of [dart:ui](https://github.com/flutter/engine/tree/master/lib/ui) package.
 * A short description of modifications:
@@ -62,14 +62,21 @@ Flur comes with the following _UIPlugin_ implementations:
   * Removed source code dealing with things that Flur doesn't plan to support.
   * Removed usage of language features not supported by _dart2js_ ([assertions in initializers](https://github.com/dart-lang/sdk/issues/30968) and [some mixins](https://github.com/dart-lang/sdk/issues/23770)).
 
-## Package "flur_html"
+### Package "flur_html"
 * _HtmlRenderTreePlugin_ re-uses Flutter rendering tree implementation. Every _RenderObject_ must be a _DomRenderObject_.
 * _HtmlUIPlugin_ is missing answers to many important questions such as:
   * What is the best way to implement Flutter layout with CSS?
   * What is the best way to support "parent data" widgets?
 
-# Getting started
-## 1.Create your project files
+## Getting started
+### 1.Get dependencies
+* Mandatory:
+  * Install Dart SDK
+    * See [instructions at dartlang.org](https://www.dartlang.org/install).
+* Recommended:
+  * Install [Dart plugin for your IDE](https://www.dartlang.org/tools).
+
+### 2.Create your project files
 Create an empty directory for your browser app. For example, `"hello_browser"`.
 
 You need to create three files:
@@ -77,7 +84,7 @@ You need to create three files:
   * /web/main.dart
   * /web/index.html
 
-### pubspec.yaml
+#### pubspec.yaml
 ```yaml
 name: hello_browser
 
@@ -110,12 +117,15 @@ transformers:
     checked: true
 ```
 
-Now we can ask Pub package manager to download all required packages. Open a terminal and run:
+#### Run 'pub get'
+Now we can ask Pub package manager to download all required packages.
+
+Open a terminal and run:
 ```
 $ pub get
 ```
 
-### web/main.dart
+#### web/main.dart
 ```dart
 // Import your previously created Flutter app
 import 'package:hello_flutter/main.dart' as app;
@@ -135,7 +145,7 @@ void main() {
 }
 ```
 
-### web/index.html
+#### web/index.html
 ```html
 <html>
 <head>
@@ -154,14 +164,14 @@ void main() {
 
 ```
 
-## 2.Run your app
-In command line, run:
+### 3.Run your app
+Open a terminal and run:
 ```
 $ pub serve
 ```
 
-## 3.Compile your app
-In command line, run:
+### 4.Compile your app
+Open a terminal and run:
 ```
 $ pub build
 ```
