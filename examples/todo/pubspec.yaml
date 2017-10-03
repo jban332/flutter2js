@@ -7,21 +7,16 @@ environment:
 
 dependencies:
   flur: any
-  flur_react: any
-  flutter:
-    git:
-      url: "git://github.com/jban332/flur.git"
-      path: "packages/flutter"
+  flur_html: any
+  flutter: any
 
 dependency_overrides:
   flur:
-    path: "../../packages/flur"
-  flur_react:
-    path: "../../packages/flur_react"
+    path: '../../packages/flur'
   flur_html:
-    path: "../../packages/flur_html"
+    path: '../../packages/flur_html'
   flutter:
-    path: "../../packages/flutter"
+    path: '../../packages/flutter'
 
 dev_dependencies:
   browser: ^0.10.0

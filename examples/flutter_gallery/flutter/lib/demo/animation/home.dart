@@ -59,17 +59,6 @@ class _RenderStatusBarPaddingSliver extends RenderSliver {
     _scrollFactor = value;
     markNeedsLayout();
   }
-
-  @override
-  void performLayout() {
-    final double height = (maxHeight - constraints.scrollOffset / scrollFactor)
-        .clamp(0.0, maxHeight);
-    geometry = new SliverGeometry(
-      paintExtent: math.min(height, constraints.remainingPaintExtent),
-      scrollExtent: maxHeight,
-      maxPaintExtent: maxHeight,
-    );
-  }
 }
 
 class _StatusBarPaddingSliver extends SingleChildRenderObjectWidget {

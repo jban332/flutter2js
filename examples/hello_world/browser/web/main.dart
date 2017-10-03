@@ -1,5 +1,4 @@
 import 'package:hello_world/main.dart' as app;
-import 'package:flur_react/react.dart';
 import 'package:flur_html/flur.dart';
 import 'package:flur_html/mdl.dart';
 

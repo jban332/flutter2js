@@ -1,13 +1,9 @@
 name: hello_world
 
 dependencies:
-  flutter:
-    sdk: flutter
+  flutter: any
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   args: 0.13.7 # TRANSITIVE DEPENDENCY
   async: 1.13.3 # TRANSITIVE DEPENDENCY
   barback: 0.15.2+11 # TRANSITIVE DEPENDENCY
@@ -62,6 +58,10 @@ dev_dependencies:
   watcher: 0.9.7+4 # TRANSITIVE DEPENDENCY
   web_socket_channel: 1.0.5 # TRANSITIVE DEPENDENCY
   yaml: 2.1.12 # TRANSITIVE DEPENDENCY
+
+dependency_overrides:
+  flutter:
+    path: "../../../packages/flutter"
 
 flutter:
   uses-material-design: true

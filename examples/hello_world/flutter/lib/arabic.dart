@@ -4,4 +4,6 @@
 
 import 'package:flutter/widgets.dart';
 
-void main() => runApp(const Center(child: const Text('برنامج أهلا بالعالم', textDirection: TextDirection.rtl)));
+void main() => runApp(const Center(
+    child:
+        const Text('برنامج أهلا بالعالم', textDirection: TextDirection.rtl)));

@@ -87,7 +87,8 @@ class BottomNavigationDemo extends StatefulWidget {
   _BottomNavigationDemoState createState() => new _BottomNavigationDemoState();
 }
 
-class _BottomNavigationDemoState extends TickerProviderStateMixin<BottomNavigationDemo>  {
+class _BottomNavigationDemoState
+    extends TickerProviderStateMixin<BottomNavigationDemo> {
   int _currentIndex = 0;
   BottomNavigationBarType _type = BottomNavigationBarType.shifting;
   List<NavigationIconView> _navigationViews;

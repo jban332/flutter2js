@@ -87,13 +87,17 @@ dependencies:
     # Relative path to your previously created Flutter app
     path: "../hello_flutter"
   
+  flur_html: "any"
+
+dependency_overrides:
+  flur:
+    git:
+      url: "git://github.com/jban332/flur.git"
+      path: "packages/flur"
   flur_html:
     git:
       url: "git://github.com/jban332/flur.git"
-      path: "packages/flur_html"
-
-dependency_overrides:
-  
+      path: "packages/flur_html"  
   flutter:
     git:
       url: "git://github.com/jban332/flur.git"

@@ -28,8 +28,8 @@ class ScrollableTabsDemo extends StatefulWidget {
   ScrollableTabsDemoState createState() => new ScrollableTabsDemoState();
 }
 
-class ScrollableTabsDemoState extends SingleTickerProviderStateMixin<ScrollableTabsDemo>
-     {
+class ScrollableTabsDemoState
+    extends SingleTickerProviderStateMixin<ScrollableTabsDemo> {
   TabController _controller;
   TabsDemoStyle _demoStyle = TabsDemoStyle.iconsAndText;
 

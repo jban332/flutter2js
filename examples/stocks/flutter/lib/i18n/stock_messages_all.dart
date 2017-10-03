@@ -15,6 +15,7 @@ Map<String, LibraryLoader> _deferredLibraries = {
   'en': () => new Future.value(null),
   'es': () => new Future.value(null),
 };
+
 /// User programs should call this before using [localeName] for messages.
 Future initializeMessages(String localeName) {
   var lib = _deferredLibraries[Intl.canonicalizedLocale(localeName)];
@@ -37,8 +38,8 @@ MessageLookupByLibrary _findExact(localeName) {
 }
 
 MessageLookupByLibrary _findGeneratedMessagesFor(locale) {
-  var actualLocale = Intl.verifiedLocale(locale, _messagesExistFor,
-      onFailure: (_) => null);
+  var actualLocale =
+      Intl.verifiedLocale(locale, _messagesExistFor, onFailure: (_) => null);
   if (actualLocale == null) return null;
   return _findExact(actualLocale);
 }

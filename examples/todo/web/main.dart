@@ -1,6 +1,4 @@
 import 'package:flur/flur.dart';
-import 'package:flur/js.dart';
-// import 'package:flur_react/react.dart';
 import 'package:flur_html/flur.dart';
 import 'package:flur_html/mdl.dart';
 import 'package:flutter/material.dart';
