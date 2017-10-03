@@ -50,19 +50,23 @@ Flur comes with the following _UIPlugin_ implementations:
   * [HtmlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/src/html_ui_plugin.dart) - Base class for HTML-based user interfaces.
   * [MdlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/mdl.dart) - Uses [Material Design Lite](https://getmdl.io/) CSS framework.
 
-## Technical details
-* _flutter_
-    * Contains most of [original package:flutter](https://github.com/flutter/flutter/tree/master/packages/flutter).
-    * We also had to add a modified version of [dart:ui](https://github.com/flutter/engine/tree/master/lib/ui) package.
-    * A short description of modifications:
-      * Nearly all Flutter SDK widgets delegate implementation to Flur.
-      * Flutter SDK methods such as _showDialog(...)_ or _HapticFeedback.vibrate()_ delegate implementation to Flur.
-      * Some methods/constructors in _dart:ui_ such as _new Canvas()_ delegate implementation to Flur or expose
-        previously unavailable fields.
-      * Removed source code dealing with things that Flur doesn't plan to support.
-    * We also had to remove usage of Flutter-only language features ([assertions in initializers](https://github.com/dart-lang/sdk/issues/30968) and [some mixins](https://github.com/dart-lang/sdk/issues/23770)).
-* _flur_html_
-  * Re-uses Flutter rendering tree implementation. Every _RenderObject_ must be a _DomRenderObject_. 
+# Useful information for contributors
+## Package "flutter"
+* The package contains nearly all of [original flutter package](https://github.com/flutter/flutter/tree/master/packages/flutter).
+* We also had to add a modified version of [dart:ui](https://github.com/flutter/engine/tree/master/lib/ui) package.
+* A short description of modifications:
+  * Nearly all widgets delegate implementation to Flur.
+  * Methods such as _showDialog(...)_ or _HapticFeedback.vibrate()_ delegate implementation to Flur.
+  * Some classes in _dart:ui_ such as _Canvas_ delegate implementation to Flur or expose
+    previously private/external fields.
+  * Removed source code dealing with things that Flur doesn't plan to support.
+  * Removed usage of language features not supported by _dart2js_ ([assertions in initializers](https://github.com/dart-lang/sdk/issues/30968) and [some mixins](https://github.com/dart-lang/sdk/issues/23770)).
+
+## Package "flur_html"
+* _HtmlRenderTreePlugin_ re-uses Flutter rendering tree implementation. Every _RenderObject_ must be a _DomRenderObject_.
+* _HtmlUIPlugin_ is missing answers to many important questions such as:
+  * What is the best way to implement Flutter layout with CSS?
+  * What is the best way to support "parent data" widgets?
 
 # Getting started
 ## 1.Create your project files
