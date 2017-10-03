@@ -34,7 +34,7 @@ Flur comes with the following _UIPlugin_ implementations:
 
 ## Technical details
 * _flutter_
-    * Contains most of [package:flutter](https://github.com/flutter/flutter/tree/master/packages/flutter).
+    * Contains most of [original package:flutter](https://github.com/flutter/flutter/tree/master/packages/flutter).
     * We also had to add a modified version of [dart:ui](https://github.com/flutter/engine/tree/master/lib/ui) package.
     * A short description of modifications:
       * Nearly all Flutter SDK widgets delegate implementation to Flur.
@@ -42,12 +42,12 @@ Flur comes with the following _UIPlugin_ implementations:
       * Some methods/constructors in _dart:ui_ such as _new Canvas()_ delegate implementation to Flur or expose
         previously unavailable fields.
       * Removed source code dealing with things that Flur doesn't plan to support.
-    * We also had to remove usage of Flutter-only language features ([assertions in initializers](https://github.com/dart-lang/sdk/issues/27141) and [some
-      mixins](https://github.com/dart-lang/sdk/issues/15101)).
-* _flur_html_ 
+    * We also had to remove usage of Flutter-only language features ([assertions in initializers](https://github.com/dart-lang/sdk/issues/30968) and [some mixins](https://github.com/dart-lang/sdk/issues/23770)).
+* _flur_html_
   * Re-uses Flutter rendering tree implementation. Every _RenderObject_ must be a _DomRenderObject_. 
 
 # Getting started
+## 1.Create your project files
 Create an empty directory for your browser app. For example, `"hello_browser"`.
 
 You need to create three files:
@@ -55,9 +55,7 @@ You need to create three files:
   * /web/main.dart
   * /web/index.html
 
-## pubspec.yaml
-Create `"pubspec.yaml"`:
-
+### pubspec.yaml
 ```yaml
 name: hello_browser
 
@@ -92,9 +90,7 @@ Now we can ask Pub package manager to download all required packages. Open a ter
 $ pub get
 ```
 
-## main.dart
-In your project directory, create `"web/main.dart"`:
-
+### web/main.dart
 ```dart
 // Import your previously created Flutter app
 import 'package:hello_flutter/main.dart' as app;
@@ -114,9 +110,7 @@ void main() {
 }
 ```
 
-## index.html
-In your project directory, create `"web/index.html"`:
-
+### web/index.html
 ```html
 <html>
 <head>
@@ -135,6 +129,5 @@ In your project directory, create `"web/index.html"`:
 
 ```
 
-Now you can test your web app:
-
+## 2.Test your app
 ```$ pub serve```
