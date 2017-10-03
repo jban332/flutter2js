@@ -23,14 +23,32 @@ Most Flutter widgets and features do not work adequately.
 # How it works?
 We modified _"package:flutter"_ so that fundamental built-in widgets (_Text_, _TextInput_, _CupertinoTabBar_, etc.) delegate building to an instance of _UIPlugin_.
 
+The framework contains _HtmlElementWidget_, which allows you to render HTML elements. In Flur, it will render a HTML element. Outside Flur, it will render an error message.
+
 When you compile your Flutter app to Javascript, you just tell package manager to use the Flur version of Flutter.
 
+## UIPlugin
 By overriding methods of [UIPlugin](https://github.com/jban332/flur/blob/master/packages/flur/lib/src/ui_plugin.dart), we can define how built-in widgets are rendered.
-The framework contains _HtmlElementWidget_, which allows you to render HTML elements.
+
+For example:
+
+```dart
+import 'package:flutter/widgets.dart';
+import 'package:flur/flur.dart' as flur;
+
+class MyUIPlugin extends flur.UIPlugin {
+  @override
+  Widget buildCheckbox(BuildContext context, Checkbox widget) {
+    return new HtmlReactWidget("input", props:{
+      "type": "checkbox",
+    });
+  }
+}
+```
 
 Flur comes with the following _UIPlugin_ implementations:
-  * _HtmlUIPlugin_ - Base class for HTML-based user interfaces.
-  * _MdlUIPlugin_ - Uses [Material Design Lite](https://getmdl.io/) CSS framework.
+  * [HtmlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/src/html_ui_plugin.dart) - Base class for HTML-based user interfaces.
+  * [MdlUIPlugin](https://github.com/jban332/flur/blob/master/packages/flur_html/lib/mdl.dart) - Uses [Material Design Lite](https://getmdl.io/) CSS framework.
 
 ## Technical details
 * _flutter_
@@ -83,6 +101,9 @@ dev_dependencies:
 
 transformers:
 - dart_to_js_script_rewriter
+- $dart2js:
+    # Checked mode makes debugging a lot easier
+    checked: true
 ```
 
 Now we can ask Pub package manager to download all required packages. Open a terminal and run:
@@ -129,5 +150,14 @@ void main() {
 
 ```
 
-## 2.Test your app
-```$ pub serve```
+## 2.Run your app
+In command line, run:
+```
+$ pub serve
+```
+
+## 3.Compile your app
+In command line, run:
+```
+$ pub build
+```
