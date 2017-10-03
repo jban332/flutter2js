@@ -39,7 +39,7 @@ import 'package:flur/flur.dart' as flur;
 class MyUIPlugin extends flur.UIPlugin {
   @override
   Widget buildCheckbox(BuildContext context, Checkbox widget) {
-    return new HtmlReactWidget("input", props:{
+    return new HtmlElementWidget("input", attributes:{
       "type": "checkbox",
     });
   }
