@@ -27,10 +27,15 @@ abstract class EdgeInsetsGeometry {
   const EdgeInsetsGeometry();
 
   double get _bottom;
+
   double get _end;
+
   double get _left;
+
   double get _right;
+
   double get _start;
+
   double get _top;
 
   /// Whether every dimension is non-negative.

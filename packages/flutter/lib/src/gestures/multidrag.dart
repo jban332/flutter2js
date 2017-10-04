@@ -49,6 +49,7 @@ abstract class MultiDragPointerState {
   Duration _lastPendingEventTimestamp;
 
   GestureArenaEntry _arenaEntry;
+
   void _setArenaEntry(GestureArenaEntry entry) {
     assert(_arenaEntry == null);
     assert(pendingDelta != null);

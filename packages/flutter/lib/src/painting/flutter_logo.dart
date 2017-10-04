@@ -9,11 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/ui.dart' as ui show Gradient, TextBox, lerpDouble;
 
+import 'alignment.dart';
 import 'basic_types.dart';
 import 'box_fit.dart';
 import 'decoration.dart';
 import 'edge_insets.dart';
-import 'alignment.dart';
 import 'text_painter.dart';
 import 'text_span.dart';
 import 'text_style.dart';
@@ -51,9 +51,8 @@ class FlutterLogoDecoration extends Decoration {
   })
       : _position = style == FlutterLogoStyle.markOnly
             ? 0.0
-            : style == FlutterLogoStyle.horizontal
-                ? 1.0
-                : -1.0, // ignore: CONST_EVAL_TYPE_BOOL_NUM_STRING
+            : style == FlutterLogoStyle.horizontal ? 1.0 : -1.0,
+        // ignore: CONST_EVAL_TYPE_BOOL_NUM_STRING
         // (see https://github.com/dart-lang/sdk/issues/26980 for details about that ignore statement)
         _opacity = 1.0;
 
@@ -243,9 +242,8 @@ class _FlutterLogoPainter extends BoxPainter {
         style: new TextStyle(
           color: _config.textColor,
           fontFamily: 'Roboto',
-          fontSize: 100.0 *
-              350.0 /
-              247.0, // 247 is the height of the F when the fontSize is 350, assuming device pixel ratio 1.0
+          fontSize: 100.0 * 350.0 / 247.0,
+          // 247 is the height of the F when the fontSize is 350, assuming device pixel ratio 1.0
           fontWeight: FontWeight.w300,
           textBaseline: TextBaseline.alphabetic,
         ),
@@ -413,8 +411,8 @@ class _FlutterLogoPainter extends BoxPainter {
     final FittedSizes fittedSize =
         applyBoxFit(BoxFit.contain, logoSize, canvasSize);
     assert(fittedSize.source == logoSize);
-    final Rect rect = Alignment.center
-        .inscribe(fittedSize.destination, offset & canvasSize);
+    final Rect rect =
+        Alignment.center.inscribe(fittedSize.destination, offset & canvasSize);
     final double centerSquareHeight = canvasSize.shortestSide;
     final Rect centerSquare = new Rect.fromLTWH(
         offset.dx + (canvasSize.width - centerSquareHeight) / 2.0,

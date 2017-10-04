@@ -99,7 +99,9 @@ abstract class GestureRecognizer extends GestureArenaMember
           final String prefix =
               debugPrintGestureArenaDiagnostics ? ' ' * 19 + '❙ ' : '';
           debugPrint(
-              '$prefix$this calling $name callback.${ report?.isNotEmpty == true ? " $report" : "" }');
+              '$prefix$this calling $name callback.${ report?.isNotEmpty == true
+                  ? " $report"
+                  : "" }');
         }
         return true;
       }());

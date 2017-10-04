@@ -126,8 +126,7 @@ abstract class BindingBase {
               await reassembleApplication();
             }
             return <String, String>{
-              'value': defaultTargetPlatform
-                  .toString(),
+              'value': defaultTargetPlatform.toString(),
             };
           });
       return true;

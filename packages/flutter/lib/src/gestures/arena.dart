@@ -268,9 +268,9 @@ class GestureArenaManager {
         final int count = state != null ? state.members.length : null;
         final String s = count != 1 ? 's' : '';
         debugPrint('Gesture arena ${pointer.toString().padRight(
-                4)} ❙ $message${ count != null
-                ? " with $count member$s."
-                : ""}');
+            4)} ❙ $message${ count != null
+            ? " with $count member$s."
+            : ""}');
       }
       return true;
     });

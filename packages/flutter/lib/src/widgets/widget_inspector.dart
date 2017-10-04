@@ -67,6 +67,7 @@ class InspectorSelection {
   /// Tools may wish to iterate through the list of candidates.
   List<RenderObject> get candidates => _candidates;
   List<RenderObject> _candidates = <RenderObject>[];
+
   set candidates(List<RenderObject> value) {
     _candidates = value;
     index = 0;

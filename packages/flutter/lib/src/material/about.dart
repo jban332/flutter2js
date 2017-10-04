@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -441,8 +440,7 @@ class _LicensePageState extends State<LicensePage> {
 
 String _defaultApplicationName(BuildContext context) {
   final Title ancestorTitle = context.ancestorWidgetOfExactType(Title);
-  return ancestorTitle?.title ??
-      Platform.resolvedExecutable.split(Platform.pathSeparator).last;
+  return ancestorTitle?.title ?? "App";
 }
 
 String _defaultApplicationVersion(BuildContext context) {

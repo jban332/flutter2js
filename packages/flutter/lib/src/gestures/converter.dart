@@ -12,6 +12,7 @@ class _PointerState {
   int get pointer => _pointer; // The identifier used in PointerEvent objects.
   int _pointer;
   static int _pointerCount = 0;
+
   void startNewPointer() {
     _pointerCount += 1;
     _pointer = _pointerCount;
@@ -19,6 +20,7 @@ class _PointerState {
 
   bool get down => _down;
   bool _down = false;
+
   void setDown() {
     assert(!_down);
     _down = true;

@@ -393,9 +393,8 @@ class DataTable extends StatelessWidget {
     label = new Container(
         padding: padding,
         height: _kHeadingRowHeight,
-        alignment: numeric
-            ? Alignment.centerRight
-            : AlignmentDirectional.centerStart,
+        alignment:
+            numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
         child: new AnimatedDefaultTextStyle(
             style: new TextStyle(
                 // TODO(ianh): font family should be Roboto; see https://github.com/flutter/flutter/issues/3116
@@ -442,9 +441,8 @@ class DataTable extends StatelessWidget {
     label = new Container(
         padding: padding,
         height: _kDataRowHeight,
-        alignment: numeric
-            ? Alignment.centerRight
-            : AlignmentDirectional.centerStart,
+        alignment:
+            numeric ? Alignment.centerRight : AlignmentDirectional.centerStart,
         child: new DefaultTextStyle(
             style: new TextStyle(
                 // TODO(ianh): font family should be Roboto; see https://github.com/flutter/flutter/issues/3116

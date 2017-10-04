@@ -96,7 +96,8 @@ class Border extends ShapeBorder {
     double width: 1.0,
     BorderStyle style: BorderStyle.solid,
   }) {
-    final BorderSide side = new BorderSide(color: color, width: width, style: style);
+    final BorderSide side =
+        new BorderSide(color: color, width: width, style: style);
     return new Border(top: side, right: side, bottom: side, left: side);
   }
 
@@ -136,7 +137,8 @@ class Border extends ShapeBorder {
 
   @override
   EdgeInsetsGeometry get dimensions {
-    return new EdgeInsets.fromLTRB(left.width, top.width, right.width, bottom.width);
+    return new EdgeInsets.fromLTRB(
+        left.width, top.width, right.width, bottom.width);
   }
 
   /// Whether all four sides of the border are identical. Uniform borders are
@@ -150,28 +152,24 @@ class Border extends ShapeBorder {
     final Color topColor = top.color;
     if (right.color != topColor ||
         bottom.color != topColor ||
-        left.color != topColor)
-      return false;
+        left.color != topColor) return false;
 
     final double topWidth = top.width;
     if (right.width != topWidth ||
         bottom.width != topWidth ||
-        left.width != topWidth)
-      return false;
+        left.width != topWidth) return false;
 
     final BorderStyle topStyle = top.style;
     if (right.style != topStyle ||
         bottom.style != topStyle ||
-        left.style != topStyle)
-      return false;
+        left.style != topStyle) return false;
 
     return true;
   }
 
   @override
-  Border add(ShapeBorder other, { bool reversed: false }) {
-    if (other is! Border)
-      return null;
+  Border add(ShapeBorder other, {bool reversed: false}) {
+    if (other is! Border) return null;
     final Border typedOther = other;
     if (BorderSide.canMerge(top, typedOther.top) &&
         BorderSide.canMerge(right, typedOther.right) &&
@@ -202,8 +200,7 @@ class Border extends ShapeBorder {
   /// Otherwise, it defers to [ShapeBorder.lerpFrom].
   @override
   ShapeBorder lerpFrom(ShapeBorder a, double t) {
-    if (a is Border)
-      return Border.lerp(a, this, t);
+    if (a is Border) return Border.lerp(a, this, t);
     return super.lerpFrom(a, t);
   }
 
@@ -216,8 +213,7 @@ class Border extends ShapeBorder {
   /// Otherwise, it defers to [ShapeBorder.lerpTo].
   @override
   ShapeBorder lerpTo(ShapeBorder b, double t) {
-    if (b is Border)
-      return Border.lerp(this, b, t);
+    if (b is Border) return Border.lerp(this, b, t);
     return super.lerpTo(b, t);
   }
 
@@ -226,30 +222,25 @@ class Border extends ShapeBorder {
   /// If a border is null, it is treated as having four [BorderSide.none]
   /// borders.
   static Border lerp(Border a, Border b, double t) {
-    if (a == null && b == null)
-      return null;
-    if (a == null)
-      return b.scale(t);
-    if (b == null)
-      return a.scale(1.0 - t);
+    if (a == null && b == null) return null;
+    if (a == null) return b.scale(t);
+    if (b == null) return a.scale(1.0 - t);
     return new Border(
         top: BorderSide.lerp(a.top, b.top, t),
         right: BorderSide.lerp(a.right, b.right, t),
         bottom: BorderSide.lerp(a.bottom, b.bottom, t),
-        left: BorderSide.lerp(a.left, b.left, t)
-    );
+        left: BorderSide.lerp(a.left, b.left, t));
   }
 
   @override
-  Path getInnerPath(Rect rect, { TextDirection textDirection }) {
+  Path getInnerPath(Rect rect, {TextDirection textDirection}) {
     return new Path()
       ..addRect(dimensions.resolve(textDirection).deflateRect(rect));
   }
 
   @override
-  Path getOuterPath(Rect rect, { TextDirection textDirection }) {
-    return new Path()
-      ..addRect(rect);
+  Path getOuterPath(Rect rect, {TextDirection textDirection}) {
+    return new Path()..addRect(rect);
   }
 
   /// Paints the border within the given [Rect] on the given [Canvas].
@@ -272,7 +263,9 @@ class Border extends ShapeBorder {
   ///
   ///  * [paintBorder], which is used if the border is not uniform.
   @override
-  void paint(Canvas canvas, Rect rect, {
+  void paint(
+    Canvas canvas,
+    Rect rect, {
     TextDirection textDirection,
     BoxShape shape: BoxShape.rectangle,
     BorderRadius borderRadius,
@@ -283,7 +276,8 @@ class Border extends ShapeBorder {
           return;
         case BorderStyle.solid:
           if (shape == BoxShape.circle) {
-            assert(borderRadius == null, 'A borderRadius can only be given for rectangular boxes.');
+            assert(borderRadius == null,
+                'A borderRadius can only be given for rectangular boxes.');
             _paintUniformBorderWithCircle(canvas, rect);
             return;
           }
@@ -296,18 +290,20 @@ class Border extends ShapeBorder {
       }
     }
 
-    assert(borderRadius == null, 'A borderRadius can only be given for uniform borders.');
-    assert(shape == BoxShape.rectangle, 'A border can only be drawn as a circle if it is uniform.');
+    assert(borderRadius == null,
+        'A borderRadius can only be given for uniform borders.');
+    assert(shape == BoxShape.rectangle,
+        'A border can only be drawn as a circle if it is uniform.');
 
-    paintBorder(canvas, rect, top: top, right: right, bottom: bottom, left: left);
+    paintBorder(canvas, rect,
+        top: top, right: right, bottom: bottom, left: left);
   }
 
-  void _paintUniformBorderWithRadius(Canvas canvas, Rect rect,
-      BorderRadius borderRadius) {
+  void _paintUniformBorderWithRadius(
+      Canvas canvas, Rect rect, BorderRadius borderRadius) {
     assert(isUniform);
     assert(top.style != BorderStyle.none);
-    final Paint paint = new Paint()
-      ..color = top.color;
+    final Paint paint = new Paint()..color = top.color;
     final RRect outer = borderRadius.toRRect(rect);
     final double width = top.width;
     if (width == 0.0) {
@@ -340,10 +336,8 @@ class Border extends ShapeBorder {
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final Border typedOther = other;
     return top == typedOther.top &&
         right == typedOther.right &&
@@ -356,8 +350,7 @@ class Border extends ShapeBorder {
 
   @override
   String toString() {
-    if (isUniform)
-      return 'Border.all($top)';
+    if (isUniform) return 'Border.all($top)';
     return 'Border($top, $right, $bottom, $left)';
   }
 }

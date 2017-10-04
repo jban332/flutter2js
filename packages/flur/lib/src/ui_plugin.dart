@@ -56,7 +56,8 @@ abstract class UIPlugin {
 
   Widget buildCheckbox(BuildContext context, Checkbox widget);
 
-  Widget buildCheckedPopupMenuItem(BuildContext context, CheckedPopupMenuItem widget) {
+  Widget buildCheckedPopupMenuItem(
+      BuildContext context, CheckedPopupMenuItem widget) {
     return unimplementedWidget(context, widget);
   }
 
@@ -88,11 +89,14 @@ abstract class UIPlugin {
   }
 
   Widget buildCupertinoButton(BuildContext context, CupertinoButton widget) {
-    return new FlatButton(child: widget.child, onPressed: widget.onPressed);
+    return new FlatButton(
+        child: widget.child, onPressed: widget.onPressed, color: widget.color);
   }
 
   Widget buildCupertinoNavigationBar(
-      BuildContext context, CupertinoNavigationBar widget);
+      BuildContext context, CupertinoNavigationBar widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildCupertinoScaffold(BuildContext context, CupertinoScaffold widget);
 
@@ -101,11 +105,15 @@ abstract class UIPlugin {
         value: widget.value,
         min: widget.min,
         max: widget.max,
-        onChanged: widget.onChanged);
+        onChanged: widget.onChanged,
+        activeColor: widget.activeColor);
   }
 
   Widget buildCupertinoSwitch(BuildContext context, CupertinoSwitch widget) {
-    return new Switch(value: widget.value, onChanged: widget.onChanged);
+    return new Switch(
+        value: widget.value,
+        onChanged: widget.onChanged,
+        activeColor: widget.activeColor);
   }
 
   Widget buildCupertinoTabBar(BuildContext context, CupertinoTabBar widget) {
@@ -208,6 +216,10 @@ abstract class UIPlugin {
     return unimplementedSingleChildWidget(context, widget);
   }
 
+  Widget buildGridTile(BuildContext context, GridTile widget) {
+    return unimplementedWidget(context, widget);
+  }
+
   Widget buildGridView(BuildContext context, GridView widget);
 
   Widget buildHero(BuildContext context, Hero widget) {
@@ -215,10 +227,10 @@ abstract class UIPlugin {
   }
 
   Widget buildIcon(BuildContext context, Icon widget) {
-    final icon = widget.icon;
-    final textString = new String.fromCharCode(icon.codePoint);
-    final style = new TextStyle(fontFamily: icon.fontFamily);
-    return new RichText(text: new TextSpan(text: textString, style: style));
+    final iconData = widget.icon;
+    final content = new String.fromCharCode(iconData.codePoint);
+    final style = new TextStyle(fontFamily: iconData.fontFamily);
+    return new Text(content, style: style);
   }
 
   Widget buildIconButton(BuildContext context, IconButton widget);
@@ -264,6 +276,10 @@ abstract class UIPlugin {
 
   Widget buildListener(BuildContext context, Listener widget) {
     return unimplementedSingleChildWidget(context, widget);
+  }
+
+  Widget buildListTile(BuildContext context, ListTile widget) {
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildListView(BuildContext context, ListView widget);
@@ -313,9 +329,7 @@ abstract class UIPlugin {
     return unimplementedSingleChildWidget(context, widget);
   }
 
-  Widget buildOverlay(BuildContext context, Overlay widget) {
-    return widget.initialEntries.first.builder(context);
-  }
+  Widget buildOverlay(BuildContext context, Overlay widget);
 
   Widget buildPadding(BuildContext context, Padding widget) {
     return unimplementedSingleChildWidget(context, widget);
@@ -384,7 +398,7 @@ abstract class UIPlugin {
   }
 
   Widget buildSingleChildScrollView(
-          BuildContext context, SingleChildScrollView widget) {
+      BuildContext context, SingleChildScrollView widget) {
     return unimplementedSingleChildWidget(context, widget);
   }
 
@@ -517,9 +531,11 @@ abstract class UIPlugin {
     throw new UnimplementedError();
   }
 
-  Widget unimplementedSingleChildWidget(BuildContext context, SingleChildUIPluginWidget widget) {
+  Widget unimplementedSingleChildWidget(
+      BuildContext context, SingleChildUIPluginWidget widget) {
     assert(() {
-      print("Ignoring unsupported widget '${widget.runtimeType}' with child '${widget.child.runtimeType}'");
+      print(
+          "Ignoring unsupported widget '${widget.runtimeType}' with child '${widget.child.runtimeType}'");
       return true;
     }());
     return widget.child;
@@ -527,7 +543,8 @@ abstract class UIPlugin {
 
   Widget unimplementedWidget(BuildContext context, Widget widget) {
     assert(() {
-      print("Encounted unsupported widget '${widget.runtimeType}': ${context.toString()}");
+      print(
+          "Encounted unsupported widget '${widget.runtimeType}': ${context.toString()}");
       return true;
     }());
     return new ErrorWidget(

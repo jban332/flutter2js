@@ -34,13 +34,13 @@ class HtmlElementWidget extends StatelessWidget {
 
   const HtmlElementWidget(this.type,
       {Key key,
-        this.className,
-        this.attributes,
-        this.eventHandlers,
-        this.style,
-        this.children,
-        this.onDomElement,
-        this.debugCreator})
+      this.className,
+      this.attributes,
+      this.eventHandlers,
+      this.style,
+      this.children,
+      this.onDomElement,
+      this.debugCreator})
       : super(key: key);
 
   @override

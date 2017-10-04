@@ -136,8 +136,8 @@ class RelativeRect {
 
   @override
   String toString() => "RelativeRect.fromLTRB(${left?.toStringAsFixed(1)}, ${top
-          ?.toStringAsFixed(1)}, ${right?.toStringAsFixed(1)}, ${bottom
-          ?.toStringAsFixed(1)})";
+      ?.toStringAsFixed(1)}, ${right?.toStringAsFixed(1)}, ${bottom
+      ?.toStringAsFixed(1)})";
 }
 
 /// How to size the non-positioned children of a [Stack].

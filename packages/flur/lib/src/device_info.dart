@@ -18,9 +18,11 @@ enum OperatingSystemType {
   other,
 }
 
+const bool isRunningInFlur = !(const bool.fromEnvironment("dart.ui"));
+
 class DeviceInfo {
   /// By default, obtains device information from Flutter APIs.
-  static DeviceInfo current = new DeviceInfo.withFlutter();
+  static DeviceInfo current = new DeviceInfo.fromSystem();
 
   /// Platform (browser, React Native, etc.).
   /// Usually known at compile time.
@@ -37,30 +39,36 @@ class DeviceInfo {
 
   DeviceInfo({this.platformType, this.userAgent, this.operatingSystemType});
 
-  /// This factory should be used when the app is running in Flutter.
-  factory DeviceInfo.withFlutter() {
+  factory DeviceInfo.fromSystem() {
+    if (JsValue.global != null) {
+      // Running in browser.
+      return new DeviceInfo.fromBrowser();
+    }
+    if (isRunningInFlur) {
+      // Running in Flur, but not in browser.
+      // This can happen in tests.
+      return new DeviceInfo(
+        platformType: PlatformType.browser,
+        operatingSystemType: OperatingSystemType.android,
+      );
+    }
+
+    // Otherwise running in Flutter engine
     return new DeviceInfo(
         platformType: PlatformType.flutter,
-        operatingSystemType: getOperatingSystemTypeFromFlutter());
+        operatingSystemType: _getOperatingSystemTypeFromFlutter());
   }
 
-  /// This factory should be used when the app is running in browser.
-  factory DeviceInfo.withBrowser(
+  factory DeviceInfo.fromBrowser(
       {String userAgent, OperatingSystemType osType}) {
     if (userAgent == null) {
-      userAgent = getUserAgent();
+      userAgent = _getUserAgent();
     }
     return new DeviceInfo(
         platformType: PlatformType.browser,
         userAgent: userAgent,
         operatingSystemType:
             osType ?? getOperatingSystemTypeFromUserAgent(userAgent));
-  }
-
-  /// This factory should be used when the app is running in browser.
-  factory DeviceInfo.withReactNative({OperatingSystemType osType}) {
-    return new DeviceInfo(
-        platformType: PlatformType.reactNative, operatingSystemType: osType);
   }
 
   /// Flur can be used to build Desktop apps too!
@@ -94,10 +102,7 @@ class DeviceInfo {
   }
 
   /// Obtains operating system type from Flutter.
-  static OperatingSystemType getOperatingSystemTypeFromFlutter() {
-    if (JsValue.global != null) {
-      return null;
-    }
+  static OperatingSystemType _getOperatingSystemTypeFromFlutter() {
     switch (defaultTargetPlatform) {
       case flutter.TargetPlatform.android:
         return OperatingSystemType.android;
@@ -125,9 +130,8 @@ class DeviceInfo {
     return OperatingSystemType.other;
   }
 
-  static String getUserAgent() {
-    return (JsValue.global?.get("navigator")
-        ?.get("userAgent")
-        ?.asDartObject() as String);
+  static String _getUserAgent() {
+    return (JsValue.global?.get("navigator")?.get("userAgent")?.asDartObject()
+        as String);
   }
 }

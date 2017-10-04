@@ -248,14 +248,16 @@ class DefaultMaterialLocalizations implements MaterialLocalizations {
     //   no matter what date the day falls on.
     switch (timeOfDayFormat) {
       case TimeOfDayFormat.h_colon_mm_space_a:
-        return '${formatHour(timeOfDay)}:${formatMinute(timeOfDay)} ${_formatDayPeriod(timeOfDay)}';
+        return '${formatHour(timeOfDay)}:${formatMinute(
+            timeOfDay)} ${_formatDayPeriod(timeOfDay)}';
       case TimeOfDayFormat.H_colon_mm:
       case TimeOfDayFormat.HH_colon_mm:
         return '${formatHour(timeOfDay)}:${formatMinute(timeOfDay)}';
       case TimeOfDayFormat.HH_dot_mm:
         return '${formatHour(timeOfDay)}.${formatMinute(timeOfDay)}';
       case TimeOfDayFormat.a_space_h_colon_mm:
-        return '${_formatDayPeriod(timeOfDay)} ${formatHour(timeOfDay)}:${formatMinute(timeOfDay)}';
+        return '${_formatDayPeriod(timeOfDay)} ${formatHour(
+            timeOfDay)}:${formatMinute(timeOfDay)}';
       case TimeOfDayFormat.frenchCanadian:
         return '${formatHour(timeOfDay)} h ${formatMinute(timeOfDay)}';
     }

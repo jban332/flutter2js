@@ -286,6 +286,7 @@ class _GlowController extends ChangeNotifier {
 
   Color get color => _color;
   Color _color;
+
   set color(Color value) {
     assert(color != null);
     if (color == value) return;
@@ -295,6 +296,7 @@ class _GlowController extends ChangeNotifier {
 
   Axis get axis => _axis;
   Axis _axis;
+
   set axis(Axis value) {
     assert(axis != null);
     if (axis == value) return;

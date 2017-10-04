@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
-import 'package:flutter/ui.dart' as ui show lerpDouble;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/ui.dart' as ui show lerpDouble;
 
 import 'basic_types.dart';
 
@@ -21,12 +21,11 @@ class BoxShadow {
   ///
   /// By default, the shadow is solid black with zero [offset], [blurRadius],
   /// and [spreadRadius].
-  const BoxShadow({
-    this.color: const Color(0xFF000000),
-    this.offset: Offset.zero,
-    this.blurRadius: 0.0,
-    this.spreadRadius: 0.0
-  });
+  const BoxShadow(
+      {this.color: const Color(0xFF000000),
+      this.offset: Offset.zero,
+      this.blurRadius: 0.0,
+      this.spreadRadius: 0.0});
 
   /// The color of the shadow.
   final Color color;
@@ -61,8 +60,7 @@ class BoxShadow {
         color: color,
         offset: offset * factor,
         blurRadius: blurRadius * factor,
-        spreadRadius: spreadRadius * factor
-    );
+        spreadRadius: spreadRadius * factor);
   }
 
   /// Linearly interpolate between two box shadows.
@@ -71,26 +69,22 @@ class BoxShadow {
   /// a box shadow that matches the other box shadow in color but has a zero
   /// offset and a zero blurRadius.
   static BoxShadow lerp(BoxShadow a, BoxShadow b, double t) {
-    if (a == null && b == null)
-      return null;
-    if (a == null)
-      return b.scale(t);
-    if (b == null)
-      return a.scale(1.0 - t);
+    if (a == null && b == null) return null;
+    if (a == null) return b.scale(t);
+    if (b == null) return a.scale(1.0 - t);
     return new BoxShadow(
         color: Color.lerp(a.color, b.color, t),
         offset: Offset.lerp(a.offset, b.offset, t),
         blurRadius: ui.lerpDouble(a.blurRadius, b.blurRadius, t),
-        spreadRadius: ui.lerpDouble(a.spreadRadius, b.spreadRadius, t)
-    );
+        spreadRadius: ui.lerpDouble(a.spreadRadius, b.spreadRadius, t));
   }
 
   /// Linearly interpolate between two lists of box shadows.
   ///
   /// If the lists differ in length, excess items are lerped with null.
-  static List<BoxShadow> lerpList(List<BoxShadow> a, List<BoxShadow> b, double t) {
-    if (a == null && b == null)
-      return null;
+  static List<BoxShadow> lerpList(
+      List<BoxShadow> a, List<BoxShadow> b, double t) {
+    if (a == null && b == null) return null;
     a ??= <BoxShadow>[];
     b ??= <BoxShadow>[];
     final List<BoxShadow> result = <BoxShadow>[];
@@ -99,17 +93,14 @@ class BoxShadow {
       result.add(BoxShadow.lerp(a[i], b[i], t));
     for (int i = commonLength; i < a.length; ++i)
       result.add(a[i].scale(1.0 - t));
-    for (int i = commonLength; i < b.length; ++i)
-      result.add(b[i].scale(t));
+    for (int i = commonLength; i < b.length; ++i) result.add(b[i].scale(t));
     return result;
   }
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final BoxShadow typedOther = other;
     return color == typedOther.color &&
         offset == typedOther.offset &&

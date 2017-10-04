@@ -4,10 +4,10 @@
 
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:flutter/ui.dart' as ui show Image;
-import 'package:flutter/ui.dart' show Size, Locale, TextDirection, hashValues;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/ui.dart' as ui show Image;
+import 'package:flutter/ui.dart' show Size, Locale, TextDirection, hashValues;
 import 'package:http/http.dart' as http;
 
 import 'asset_bundle.dart';
@@ -91,19 +91,19 @@ class ImageConfiguration {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType)
-      return false;
+    if (other.runtimeType != runtimeType) return false;
     final ImageConfiguration typedOther = other;
-    return typedOther.bundle == bundle
-        && typedOther.devicePixelRatio == devicePixelRatio
-        && typedOther.locale == locale
-        && typedOther.textDirection == textDirection
-        && typedOther.size == size
-        && typedOther.platform == platform;
+    return typedOther.bundle == bundle &&
+        typedOther.devicePixelRatio == devicePixelRatio &&
+        typedOther.locale == locale &&
+        typedOther.textDirection == textDirection &&
+        typedOther.size == size &&
+        typedOther.platform == platform;
   }
 
   @override
-  int get hashCode => hashValues(bundle, devicePixelRatio, locale, size, platform);
+  int get hashCode =>
+      hashValues(bundle, devicePixelRatio, locale, size, platform);
 
   @override
   String toString() {
@@ -111,38 +111,32 @@ class ImageConfiguration {
     result.write('ImageConfiguration(');
     bool hasArguments = false;
     if (bundle != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('bundle: $bundle');
       hasArguments = true;
     }
     if (devicePixelRatio != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('devicePixelRatio: $devicePixelRatio');
       hasArguments = true;
     }
     if (locale != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('locale: $locale');
       hasArguments = true;
     }
     if (textDirection != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('textDirection: $textDirection');
       hasArguments = true;
     }
     if (size != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('size: $size');
       hasArguments = true;
     }
     if (platform != null) {
-      if (hasArguments)
-        result.write(', ');
+      if (hasArguments) result.write(', ');
       result.write('platform: ${describeEnum(platform)}');
       hasArguments = true;
     }
@@ -263,24 +257,22 @@ abstract class ImageProvider<T> {
     obtainKey(configuration).then<Null>((T key) {
       obtainedKey = key;
       stream.setCompleter(imageCache.putIfAbsent(key, () => load(key)));
-    }).catchError(
-            (dynamic exception, StackTrace stack) async {
-          FlutterError.reportError(new FlutterErrorDetails(
-              exception: exception,
-              stack: stack,
-              library: 'services library',
-              context: 'while resolving an image',
-              silent: true, // could be a network error or whatnot
-              informationCollector: (StringBuffer information) {
-                information.writeln('Image provider: $this');
-                information.writeln('Image configuration: $configuration');
-                if (obtainedKey != null)
-                  information.writeln('Image key: $obtainedKey');
-              }
-          ));
-          return null;
-        }
-    );
+    }).catchError((dynamic exception, StackTrace stack) async {
+      FlutterError.reportError(new FlutterErrorDetails(
+          exception: exception,
+          stack: stack,
+          library: 'services library',
+          context: 'while resolving an image',
+          silent: true,
+          // could be a network error or whatnot
+          informationCollector: (StringBuffer information) {
+            information.writeln('Image provider: $this');
+            information.writeln('Image configuration: $configuration');
+            if (obtainedKey != null)
+              information.writeln('Image key: $obtainedKey');
+          }));
+      return null;
+    });
     return stream;
   }
 
@@ -313,11 +305,8 @@ class AssetBundleImageKey {
   /// Creates the key for an [AssetImage] or [AssetBundleImageProvider].
   ///
   /// The arguments must not be null.
-  const AssetBundleImageKey({
-    @required this.bundle,
-    @required this.name,
-    @required this.scale
-  });
+  const AssetBundleImageKey(
+      {@required this.bundle, @required this.name, @required this.scale});
 
   /// The bundle from which the image will be obtained.
   ///
@@ -334,26 +323,27 @@ class AssetBundleImageKey {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType)
-      return false;
+    if (other.runtimeType != runtimeType) return false;
     final AssetBundleImageKey typedOther = other;
-    return bundle == typedOther.bundle
-        && name == typedOther.name
-        && scale == typedOther.scale;
+    return bundle == typedOther.bundle &&
+        name == typedOther.name &&
+        scale == typedOther.scale;
   }
 
   @override
   int get hashCode => hashValues(bundle, name, scale);
 
   @override
-  String toString() => '$runtimeType(bundle: $bundle, name: "$name", scale: $scale)';
+  String toString() =>
+      '$runtimeType(bundle: $bundle, name: "$name", scale: $scale)';
 }
 
 /// A subclass of [ImageProvider] that knows about [AssetBundle]s.
 ///
 /// This factors out the common logic of [AssetBundle]-based [ImageProvider]
 /// classes, simplifying what subclasses must implement to just [obtainKey].
-abstract class AssetBundleImageProvider extends ImageProvider<AssetBundleImageKey> {
+abstract class AssetBundleImageProvider
+    extends ImageProvider<AssetBundleImageKey> {
   /// Abstract const constructor. This constructor enables subclasses to provide
   /// const constructors so that they can be used in const expressions.
   const AssetBundleImageProvider();
@@ -362,13 +352,11 @@ abstract class AssetBundleImageProvider extends ImageProvider<AssetBundleImageKe
   /// image using [loadAsync].
   @override
   ImageStreamCompleter load(AssetBundleImageKey key) {
-    return new OneFrameImageStreamCompleter(
-        loadAsync(key),
+    return new OneFrameImageStreamCompleter(loadAsync(key),
         informationCollector: (StringBuffer information) {
-          information.writeln('Image provider: $this');
-          information.write('Image key: $key');
-        }
-    );
+      information.writeln('Image provider: $this');
+      information.write('Image key: $key');
+    });
   }
 
   /// Fetches the image from the asset bundle, decodes it, and returns a
@@ -378,11 +366,9 @@ abstract class AssetBundleImageProvider extends ImageProvider<AssetBundleImageKe
   @protected
   Future<ImageInfo> loadAsync(AssetBundleImageKey key) async {
     final ByteData data = await key.bundle.load(key.name);
-    if (data == null)
-      throw 'Unable to read data';
+    if (data == null) throw 'Unable to read data';
     final ui.Image image = await decodeImage(data);
-    if (image == null)
-      throw 'Unable to decode image data';
+    if (image == null) throw 'Unable to decode image data';
     return new ImageInfo(image: image, scale: key.scale);
   }
 
@@ -406,7 +392,7 @@ class NetworkImage extends ImageProvider<NetworkImage> {
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments must not be null.
-  const NetworkImage(this.url, { this.scale: 1.0 });
+  const NetworkImage(this.url, {this.scale: 1.0});
 
   /// The URL from which the image will be fetched.
   final String url;
@@ -421,13 +407,11 @@ class NetworkImage extends ImageProvider<NetworkImage> {
 
   @override
   ImageStreamCompleter load(NetworkImage key) {
-    return new OneFrameImageStreamCompleter(
-        _loadAsync(key),
+    return new OneFrameImageStreamCompleter(_loadAsync(key),
         informationCollector: (StringBuffer information) {
-          information.writeln('Image provider: $this');
-          information.write('Image key: $key');
-        }
-    );
+      information.writeln('Image provider: $this');
+      information.write('Image key: $key');
+    });
   }
 
   static final http.Client _httpClient = createHttpClient();
@@ -437,16 +421,13 @@ class NetworkImage extends ImageProvider<NetworkImage> {
 
     final Uri resolved = Uri.base.resolve(key.url);
     final http.Response response = await _httpClient.get(resolved);
-    if (response == null || response.statusCode != 200)
-      return null;
+    if (response == null || response.statusCode != 200) return null;
 
     final Uint8List bytes = response.bodyBytes;
-    if (bytes.lengthInBytes == 0)
-      return null;
+    if (bytes.lengthInBytes == 0) return null;
 
     final ui.Image image = await decodeImageFromList(bytes);
-    if (image == null)
-      return null;
+    if (image == null) return null;
 
     return new ImageInfo(
       image: image,
@@ -456,11 +437,9 @@ class NetworkImage extends ImageProvider<NetworkImage> {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType)
-      return false;
+    if (other.runtimeType != runtimeType) return false;
     final NetworkImage typedOther = other;
-    return url == typedOther.url
-        && scale == typedOther.scale;
+    return url == typedOther.url && scale == typedOther.scale;
   }
 
   @override
@@ -482,7 +461,7 @@ class MemoryImage extends ImageProvider<MemoryImage> {
   /// Creates an object that decodes a [Uint8List] buffer as an image.
   ///
   /// The arguments must not be null.
-  const MemoryImage(this.bytes, { this.scale: 1.0 });
+  const MemoryImage(this.bytes, {this.scale: 1.0});
 
   /// The bytes to decode into an image.
   final Uint8List bytes;
@@ -504,8 +483,7 @@ class MemoryImage extends ImageProvider<MemoryImage> {
     assert(key == this);
 
     final ui.Image image = await decodeImageFromList(bytes);
-    if (image == null)
-      return null;
+    if (image == null) return null;
 
     return new ImageInfo(
       image: image,
@@ -515,18 +493,17 @@ class MemoryImage extends ImageProvider<MemoryImage> {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType)
-      return false;
+    if (other.runtimeType != runtimeType) return false;
     final MemoryImage typedOther = other;
-    return bytes == typedOther.bytes
-        && scale == typedOther.scale;
+    return bytes == typedOther.bytes && scale == typedOther.scale;
   }
 
   @override
   int get hashCode => hashValues(bytes.hashCode, scale);
 
   @override
-  String toString() => '$runtimeType(${describeIdentity(bytes)}, scale: $scale)';
+  String toString() =>
+      '$runtimeType(${describeIdentity(bytes)}, scale: $scale)';
 }
 
 /// Fetches an image from an [AssetBundle], associating it with the given scale.
@@ -606,7 +583,8 @@ class ExactAssetImage extends AssetBundleImageProvider {
   /// The [package] argument must be non-null when fetching an asset that is
   /// included in a package. See the documentation for the [ExactAssetImage] class
   /// itself for details.
-  const ExactAssetImage(this.assetName, {
+  const ExactAssetImage(
+    this.assetName, {
     this.scale: 1.0,
     this.bundle,
     this.package,
@@ -617,7 +595,8 @@ class ExactAssetImage extends AssetBundleImageProvider {
 
   /// The key to use to obtain the resource from the [bundle]. This is the
   /// argument passed to [AssetBundle.load].
-  String get keyName => package == null ? assetName : 'packages/$package/$assetName';
+  String get keyName =>
+      package == null ? assetName : 'packages/$package/$assetName';
 
   /// The scale to place in the [ImageInfo] object of the image.
   final double scale;
@@ -641,23 +620,22 @@ class ExactAssetImage extends AssetBundleImageProvider {
     return new SynchronousFuture<AssetBundleImageKey>(new AssetBundleImageKey(
         bundle: bundle ?? configuration.bundle ?? rootBundle,
         name: keyName,
-        scale: scale
-    ));
+        scale: scale));
   }
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType)
-      return false;
+    if (other.runtimeType != runtimeType) return false;
     final ExactAssetImage typedOther = other;
-    return keyName == typedOther.keyName
-        && scale == typedOther.scale
-        && bundle == typedOther.bundle;
+    return keyName == typedOther.keyName &&
+        scale == typedOther.scale &&
+        bundle == typedOther.bundle;
   }
 
   @override
   int get hashCode => hashValues(keyName, scale, bundle);
 
   @override
-  String toString() => '$runtimeType(name: "$keyName", scale: $scale, bundle: $bundle)';
+  String toString() =>
+      '$runtimeType(name: "$keyName", scale: $scale, bundle: $bundle)';
 }

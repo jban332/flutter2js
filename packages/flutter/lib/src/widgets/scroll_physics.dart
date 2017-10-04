@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
-import 'package:flutter/ui.dart' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/physics.dart';
+import 'package:flutter/ui.dart' as ui;
 
 import 'overscroll_indicator.dart';
 import 'scroll_metrics.dart';
@@ -298,8 +298,8 @@ class BouncingScrollPhysics extends ScrollPhysics {
       return new BouncingScrollSimulation(
         spring: spring,
         position: position.pixels,
-        velocity: velocity *
-            0.91, // TODO(abarth): We should move this constant closer to the drag end.
+        velocity: velocity * 0.91,
+        // TODO(abarth): We should move this constant closer to the drag end.
         leadingExtent: position.minScrollExtent,
         trailingExtent: position.maxScrollExtent,
         tolerance: tolerance,

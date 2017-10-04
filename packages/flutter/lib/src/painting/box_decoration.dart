@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:math' as math;
-import 'package:flutter/ui.dart' as ui show Image;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/ui.dart' as ui show Image;
 
 import 'basic_types.dart';
 import 'border_radius.dart';
@@ -158,15 +158,13 @@ class BoxDecoration extends Decoration {
 
   @override
   BoxDecoration lerpFrom(Decoration a, double t) {
-    if (a is BoxDecoration)
-      return BoxDecoration.lerp(a, this, t);
+    if (a is BoxDecoration) return BoxDecoration.lerp(a, this, t);
     return super.lerpFrom(a, t);
   }
 
   @override
   BoxDecoration lerpTo(Decoration b, double t) {
-    if (b is BoxDecoration)
-      return BoxDecoration.lerp(this, b, t);
+    if (b is BoxDecoration) return BoxDecoration.lerp(this, b, t);
     return super.lerpTo(b, t);
   }
 
@@ -182,12 +180,9 @@ class BoxDecoration extends Decoration {
   ///     and which use [BoxDecoration.lerp] when interpolating two
   ///    [BoxDecoration]s or a [BoxDecoration] to or from null.
   static BoxDecoration lerp(BoxDecoration a, BoxDecoration b, double t) {
-    if (a == null && b == null)
-      return null;
-    if (a == null)
-      return b.scale(t);
-    if (b == null)
-      return a.scale(1.0 - t);
+    if (a == null && b == null) return null;
+    if (a == null) return b.scale(t);
+    if (b == null) return a.scale(1.0 - t);
     // TODO(abarth): lerp ALL the fields.
     return new BoxDecoration(
       color: Color.lerp(a.color, b.color, t),
@@ -202,10 +197,8 @@ class BoxDecoration extends Decoration {
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final BoxDecoration typedOther = other;
     return color == typedOther.color &&
         image == typedOther.image &&
@@ -236,13 +229,21 @@ class BoxDecoration extends Decoration {
       ..defaultDiagnosticsTreeStyle = DiagnosticsTreeStyle.whitespace
       ..emptyBodyDescription = '<no decorations specified>';
 
-    properties.add(new DiagnosticsProperty<Color>('color', color, defaultValue: null));
-    properties.add(new DiagnosticsProperty<DecorationImage>('image', image, defaultValue: null));
-    properties.add(new DiagnosticsProperty<Border>('border', border, defaultValue: null));
-    properties.add(new DiagnosticsProperty<BorderRadius>('borderRadius', borderRadius, defaultValue: null));
-    properties.add(new IterableProperty<BoxShadow>('boxShadow', boxShadow, defaultValue: null, style: DiagnosticsTreeStyle.whitespace));
-    properties.add(new DiagnosticsProperty<Gradient>('gradient', gradient, defaultValue: null));
-    properties.add(new EnumProperty<BoxShape>('shape', shape, defaultValue: BoxShape.rectangle));
+    properties.add(
+        new DiagnosticsProperty<Color>('color', color, defaultValue: null));
+    properties.add(new DiagnosticsProperty<DecorationImage>('image', image,
+        defaultValue: null));
+    properties.add(
+        new DiagnosticsProperty<Border>('border', border, defaultValue: null));
+    properties.add(new DiagnosticsProperty<BorderRadius>(
+        'borderRadius', borderRadius,
+        defaultValue: null));
+    properties.add(new IterableProperty<BoxShadow>('boxShadow', boxShadow,
+        defaultValue: null, style: DiagnosticsTreeStyle.whitespace));
+    properties.add(new DiagnosticsProperty<Gradient>('gradient', gradient,
+        defaultValue: null));
+    properties.add(new EnumProperty<BoxShape>('shape', shape,
+        defaultValue: BoxShape.rectangle));
   }
 
   @override
@@ -257,7 +258,7 @@ class BoxDecoration extends Decoration {
         }
         return true;
       case BoxShape.circle:
-      // Circles are inscribed into our smallest dimension.
+        // Circles are inscribed into our smallest dimension.
         final Offset center = size.center(Offset.zero);
         final double distance = (position - center).distance;
         return distance <= math.min(size.width, size.height) / 2.0;
@@ -276,8 +277,7 @@ class BoxDecoration extends Decoration {
 /// An object that paints a [BoxDecoration] into a canvas.
 class _BoxDecorationPainter extends BoxPainter {
   _BoxDecorationPainter(this._decoration, VoidCallback onChange)
-      :
-        super(onChange) {
+      : super(onChange) {
     assert(_decoration != null);
   }
 
@@ -285,15 +285,17 @@ class _BoxDecorationPainter extends BoxPainter {
 
   Paint _cachedBackgroundPaint;
   Rect _rectForCachedBackgroundPaint;
+
   Paint _getBackgroundPaint(Rect rect) {
     assert(rect != null);
-    assert(_decoration.gradient != null || _rectForCachedBackgroundPaint == null);
+    assert(
+        _decoration.gradient != null || _rectForCachedBackgroundPaint == null);
 
     if (_cachedBackgroundPaint == null ||
-        (_decoration.gradient != null && _rectForCachedBackgroundPaint != rect)) {
+        (_decoration.gradient != null &&
+            _rectForCachedBackgroundPaint != rect)) {
       final Paint paint = new Paint();
-      if (_decoration.color != null)
-        paint.color = _decoration.color;
+      if (_decoration.color != null) paint.color = _decoration.color;
       if (_decoration.gradient != null) {
         paint.shader = _decoration.gradient.createShader(rect);
         _rectForCachedBackgroundPaint = rect;
@@ -323,13 +325,14 @@ class _BoxDecorationPainter extends BoxPainter {
   }
 
   void _paintShadows(Canvas canvas, Rect rect) {
-    if (_decoration.boxShadow == null)
-      return;
+    if (_decoration.boxShadow == null) return;
     for (BoxShadow boxShadow in _decoration.boxShadow) {
       final Paint paint = new Paint()
         ..color = boxShadow.color
-        ..maskFilter = new MaskFilter.blur(BlurStyle.normal, boxShadow.blurSigma);
-      final Rect bounds = rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
+        ..maskFilter =
+            new MaskFilter.blur(BlurStyle.normal, boxShadow.blurSigma);
+      final Rect bounds =
+          rect.shift(boxShadow.offset).inflate(boxShadow.spreadRadius);
       _paintBox(canvas, bounds, paint);
     }
   }
@@ -342,30 +345,31 @@ class _BoxDecorationPainter extends BoxPainter {
   ImageStream _imageStream;
   ImageInfo _image;
 
-  void _paintBackgroundImage(Canvas canvas, Rect rect, ImageConfiguration configuration) {
+  void _paintBackgroundImage(
+      Canvas canvas, Rect rect, ImageConfiguration configuration) {
     // TODO(ianh): factor this out into a DecorationImage.paint method.
     final DecorationImage backgroundImage = _decoration.image;
-    if (backgroundImage == null)
-      return;
+    if (backgroundImage == null) return;
 
     bool flipHorizontally = false;
     if (backgroundImage.matchTextDirection) {
       // We check this first so that the assert will fire immediately, not just when the
       // image is ready.
-      assert(configuration.textDirection != null, 'matchTextDirection can only be used when a TextDirection is available.');
+      assert(configuration.textDirection != null,
+          'matchTextDirection can only be used when a TextDirection is available.');
       if (configuration.textDirection == TextDirection.rtl)
         flipHorizontally = true;
     }
 
-    final ImageStream newImageStream = backgroundImage.image.resolve(configuration);
+    final ImageStream newImageStream =
+        backgroundImage.image.resolve(configuration);
     if (newImageStream.key != _imageStream?.key) {
       _imageStream?.removeListener(_imageListener);
       _imageStream = newImageStream;
       _imageStream.addListener(_imageListener);
     }
     final ui.Image image = _image?.image;
-    if (image == null)
-      return;
+    if (image == null) return;
 
     Path clipPath;
     if (_decoration.shape == BoxShape.circle)
@@ -389,17 +393,14 @@ class _BoxDecorationPainter extends BoxPainter {
       flipHorizontally: flipHorizontally,
     );
 
-    if (clipPath != null)
-      canvas.restore();
+    if (clipPath != null) canvas.restore();
   }
 
   void _imageListener(ImageInfo value, bool synchronousCall) {
-    if (_image == value)
-      return;
+    if (_image == value) return;
     _image = value;
     assert(onChanged != null);
-    if (!synchronousCall)
-      onChanged();
+    if (!synchronousCall) onChanged();
   }
 
   @override
@@ -419,11 +420,7 @@ class _BoxDecorationPainter extends BoxPainter {
     _paintShadows(canvas, rect);
     _paintBackgroundColor(canvas, rect);
     _paintBackgroundImage(canvas, rect, configuration);
-    _decoration.border?.paint(
-        canvas,
-        rect,
-        shape: _decoration.shape,
-        borderRadius: _decoration.borderRadius
-    );
+    _decoration.border?.paint(canvas, rect,
+        shape: _decoration.shape, borderRadius: _decoration.borderRadius);
   }
 }

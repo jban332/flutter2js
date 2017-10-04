@@ -369,8 +369,7 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
         'colorBlendMode', colorBlendMode,
         defaultValue: null));
     description.add(new EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    description.add(new DiagnosticsProperty<Alignment>(
-        'alignment', alignment,
+    description.add(new DiagnosticsProperty<Alignment>('alignment', alignment,
         defaultValue: null));
     description.add(new EnumProperty<ImageRepeat>('repeat', repeat,
         defaultValue: ImageRepeat.noRepeat));

@@ -50,7 +50,8 @@ class MediaQueryData {
   MediaQueryData.fromWindow(ui.Window window)
       : size = window.physicalSize / window.devicePixelRatio,
         devicePixelRatio = window.devicePixelRatio,
-        textScaleFactor = 1.0, // TODO(abarth): Read this value from window.
+        textScaleFactor = 1.0,
+        // TODO(abarth): Read this value from window.
         padding = new EdgeInsets.fromWindowPadding(
             window.padding, window.devicePixelRatio);
 

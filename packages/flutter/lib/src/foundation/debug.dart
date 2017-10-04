@@ -26,7 +26,7 @@ bool debugAssertAllFoundationVarsUnset(String reason,
         debugDefaultTargetPlatformOverride != null)
       throw new FlutterError(reason);
     return true;
-  });
+  }());
   return true;
 }
 

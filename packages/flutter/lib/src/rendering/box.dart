@@ -466,8 +466,8 @@ class BoxConstraints extends Constraints {
           whichFields = affectedFieldsList.single;
         }
         throwError('BoxConstraints has ${affectedFieldsList.length == 1
-                ? 'a NaN value'
-                : 'NaN values' } in $whichFields.');
+            ? 'a NaN value'
+            : 'NaN values' } in $whichFields.');
       }
       if (minWidth < 0.0 && minHeight < 0.0)
         throwError(

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:http/browser_client.dart' as http;
 import 'package:http/http.dart' as http;
 
 /// Create a new [http.Client] object.
@@ -14,5 +13,5 @@ import 'package:http/http.dart' as http;
 /// provide an [http.testing.MockClient].
 // TODO(ianh): Fix the link to MockClient once dartdoc has a solution.
 ValueGetter<http.Client> createHttpClient = () {
-  return new http.BrowserClient();
+  return new http.Client();
 };

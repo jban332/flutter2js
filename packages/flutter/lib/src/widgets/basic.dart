@@ -949,8 +949,8 @@ class Align extends flur.SingleChildUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment));
+    description.add(
+        new DiagnosticsProperty<AlignmentGeometry>('alignment', alignment));
     description.add(
         new DoubleProperty('widthFactor', widthFactor, defaultValue: null));
     description.add(
@@ -1289,8 +1289,8 @@ class FractionallySizedBox extends flur.SingleChildUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment));
+    description.add(
+        new DiagnosticsProperty<AlignmentGeometry>('alignment', alignment));
     description.add(
         new DoubleProperty('widthFactor', widthFactor, defaultValue: null));
     description.add(
@@ -1408,8 +1408,8 @@ class OverflowBox extends flur.SingleChildUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment));
+    description.add(
+        new DiagnosticsProperty<AlignmentGeometry>('alignment', alignment));
     description
         .add(new DoubleProperty('minWidth', minWidth, defaultValue: null));
     description
@@ -1457,8 +1457,8 @@ class SizedOverflowBox extends flur.SingleChildUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment));
+    description.add(
+        new DiagnosticsProperty<AlignmentGeometry>('alignment', alignment));
     description
         .add(new DiagnosticsProperty<Size>('size', size, defaultValue: null));
   }
@@ -1843,8 +1843,8 @@ class Stack extends flur.MultiChildUIPluginWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(new DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment));
+    description.add(
+        new DiagnosticsProperty<AlignmentGeometry>('alignment', alignment));
     description.add(new EnumProperty<TextDirection>(
         'textDirection', textDirection,
         defaultValue: null));
@@ -3394,8 +3394,7 @@ class RawImage extends flur.StatelessUIPluginWidget {
         'colorBlendMode', colorBlendMode,
         defaultValue: null));
     description.add(new EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    description.add(new DiagnosticsProperty<Alignment>(
-        'alignment', alignment,
+    description.add(new DiagnosticsProperty<Alignment>('alignment', alignment,
         defaultValue: null));
     description.add(new EnumProperty<ImageRepeat>('repeat', repeat,
         defaultValue: ImageRepeat.noRepeat));

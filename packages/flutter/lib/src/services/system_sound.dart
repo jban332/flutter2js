@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'system_channels.dart';
+import 'package:flur/flur_for_modified_flutter.dart' as flur;
 
 /// A sound provided by the system.
 enum SystemSoundType {
@@ -20,9 +20,6 @@ class SystemSound {
   /// Play the specified system sound. If that sound is not present on the
   /// system, the call is ignored.
   static Future<Null> play(SystemSoundType type) async {
-    await SystemChannels.platform.invokeMethod(
-      'SystemSound.play',
-      type.toString(),
-    );
+    return flur.PlatformPlugin.current.playSystemSound(type);
   }
 }

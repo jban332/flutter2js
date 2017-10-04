@@ -335,7 +335,7 @@ class FlutterError extends AssertionError {
           final Match packageMatch = packageParser.firstMatch(match.group(2));
           if (packageMatch != null && packageMatch.group(1) == 'package') {
             skipped.add('package ${packageMatch.group(
-                    2)}'); // avoid "package package:foo"
+                2)}'); // avoid "package package:foo"
           } else {
             skipped.add('package ${match.group(2)}');
           }

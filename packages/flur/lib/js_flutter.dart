@@ -1,7 +1,7 @@
 import 'js.dart';
 
 class JsValueImpl extends JsValue {
-  static JsValueImpl get global => new JsValueImpl(null);
+  static JsValueImpl get global => null;
 
   static dynamic dartToJs(Object value) {
     throw new UnsupportedError("Javascript is not available in Flutter.");

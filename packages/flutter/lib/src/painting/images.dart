@@ -2,10 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/ui.dart' as ui show Image;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/ui.dart' as ui show Image;
 
 import 'alignment.dart';
 import 'basic_types.dart';
@@ -116,40 +115,35 @@ class DecorationImage {
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final DecorationImage typedOther = other;
-    return image == typedOther.image
-        && colorFilter == typedOther.colorFilter
-        && fit == typedOther.fit
-        && alignment == typedOther.alignment
-        && centerSlice == typedOther.centerSlice
-        && repeat == typedOther.repeat
-        && matchTextDirection == typedOther.matchTextDirection;
+    return image == typedOther.image &&
+        colorFilter == typedOther.colorFilter &&
+        fit == typedOther.fit &&
+        alignment == typedOther.alignment &&
+        centerSlice == typedOther.centerSlice &&
+        repeat == typedOther.repeat &&
+        matchTextDirection == typedOther.matchTextDirection;
   }
 
   @override
-  int get hashCode => hashValues(image, colorFilter, fit, alignment, centerSlice, repeat, matchTextDirection);
+  int get hashCode => hashValues(image, colorFilter, fit, alignment,
+      centerSlice, repeat, matchTextDirection);
 
   @override
   String toString() {
     final List<String> properties = <String>[];
     properties.add('$image');
-    if (colorFilter != null)
-      properties.add('$colorFilter');
+    if (colorFilter != null) properties.add('$colorFilter');
     if (fit != null &&
         !(fit == BoxFit.fill && centerSlice != null) &&
         !(fit == BoxFit.scaleDown && centerSlice == null))
       properties.add('$fit');
     properties.add('$alignment');
-    if (centerSlice != null)
-      properties.add('centerSlice: $centerSlice');
-    if (repeat != ImageRepeat.noRepeat)
-      properties.add('$repeat');
-    if (matchTextDirection)
-      properties.add('match text direction');
+    if (centerSlice != null) properties.add('centerSlice: $centerSlice');
+    if (repeat != ImageRepeat.noRepeat) properties.add('$repeat');
+    if (matchTextDirection) properties.add('match text direction');
     return '$runtimeType(${properties.join(", ")})';
   }
 }
@@ -226,16 +220,14 @@ void paintImage({
   assert(alignment != null);
   assert(repeat != null);
   assert(flipHorizontally != null);
-  if (rect.isEmpty)
-    return;
+  if (rect.isEmpty) return;
   Size outputSize = rect.size;
   Size inputSize = new Size(image.width.toDouble(), image.height.toDouble());
   Offset sliceBorder;
   if (centerSlice != null) {
     sliceBorder = new Offset(
         centerSlice.left + inputSize.width - centerSlice.right,
-        centerSlice.top + inputSize.height - centerSlice.bottom
-    );
+        centerSlice.top + inputSize.height - centerSlice.bottom);
     outputSize -= sliceBorder;
     inputSize -= sliceBorder;
   }
@@ -249,7 +241,8 @@ void paintImage({
     destinationSize += sliceBorder;
     // We don't have the ability to draw a subset of the image at the same time
     // as we apply a nine-patch stretch.
-    assert(sourceSize == inputSize, 'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
+    assert(sourceSize == inputSize,
+        'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
   }
   if (repeat != ImageRepeat.noRepeat && destinationSize == outputSize) {
     // There's no need to repeat the image because we're exactly filling the
@@ -257,25 +250,25 @@ void paintImage({
     repeat = ImageRepeat.noRepeat;
   }
   final Paint paint = new Paint()..isAntiAlias = false;
-  if (colorFilter != null)
-    paint.colorFilter = colorFilter;
+  if (colorFilter != null) paint.colorFilter = colorFilter;
   if (sourceSize != destinationSize) {
     // Use the "low" quality setting to scale the image, which corresponds to
     // bilinear interpolation, rather than the default "none" which corresponds
     // to nearest-neighbor.
     paint.filterQuality = FilterQuality.low;
   }
-  final double halfWidthDelta = (outputSize.width - destinationSize.width) / 2.0;
-  final double halfHeightDelta = (outputSize.height - destinationSize.height) / 2.0;
-  final double dx = halfWidthDelta + (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
+  final double halfWidthDelta =
+      (outputSize.width - destinationSize.width) / 2.0;
+  final double halfHeightDelta =
+      (outputSize.height - destinationSize.height) / 2.0;
+  final double dx = halfWidthDelta +
+      (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
   final Rect destinationRect = destinationPosition & destinationSize;
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
-  if (needSave)
-    canvas.save();
-  if (repeat != ImageRepeat.noRepeat)
-    canvas.clipRect(rect);
+  if (needSave) canvas.save();
+  if (repeat != ImageRepeat.noRepeat) canvas.clipRect(rect);
   if (flipHorizontally) {
     final double dx = -(rect.left + rect.width / 2.0);
     canvas.translate(-dx, 0.0);
@@ -283,20 +276,21 @@ void paintImage({
     canvas.translate(dx, 0.0);
   }
   if (centerSlice == null) {
-    final Rect sourceRect = alignment.inscribe(
-        fittedSizes.source, Offset.zero & inputSize
-    );
-    for (Rect tileRect in _generateImageTileRects(rect, destinationRect, repeat))
+    final Rect sourceRect =
+        alignment.inscribe(fittedSizes.source, Offset.zero & inputSize);
+    for (Rect tileRect
+        in _generateImageTileRects(rect, destinationRect, repeat))
       canvas.drawImageRect(image, sourceRect, tileRect, paint);
   } else {
-    for (Rect tileRect in _generateImageTileRects(rect, destinationRect, repeat))
+    for (Rect tileRect
+        in _generateImageTileRects(rect, destinationRect, repeat))
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
   }
-  if (needSave)
-    canvas.restore();
+  if (needSave) canvas.restore();
 }
 
-Iterable<Rect> _generateImageTileRects(Rect outputRect, Rect fundamentalRect, ImageRepeat repeat) sync* {
+Iterable<Rect> _generateImageTileRects(
+    Rect outputRect, Rect fundamentalRect, ImageRepeat repeat) sync* {
   if (repeat == ImageRepeat.noRepeat) {
     yield fundamentalRect;
     return;

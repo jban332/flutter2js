@@ -150,7 +150,28 @@ class TextTreeConfiguration {
     this.isNameOnOwnLine: false,
     this.isBlankLineBetweenPropertiesAndChildren: true,
   })
-      : childLinkSpace = ' ' * linkCharacter.length;
+      : childLinkSpace = ' ' * linkCharacter.length {
+    assert(prefixLineOne != null);
+    assert(prefixOtherLines != null);
+    assert(prefixLastChildLineOne != null);
+    assert(prefixOtherLinesRootNode != null);
+    assert(linkCharacter != null);
+    assert(propertyPrefixIfChildren != null);
+    assert(propertyPrefixNoChildren != null);
+    assert(lineBreak != null);
+    assert(lineBreakProperties != null);
+    assert(afterName != null);
+    assert(afterDescriptionIfBody != null);
+    assert(beforeProperties != null);
+    assert(afterProperties != null);
+    assert(propertySeparator != null);
+    assert(bodyIndent != null);
+    assert(footer != null);
+    assert(showChildren != null);
+    assert(addBlankLineIfNoChildren != null);
+    assert(isNameOnOwnLine != null);
+    assert(isBlankLineBetweenPropertiesAndChildren != null);
+  }
 
   /// Prefix to add to the first line to display a child with this style.
   final String prefixLineOne;
@@ -533,7 +554,7 @@ class _PrefixedStringBuilder {
 
     if (s == '\n') {
       // Edge case to avoid adding trailing whitespace when the caller did
-      // not explicitly add trailing trailing whitespace.
+      // not explicitly add trailing whitespace.
       if (_buffer.isEmpty) {
         _buffer.write(prefixLineOne.trimRight());
       } else if (_atLineStart) {
@@ -618,6 +639,8 @@ abstract class DiagnosticsNode {
     this.showName: true,
     this.showSeparator: true,
   }) {
+    assert(showName != null);
+    assert(showSeparator != null);
     // A name ending with ':' indicates that the user forgot that the ':' will
     // be automatically added for them when generating descriptions of the
     // property.
@@ -789,6 +812,11 @@ abstract class DiagnosticsNode {
 
   /// Returns a string representation of this node and its descendants.
   ///
+  /// `prefixLineOne` will be added to the front of the first line of the
+  /// output. `prefixOtherLines` will be added to the front of each other line.
+  /// If `prefixOtherLines` is null, the `prefixLineOne` is used for every line.
+  /// By default, there is no prefix.
+  ///
   /// `minLevel` specifies the minimum [DiagnosticLevel] for properties included
   /// in the output.
   ///
@@ -814,8 +842,10 @@ abstract class DiagnosticsNode {
     if (prefixOtherLines.isEmpty)
       prefixOtherLines += config.prefixOtherLinesRootNode;
 
-    final _PrefixedStringBuilder builder =
-        new _PrefixedStringBuilder(prefixLineOne, prefixOtherLines);
+    final _PrefixedStringBuilder builder = new _PrefixedStringBuilder(
+      prefixLineOne,
+      prefixOtherLines,
+    );
 
     final String description =
         toDescription(parentConfiguration: parentConfiguration);
@@ -867,8 +897,8 @@ abstract class DiagnosticsNode {
         final TextTreeConfiguration propertyStyle =
             property.textTreeConfiguration;
         builder.writeRaw(property.toStringDeep(
-          prefixLineOne:
-              '${builder.prefixOtherLines}${propertyStyle.prefixLineOne}',
+          prefixLineOne: '${builder.prefixOtherLines}${propertyStyle
+              .prefixLineOne}',
           prefixOtherLines: '${builder.prefixOtherLines}${propertyStyle
               .linkCharacter}${propertyStyle.prefixOtherLines}',
           parentConfiguration: config,
@@ -921,13 +951,12 @@ abstract class DiagnosticsNode {
         final TextTreeConfiguration childConfig =
             _childTextConfiguration(child, config);
         if (i == children.length - 1) {
-          final String lastChildPrefixLineOne =
-              '$prefixChildren${childConfig.prefixLastChildLineOne}';
+          final String lastChildPrefixLineOne = '$prefixChildren${childConfig
+              .prefixLastChildLineOne}';
           builder.writeRawLine(child.toStringDeep(
             prefixLineOne: lastChildPrefixLineOne,
-            prefixOtherLines:
-                '$prefixChildren${childConfig.childLinkSpace}${childConfig
-                .prefixOtherLines}',
+            prefixOtherLines: '$prefixChildren${childConfig
+                .childLinkSpace}${childConfig.prefixOtherLines}',
             parentConfiguration: config,
             minLevel: minLevel,
           ));
@@ -938,11 +967,10 @@ abstract class DiagnosticsNode {
         } else {
           final TextTreeConfiguration nextChildStyle =
               _childTextConfiguration(children[i + 1], config);
-          final String childPrefixLineOne =
-              '$prefixChildren${childConfig.prefixLineOne}';
-          final String childPrefixOtherLines =
-              '$prefixChildren${nextChildStyle.linkCharacter}${childConfig
-              .prefixOtherLines}';
+          final String childPrefixLineOne = '$prefixChildren${childConfig
+              .prefixLineOne}';
+          final String childPrefixOtherLines = '$prefixChildren${nextChildStyle
+              .linkCharacter}${childConfig.prefixOtherLines}';
           builder.writeRawLine(child.toStringDeep(
             prefixLineOne: childPrefixLineOne,
             prefixOtherLines: childPrefixOtherLines,
@@ -1000,7 +1028,11 @@ class MessageProperty extends DiagnosticsProperty<Null> {
     String message, {
     DiagnosticLevel level: DiagnosticLevel.info,
   })
-      : super(name, null, description: message, level: level);
+      : super(name, null, description: message, level: level) {
+    assert(name != null);
+    assert(message != null);
+    assert(level != null);
+  }
 }
 
 /// Property which encloses its string [value] in quotes.
@@ -1031,7 +1063,11 @@ class StringProperty extends DiagnosticsProperty<String> {
           showName: showName,
           ifEmpty: ifEmpty,
           level: level,
-        );
+        ) {
+    assert(showName != null);
+    assert(quoted != null);
+    assert(level != null);
+  }
 
   /// Whether the description is enclosed in double quotes.
   final bool quoted;
@@ -1143,7 +1179,10 @@ class DoubleProperty extends _NumProperty<double> {
           defaultValue: defaultValue,
           showName: showName,
           level: level,
-        );
+        ) {
+    assert(showName != null);
+    assert(level != null);
+  }
 
   /// Property with a [value] that is computed only when needed.
   ///
@@ -1170,7 +1209,10 @@ class DoubleProperty extends _NumProperty<double> {
           tooltip: tooltip,
           defaultValue: defaultValue,
           level: level,
-        );
+        ) {
+    assert(showName != null);
+    assert(level != null);
+  }
 
   @override
   String numberToString() => value?.toStringAsFixed(1);
@@ -1200,7 +1242,10 @@ class IntProperty extends _NumProperty<int> {
           unit: unit,
           defaultValue: defaultValue,
           level: level,
-        );
+        ) {
+    assert(showName != null);
+    assert(level != null);
+  }
 
   @override
   String numberToString() => value.toString();
@@ -1234,7 +1279,10 @@ class PercentProperty extends DoubleProperty {
           tooltip: tooltip,
           unit: unit,
           level: level,
-        );
+        ) {
+    assert(showName != null);
+    assert(level != null);
+  }
 
   @override
   String valueToString({TextTreeConfiguration parentConfiguration}) {
@@ -1308,6 +1356,8 @@ class FlagProperty extends DiagnosticsProperty<bool> {
           defaultValue: defaultValue,
           level: level,
         ) {
+    assert(showName != null);
+    assert(level != null);
     assert(ifTrue != null || ifFalse != null);
   }
 
@@ -1369,7 +1419,7 @@ class IterableProperty<T> extends DiagnosticsProperty<Iterable<T>> {
   /// Create a diagnostics property for iterables (e.g. lists).
   ///
   /// The [ifEmpty] argument is used to indicate how an iterable [value] with 0
-  /// elements is displayed. If [ifEmpty] equals `null` that indicates that an
+  /// elements is displayed. If [ifEmpty] equals null that indicates that an
   /// empty iterable [value] is not interesting to display similar to how
   /// [defaultValue] is used to indicate that a specific concrete value is not
   /// interesting to display.
@@ -1394,7 +1444,11 @@ class IterableProperty<T> extends DiagnosticsProperty<Iterable<T>> {
           style: style,
           showName: showName,
           level: level,
-        );
+        ) {
+    assert(style != null);
+    assert(showName != null);
+    assert(level != null);
+  }
 
   @override
   String valueToString({TextTreeConfiguration parentConfiguration}) {
@@ -1415,10 +1469,10 @@ class IterableProperty<T> extends DiagnosticsProperty<Iterable<T>> {
   /// Priority level of the diagnostic used to control which diagnostics should
   /// be shown and filtered.
   ///
-  /// If [ifEmpty] is `null` and the [value] is an empty [Iterable] then level
+  /// If [ifEmpty] is null and the [value] is an empty [Iterable] then level
   /// [DiagnosticLevel.fine] is returned in a similar way to how an
-  /// [ObjectFlagProperty] handles when [ifNull] is `null` and the [value] is
-  /// `null`.
+  /// [ObjectFlagProperty] handles when [ifNull] is null and the [value] is
+  /// null.
   @override
   DiagnosticLevel get level {
     if (ifEmpty == null &&
@@ -1453,7 +1507,9 @@ class EnumProperty<T> extends DiagnosticsProperty<T> {
           value,
           defaultValue: defaultValue,
           level: level,
-        );
+        ) {
+    assert(level != null);
+  }
 
   @override
   String valueToString({TextTreeConfiguration parentConfiguration}) {
@@ -1501,7 +1557,11 @@ class ObjectFlagProperty<T> extends DiagnosticsProperty<T> {
           showName: showName,
           ifNull: ifNull,
           level: level,
-        );
+        ) {
+    assert(ifPresent != null || ifNull != null);
+    assert(showName != null);
+    assert(level != null);
+  }
 
   /// Shorthand constructor to describe whether the property has a value.
   ///
@@ -1520,7 +1580,10 @@ class ObjectFlagProperty<T> extends DiagnosticsProperty<T> {
           value,
           showName: false,
           level: level,
-        );
+        ) {
+    assert(name != null);
+    assert(level != null);
+  }
 
   /// Description to use if the property [value] is not null.
   ///
@@ -1586,8 +1649,8 @@ class DiagnosticsProperty<T> extends DiagnosticsNode {
   ///
   /// The [level] argument is just a suggestion and can be overridden if
   /// something else about the property causes it to have a lower or higher
-  /// level. For example, if the property value is `null` and [missingIfNull] is
-  /// `true`, [level] is raised to [DiagnosticLevel.warning].
+  /// level. For example, if the property value is null and [missingIfNull] is
+  /// true, [level] is raised to [DiagnosticLevel.warning].
   DiagnosticsProperty(
     String name,
     T value, {
@@ -1613,7 +1676,12 @@ class DiagnosticsProperty<T> extends DiagnosticsNode {
           showName: showName,
           showSeparator: showSeparator,
           style: style,
-        );
+        ) {
+    assert(showName != null);
+    assert(showSeparator != null);
+    assert(style != null);
+    assert(level != null);
+  }
 
   /// Property with a [value] that is computed only when needed.
   ///
@@ -1652,7 +1720,14 @@ class DiagnosticsProperty<T> extends DiagnosticsNode {
           showName: showName,
           showSeparator: showSeparator,
           style: style,
-        );
+        ) {
+    assert(showName != null);
+    assert(showSeparator != null);
+    assert(defaultValue == kNoDefaultValue || defaultValue is T);
+    assert(missingIfNull != null);
+    assert(style != null);
+    assert(level != null);
+  }
 
   final String _description;
 
@@ -1832,7 +1907,9 @@ class DiagnosticableNode<T extends Diagnosticable> extends DiagnosticsNode {
       : super(
           name: name,
           style: style,
-        );
+        ) {
+    assert(value != null);
+  }
 
   @override
   final T value;
@@ -2023,7 +2100,7 @@ abstract class Diagnosticable {
   /// Returns a debug representation of the object that is used by debugging
   /// tools and by [toStringDeep].
   ///
-  /// Leave [name] as `null` if there is not a meaningful description of the
+  /// Leave [name] as null if there is not a meaningful description of the
   /// relationship between the this node and its parent.
   ///
   /// Typically the [style] argument is only specified to indicate an atypical
@@ -2300,6 +2377,11 @@ abstract class DiagnosticableTree extends Diagnosticable {
 
   /// Returns a string representation of this node and its descendants.
   ///
+  /// `prefixLineOne` will be added to the front of the first line of the
+  /// output. `prefixOtherLines` will be added to the front of each other line.
+  /// If `prefixOtherLines` is null, the `prefixLineOne` is used for every line.
+  /// By default, there is no prefix.
+  ///
   /// `minLevel` specifies the minimum [DiagnosticLevel] for properties included
   /// in the output.
   ///
@@ -2361,6 +2443,10 @@ abstract class DiagnosticableTree extends Diagnosticable {
 /// This class is identical to DiagnosticableTree except that it can be used as
 /// a mixin.
 abstract class DiagnosticableTreeMixin implements DiagnosticableTree {
+  // This class is intended to be used as a mixin, and should not be
+  // extended directly.
+  factory DiagnosticableTreeMixin._() => null;
+
   @override
   String toString({DiagnosticLevel minLevel: DiagnosticLevel.debug}) {
     return toDiagnosticsNode(style: DiagnosticsTreeStyle.singleLine)

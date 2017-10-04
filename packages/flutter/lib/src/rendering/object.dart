@@ -431,9 +431,7 @@ abstract class RenderObject extends AbstractNode with DiagnosticableTreeMixin {
   /// Initializes internal fields for subclasses.
   RenderObject();
 
-  void markNeedsLayout() {
-
-  }
+  void markNeedsLayout() {}
 
   /// Data for use by the parent render object.
   ///
@@ -530,7 +528,8 @@ abstract class RenderObjectWithChildMixin<ChildType extends RenderObject>
             'The $runtimeType that expected a $ChildType child was created by:\n'
             '  $debugCreator\n'
             '\n'
-            'The ${child.runtimeType} that did not match the expected child type '
+            'The ${child
+                .runtimeType} that did not match the expected child type '
             'was created by:\n'
             '  ${child.debugCreator}\n');
       }
@@ -543,6 +542,7 @@ abstract class RenderObjectWithChildMixin<ChildType extends RenderObject>
 
   /// The render object's unique child
   ChildType get child => _child;
+
   set child(ChildType value) {
     if (_child != null) dropChild(_child);
     _child = value;
@@ -659,7 +659,8 @@ abstract class ContainerRenderObjectMixin<ChildType extends RenderObject,
             'The $runtimeType that expected a $ChildType child was created by:\n'
             '  $debugCreator\n'
             '\n'
-            'The ${child.runtimeType} that did not match the expected child type '
+            'The ${child
+                .runtimeType} that did not match the expected child type '
             'was created by:\n'
             '  ${child.debugCreator}\n');
       }
@@ -670,6 +671,7 @@ abstract class ContainerRenderObjectMixin<ChildType extends RenderObject,
 
   ChildType _firstChild;
   ChildType _lastChild;
+
   void _insertIntoChildList(ChildType child, {ChildType after}) {
     final ParentDataType childParentData = child.parentData;
     assert(childParentData.nextSibling == null);

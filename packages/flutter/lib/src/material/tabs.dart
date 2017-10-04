@@ -278,10 +278,11 @@ double _indexChangeProgress(TabController controller) {
   // The controller's offset is changing because the user is dragging the
   // TabBarView's PageView to the left or right.
   if (!controller.indexIsChanging)
-    return (currentIndex -  controllerValue).abs().clamp(0.0, 1.0);
+    return (currentIndex - controllerValue).abs().clamp(0.0, 1.0);
 
   // The TabController animation's value is changing from previousIndex to currentIndex.
-  return (controllerValue - currentIndex).abs() / (currentIndex - previousIndex).abs();
+  return (controllerValue - currentIndex).abs() /
+      (currentIndex - previousIndex).abs();
 }
 
 /// Displays a row of small circular indicators, one per tab. The selected
@@ -297,7 +298,8 @@ class TabPageSelector extends StatelessWidget {
     this.indicatorSize: 12.0,
     this.color,
     this.selectedColor,
-  }) : super(key: key);
+  })
+      : super(key: key);
 
   /// This widget's selection and animation state.
   ///
@@ -321,11 +323,11 @@ class TabPageSelector extends StatelessWidget {
   final Color selectedColor;
 
   Widget _buildTabIndicator(
-      int tabIndex,
-      TabController tabController,
-      ColorTween selectedColorTween,
-      ColorTween previousColorTween,
-      ) {
+    int tabIndex,
+    TabController tabController,
+    ColorTween selectedColorTween,
+    ColorTween previousColorTween,
+  ) {
     Color background;
     if (tabController.indexIsChanging) {
       // The selection's animation is animating from previousValue to value.
@@ -360,19 +362,21 @@ class TabPageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color fixColor = color ?? Colors.transparent;
-    final Color fixSelectedColor = selectedColor ?? Theme.of(context).accentColor;
-    final ColorTween selectedColorTween = new ColorTween(begin: fixColor, end: fixSelectedColor);
-    final ColorTween previousColorTween = new ColorTween(begin: fixSelectedColor, end: fixColor);
-    final TabController tabController = controller ?? DefaultTabController.of(context);
+    final Color fixSelectedColor =
+        selectedColor ?? Theme.of(context).accentColor;
+    final ColorTween selectedColorTween =
+        new ColorTween(begin: fixColor, end: fixSelectedColor);
+    final ColorTween previousColorTween =
+        new ColorTween(begin: fixSelectedColor, end: fixColor);
+    final TabController tabController =
+        controller ?? DefaultTabController.of(context);
     assert(() {
       if (tabController == null) {
-        throw new FlutterError(
-            'No TabController for $runtimeType.\n'
-                'When creating a $runtimeType, you must either provide an explicit TabController '
-                'using the "controller" property, or you must ensure that there is a '
-                'DefaultTabController above the $runtimeType.\n'
-                'In this case, there was neither an explicit controller nor a default controller.'
-        );
+        throw new FlutterError('No TabController for $runtimeType.\n'
+            'When creating a $runtimeType, you must either provide an explicit TabController '
+            'using the "controller" property, or you must ensure that there is a '
+            'DefaultTabController above the $runtimeType.\n'
+            'In this case, there was neither an explicit controller nor a default controller.');
       }
       return true;
     }());
@@ -387,12 +391,13 @@ class TabPageSelector extends StatelessWidget {
             label: 'Page ${tabController.index + 1} of ${tabController.length}',
             child: new Row(
               mainAxisSize: MainAxisSize.min,
-              children: new List<Widget>.generate(tabController.length, (int tabIndex) {
-                return _buildTabIndicator(tabIndex, tabController, selectedColorTween, previousColorTween);
+              children: new List<Widget>.generate(tabController.length,
+                  (int tabIndex) {
+                return _buildTabIndicator(tabIndex, tabController,
+                    selectedColorTween, previousColorTween);
               }).toList(),
             ),
           );
-        }
-    );
+        });
   }
 }

@@ -14,12 +14,15 @@ abstract class RenderTreePlugin {
 
   void runApp(Widget widget);
 
-  Widget buildHtmlElementWidget(BuildContext context, HtmlElementWidget widget) {
-    throw new UnimplementedError("'${this.runtimeType}' is missing support for HtmlElementWidget.");
+  Widget buildHtmlElementWidget(
+      BuildContext context, HtmlElementWidget widget) {
+    throw new UnimplementedError(
+        "'${this.runtimeType}' is missing support for HtmlElementWidget.");
   }
 
   Widget buildReactWidget(BuildContext context, ReactWidget widget) {
-    throw new UnimplementedError("'${this.runtimeType}' is missing support for ReactWidget.");
+    throw new UnimplementedError(
+        "'${this.runtimeType}' is missing support for ReactWidget.");
   }
 
   // A special case because otherwise we risk infinite recursion.

@@ -369,6 +369,5 @@ abstract class ScaffoldFeatureController<T extends Widget, U> {
 /// A [ScaffoldFeatureController] for persistent bottom sheets.
 ///
 /// This is the type of objects returned by [ScaffoldState.showBottomSheet].
-abstract class PersistentBottomSheetController<T> extends ScaffoldFeatureController {
-
-}
+abstract class PersistentBottomSheetController<T>
+    extends ScaffoldFeatureController {}

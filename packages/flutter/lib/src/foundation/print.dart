@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:collection';
 
 /// Signature for [debugPrint] implementations.
 typedef void DebugPrintCallback(String message, {int wrapWidth});
@@ -44,55 +43,13 @@ void debugPrintSynchronously(String message, {int wrapWidth}) {
 /// Implementation of [debugPrint] that throttles messages. This avoids dropping
 /// messages on platforms that rate-limit their logging (for example, Android).
 void debugPrintThrottled(String message, {int wrapWidth}) {
-  if (wrapWidth != null) {
-    _debugPrintBuffer.addAll(message
-        .split('\n')
-        .expand((String line) => debugWordWrap(line, wrapWidth)));
-  } else {
-    _debugPrintBuffer.addAll(message.split('\n'));
-  }
-  if (!_debugPrintScheduled) _debugPrintTask();
-}
-
-int _debugPrintedCharacters = 0;
-const int _kDebugPrintCapacity = 12 * 1024;
-const Duration _kDebugPrintPauseTime = const Duration(seconds: 1);
-final Queue<String> _debugPrintBuffer = new Queue<String>();
-final Stopwatch _debugPrintStopwatch = new Stopwatch();
-Completer<Null> _debugPrintCompleter;
-bool _debugPrintScheduled = false;
-
-void _debugPrintTask() {
-  _debugPrintScheduled = false;
-  if (_debugPrintStopwatch.elapsed > _kDebugPrintPauseTime) {
-    _debugPrintStopwatch.stop();
-    _debugPrintStopwatch.reset();
-    _debugPrintedCharacters = 0;
-  }
-  while (_debugPrintedCharacters < _kDebugPrintCapacity &&
-      _debugPrintBuffer.isNotEmpty) {
-    final String line = _debugPrintBuffer.removeFirst();
-    _debugPrintedCharacters +=
-        line.length; // TODO(ianh): Use the UTF-8 byte length instead
-    print(line);
-  }
-  if (_debugPrintBuffer.isNotEmpty) {
-    _debugPrintScheduled = true;
-    _debugPrintedCharacters = 0;
-    new Timer(_kDebugPrintPauseTime, _debugPrintTask);
-    _debugPrintCompleter ??= new Completer<Null>();
-  } else {
-    _debugPrintStopwatch.start();
-    _debugPrintCompleter?.complete();
-    _debugPrintCompleter = null;
-  }
+  debugPrintSynchronously(message, wrapWidth: wrapWidth);
 }
 
 /// A Future that resolves when there is no longer any buffered content being
 /// printed by [debugPrintThrottled] (which is the default implementation for
 /// [debugPrint], which is used to report errors to the console).
-Future<Null> get debugPrintDone =>
-    _debugPrintCompleter?.future ?? new Future<Null>.value();
+Future<Null> get debugPrintDone => new Future<Null>.value();
 
 final RegExp _indentPattern = new RegExp('^ *(?:[-+*] |[0-9]+[.):] )?');
 enum _WordWrapParseMode { inSpace, inWord, atBreak }

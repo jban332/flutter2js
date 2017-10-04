@@ -63,8 +63,8 @@ abstract class MultiChildUIPluginWidget extends StatelessUIPluginWidget {
   /// objects.
   MultiChildUIPluginWidget({Key key, this.children: const <Widget>[]})
       : super(key: key) {
-    assert(children!=null);
-    assert(children.every((w)=>w!=null));
+    assert(children != null);
+    assert(children.every((w) => w != null));
   }
 
   /// The widgets below this widget in the tree.

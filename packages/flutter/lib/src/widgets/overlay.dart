@@ -152,7 +152,7 @@ class OverlayEntry {
 
   @override
   String toString() => '${describeIdentity(
-          this)}(opaque: $opaque; maintainState: $maintainState)';
+      this)}(opaque: $opaque; maintainState: $maintainState)';
 }
 
 class _OverlayEntry extends StatefulWidget {

@@ -22,8 +22,8 @@ class TableCellParentData extends BoxParentData {
 
   @override
   String toString() => '${super.toString()}; ${verticalAlignment == null
-          ? "default vertical alignment"
-          : "$verticalAlignment"}';
+      ? "default vertical alignment"
+      : "$verticalAlignment"}';
 }
 
 /// Base class to describe how wide a column in a [RenderTable] should be.

@@ -84,15 +84,12 @@ abstract class AlignmentGeometry {
   /// this is not reflected in the type system). Otherwise, an object
   /// representing a combination of both is returned. That object can be turned
   /// into a concrete [Alignment] using [resolve].
-  static AlignmentGeometry lerp(AlignmentGeometry a, AlignmentGeometry b, double t) {
-    if (a == null && b == null)
-      return null;
-    if (a == null)
-      return b * t;
-    if (b == null)
-      return a * (1.0 - t);
-    if (a is Alignment && b is Alignment)
-      return Alignment.lerp(a, b, t);
+  static AlignmentGeometry lerp(
+      AlignmentGeometry a, AlignmentGeometry b, double t) {
+    if (a == null && b == null) return null;
+    if (a == null) return b * t;
+    if (b == null) return a * (1.0 - t);
+    if (a is Alignment && b is Alignment) return Alignment.lerp(a, b, t);
     if (a is AlignmentDirectional && b is AlignmentDirectional)
       return AlignmentDirectional.lerp(a, b, t);
     return new _MixedAlignment(
@@ -115,17 +112,16 @@ abstract class AlignmentGeometry {
 
   @override
   String toString() {
-    if (_start == 0.0)
-      return Alignment._stringify(_x, _y);
-    if (_x == 0.0)
-      return AlignmentDirectional._stringify(_start, _y);
-    return Alignment._stringify(_x, _y) + ' + ' + AlignmentDirectional._stringify(_start, 0.0);
+    if (_start == 0.0) return Alignment._stringify(_x, _y);
+    if (_x == 0.0) return AlignmentDirectional._stringify(_start, _y);
+    return Alignment._stringify(_x, _y) +
+        ' + ' +
+        AlignmentDirectional._stringify(_start, 0.0);
   }
 
   @override
   bool operator ==(dynamic other) {
-    if (other is! AlignmentGeometry)
-      return false;
+    if (other is! AlignmentGeometry) return false;
     final AlignmentGeometry typedOther = other;
     return _x == typedOther._x &&
         _start == typedOther._start &&
@@ -229,8 +225,7 @@ class Alignment extends AlignmentGeometry {
 
   @override
   AlignmentGeometry add(AlignmentGeometry other) {
-    if (other is Alignment)
-      return this + other;
+    if (other is Alignment) return this + other;
     return super.add(other);
   }
 
@@ -319,37 +314,30 @@ class Alignment extends AlignmentGeometry {
   ///
   /// If either is null, this function interpolates from [Alignment.center].
   static Alignment lerp(Alignment a, Alignment b, double t) {
-    if (a == null && b == null)
-      return null;
+    if (a == null && b == null) return null;
     if (a == null)
-      return new Alignment(ui.lerpDouble(0.0, b.x, t), ui.lerpDouble(0.0, b.y, t));
+      return new Alignment(
+          ui.lerpDouble(0.0, b.x, t), ui.lerpDouble(0.0, b.y, t));
     if (b == null)
-      return new Alignment(ui.lerpDouble(a.x, 0.0, t), ui.lerpDouble(a.y, 0.0, t));
-    return new Alignment(ui.lerpDouble(a.x, b.x, t), ui.lerpDouble(a.y, b.y, t));
+      return new Alignment(
+          ui.lerpDouble(a.x, 0.0, t), ui.lerpDouble(a.y, 0.0, t));
+    return new Alignment(
+        ui.lerpDouble(a.x, b.x, t), ui.lerpDouble(a.y, b.y, t));
   }
 
   @override
   Alignment resolve(TextDirection direction) => this;
 
   static String _stringify(double x, double y) {
-    if (x == -1.0 && y == -1.0)
-      return 'Alignment.topLeft';
-    if (x == 0.0 && y == -1.0)
-      return 'Alignment.topCenter';
-    if (x == 1.0 && y == -1.0)
-      return 'Alignment.topRight';
-    if (x == -1.0 && y == 0.0)
-      return 'Alignment.centerLeft';
-    if (x == 0.0 && y == 0.0)
-      return 'Alignment.center';
-    if (x == 1.0 && y == 0.0)
-      return 'Alignment.centerRight';
-    if (x == -1.0 && y == 1.0)
-      return 'Alignment.bottomLeft';
-    if (x == 0.0 && y == 1.0)
-      return 'Alignment.bottomCenter';
-    if (x == 1.0 && y == 1.0)
-      return 'Alignment.bottomRight';
+    if (x == -1.0 && y == -1.0) return 'Alignment.topLeft';
+    if (x == 0.0 && y == -1.0) return 'Alignment.topCenter';
+    if (x == 1.0 && y == -1.0) return 'Alignment.topRight';
+    if (x == -1.0 && y == 0.0) return 'Alignment.centerLeft';
+    if (x == 0.0 && y == 0.0) return 'Alignment.center';
+    if (x == 1.0 && y == 0.0) return 'Alignment.centerRight';
+    if (x == -1.0 && y == 1.0) return 'Alignment.bottomLeft';
+    if (x == 0.0 && y == 1.0) return 'Alignment.bottomCenter';
+    if (x == 1.0 && y == 1.0) return 'Alignment.bottomRight';
     return 'Alignment(${x.toStringAsFixed(1)}, '
         '${y.toStringAsFixed(1)})';
   }
@@ -409,45 +397,53 @@ class AlignmentDirectional extends AlignmentGeometry {
   double get _y => y;
 
   /// The top corner on the "start" side.
-  static const AlignmentDirectional topStart = const AlignmentDirectional(-1.0, -1.0);
+  static const AlignmentDirectional topStart =
+      const AlignmentDirectional(-1.0, -1.0);
 
   /// The center point along the top edge.
   ///
   /// Consider using [Alignment.topCenter] instead, as it does not need
   /// to be [resolve]d to be used.
-  static const AlignmentDirectional topCenter = const AlignmentDirectional(0.0, -1.0);
+  static const AlignmentDirectional topCenter =
+      const AlignmentDirectional(0.0, -1.0);
 
   /// The top corner on the "end" side.
-  static const AlignmentDirectional topEnd = const AlignmentDirectional(1.0, -1.0);
+  static const AlignmentDirectional topEnd =
+      const AlignmentDirectional(1.0, -1.0);
 
   /// The center point along the "start" edge.
-  static const AlignmentDirectional centerStart = const AlignmentDirectional(-1.0, 0.0);
+  static const AlignmentDirectional centerStart =
+      const AlignmentDirectional(-1.0, 0.0);
 
   /// The center point, both horizontally and vertically.
   ///
   /// Consider using [Alignment.center] instead, as it does not need to
   /// be [resolve]d to be used.
-  static const AlignmentDirectional center = const AlignmentDirectional(0.0, 0.0);
+  static const AlignmentDirectional center =
+      const AlignmentDirectional(0.0, 0.0);
 
   /// The center point along the "end" edge.
-  static const AlignmentDirectional centerEnd = const AlignmentDirectional(1.0, 0.0);
+  static const AlignmentDirectional centerEnd =
+      const AlignmentDirectional(1.0, 0.0);
 
   /// The bottom corner on the "start" side.
-  static const AlignmentDirectional bottomStart = const AlignmentDirectional(-1.0, 1.0);
+  static const AlignmentDirectional bottomStart =
+      const AlignmentDirectional(-1.0, 1.0);
 
   /// The center point along the bottom edge.
   ///
   /// Consider using [Alignment.bottomCenter] instead, as it does not
   /// need to be [resolve]d to be used.
-  static const AlignmentDirectional bottomCenter = const AlignmentDirectional(0.0, 1.0);
+  static const AlignmentDirectional bottomCenter =
+      const AlignmentDirectional(0.0, 1.0);
 
   /// The bottom corner on the "end" side.
-  static const AlignmentDirectional bottomEnd = const AlignmentDirectional(1.0, 1.0);
+  static const AlignmentDirectional bottomEnd =
+      const AlignmentDirectional(1.0, 1.0);
 
   @override
   AlignmentGeometry add(AlignmentGeometry other) {
-    if (other is AlignmentDirectional)
-      return this + other;
+    if (other is AlignmentDirectional) return this + other;
     return super.add(other);
   }
 
@@ -482,7 +478,8 @@ class AlignmentDirectional extends AlignmentGeometry {
   /// Integer divides the [AlignmentDirectional] in each dimension by the given factor.
   @override
   AlignmentDirectional operator ~/(double other) {
-    return new AlignmentDirectional((start ~/ other).toDouble(), (y ~/ other).toDouble());
+    return new AlignmentDirectional(
+        (start ~/ other).toDouble(), (y ~/ other).toDouble());
   }
 
   /// Computes the remainder in each dimension by the given factor.
@@ -494,14 +491,17 @@ class AlignmentDirectional extends AlignmentGeometry {
   /// Linearly interpolate between two [AlignmentDirectional]s.
   ///
   /// If either is null, this function interpolates from [AlignmentDirectional.center].
-  static AlignmentDirectional lerp(AlignmentDirectional a, AlignmentDirectional b, double t) {
-    if (a == null && b == null)
-      return null;
+  static AlignmentDirectional lerp(
+      AlignmentDirectional a, AlignmentDirectional b, double t) {
+    if (a == null && b == null) return null;
     if (a == null)
-      return new AlignmentDirectional(ui.lerpDouble(0.0, b.start, t), ui.lerpDouble(0.0, b.y, t));
+      return new AlignmentDirectional(
+          ui.lerpDouble(0.0, b.start, t), ui.lerpDouble(0.0, b.y, t));
     if (b == null)
-      return new AlignmentDirectional(ui.lerpDouble(a.start, 0.0, t), ui.lerpDouble(a.y, 0.0, t));
-    return new AlignmentDirectional(ui.lerpDouble(a.start, b.start, t), ui.lerpDouble(a.y, b.y, t));
+      return new AlignmentDirectional(
+          ui.lerpDouble(a.start, 0.0, t), ui.lerpDouble(a.y, 0.0, t));
+    return new AlignmentDirectional(
+        ui.lerpDouble(a.start, b.start, t), ui.lerpDouble(a.y, b.y, t));
   }
 
   @override
@@ -517,24 +517,15 @@ class AlignmentDirectional extends AlignmentGeometry {
   }
 
   static String _stringify(double start, double y) {
-    if (start == -1.0 && y == -1.0)
-      return 'AlignmentDirectional.topStart';
-    if (start == 0.0 && y == -1.0)
-      return 'AlignmentDirectional.topCenter';
-    if (start == 1.0 && y == -1.0)
-      return 'AlignmentDirectional.topEnd';
-    if (start == -1.0 && y == 0.0)
-      return 'AlignmentDirectional.centerStart';
-    if (start == 0.0 && y == 0.0)
-      return 'AlignmentDirectional.center';
-    if (start == 1.0 && y == 0.0)
-      return 'AlignmentDirectional.centerEnd';
-    if (start == -1.0 && y == 1.0)
-      return 'AlignmentDirectional.bottomStart';
-    if (start == 0.0 && y == 1.0)
-      return 'AlignmentDirectional.bottomCenter';
-    if (start == 1.0 && y == 1.0)
-      return 'AlignmentDirectional.bottomEnd';
+    if (start == -1.0 && y == -1.0) return 'AlignmentDirectional.topStart';
+    if (start == 0.0 && y == -1.0) return 'AlignmentDirectional.topCenter';
+    if (start == 1.0 && y == -1.0) return 'AlignmentDirectional.topEnd';
+    if (start == -1.0 && y == 0.0) return 'AlignmentDirectional.centerStart';
+    if (start == 0.0 && y == 0.0) return 'AlignmentDirectional.center';
+    if (start == 1.0 && y == 0.0) return 'AlignmentDirectional.centerEnd';
+    if (start == -1.0 && y == 1.0) return 'AlignmentDirectional.bottomStart';
+    if (start == 0.0 && y == 1.0) return 'AlignmentDirectional.bottomCenter';
+    if (start == 1.0 && y == 1.0) return 'AlignmentDirectional.bottomEnd';
     return 'AlignmentDirectional(${start.toStringAsFixed(1)}, '
         '${y.toStringAsFixed(1)})';
   }

@@ -581,6 +581,6 @@ class ThemeData {
 
   @override
   String toString() => '$runtimeType(${ platform != defaultTargetPlatform
-          ? "$platform "
-          : ''}$brightness $primaryColor etc...)';
+      ? "$platform "
+      : ''}$brightness $primaryColor etc...)';
 }

@@ -123,7 +123,7 @@ class VelocityEstimate {
 
   @override
   String toString() => 'VelocityEstimate(${pixelsPerSecond.dx.toStringAsFixed(
-          1)}, ${pixelsPerSecond.dy.toStringAsFixed(1)})';
+      1)}, ${pixelsPerSecond.dy.toStringAsFixed(1)})';
 }
 
 class _PointAtTime {

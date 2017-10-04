@@ -3,8 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:collection';
-import 'dart:developer'
-    show Timeline;
+import 'dart:developer' show Timeline;
 
 import 'package:flutter/foundation.dart';
 
@@ -13,7 +12,6 @@ import 'framework.dart';
 import 'media_query.dart';
 import 'table.dart';
 // to disambiguate reference in dartdocs below
-
 
 // Any changes to this file should be reflected in the debugAssertAllWidgetVarsUnset()
 // function below.
@@ -157,7 +155,8 @@ bool debugCheckHasTable(BuildContext context) {
         context.ancestorWidgetOfExactType(Table) == null) {
       final Element element = context;
       throw new FlutterError('No Table widget found.\n'
-          '${context.widget.runtimeType} widgets require a Table widget ancestor.\n'
+          '${context.widget
+          .runtimeType} widgets require a Table widget ancestor.\n'
           'The specific widget that could not find a Table ancestor was:\n'
           '  ${context.widget}\n'
           'The ownership chain for the affected widget is:\n'
@@ -187,7 +186,8 @@ bool debugCheckHasMediaQuery(BuildContext context) {
         context.ancestorWidgetOfExactType(MediaQuery) == null) {
       final Element element = context;
       throw new FlutterError('No MediaQuery widget found.\n'
-          '${context.widget.runtimeType} widgets require a MediaQuery widget ancestor.\n'
+          '${context.widget
+          .runtimeType} widgets require a MediaQuery widget ancestor.\n'
           'The specific widget that could not find a MediaQuery ancestor was:\n'
           '  ${context.widget}\n'
           'The ownership chain for the affected widget is:\n'
@@ -219,7 +219,8 @@ bool debugCheckHasDirectionality(BuildContext context) {
         context.ancestorWidgetOfExactType(Directionality) == null) {
       final Element element = context;
       throw new FlutterError('No Directionality widget found.\n'
-          '${context.widget.runtimeType} widgets require a Directionality widget ancestor.\n'
+          '${context.widget
+          .runtimeType} widgets require a Directionality widget ancestor.\n'
           'The specific widget that could not find a Directionality ancestor was:\n'
           '  ${context.widget}\n'
           'The ownership chain for the affected widget is:\n'

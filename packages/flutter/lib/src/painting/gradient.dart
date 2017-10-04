@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/ui.dart' as ui show Gradient, lerpDouble;
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/ui.dart' as ui show Gradient, lerpDouble;
 
 import 'alignment.dart';
 import 'basic_types.dart';
@@ -29,7 +28,7 @@ abstract class Gradient {
   /// If the gradient's configuration is text-direction-dependent, for example
   /// it uses [AlignmentDirectional] objects instead of [Alignment]
   /// objects, then the `textDirection` argument must not be null.
-  Shader createShader(Rect rect, { TextDirection textDirection });
+  Shader createShader(Rect rect, {TextDirection textDirection});
 }
 
 /// A 2D linear gradient.
@@ -159,11 +158,13 @@ class LinearGradient extends Gradient {
   final TileMode tileMode;
 
   @override
-  Shader createShader(Rect rect, { TextDirection textDirection }) {
+  Shader createShader(Rect rect, {TextDirection textDirection}) {
     return new ui.Gradient.linear(
       begin.resolve(textDirection).withinRect(rect),
       end.resolve(textDirection).withinRect(rect),
-      colors, stops, tileMode,
+      colors,
+      stops,
+      tileMode,
     );
   }
 
@@ -177,7 +178,9 @@ class LinearGradient extends Gradient {
     return new LinearGradient(
       begin: begin,
       end: end,
-      colors: colors.map<Color>((Color color) => Color.lerp(null, color, factor)).toList(),
+      colors: colors
+          .map<Color>((Color color) => Color.lerp(null, color, factor))
+          .toList(),
       stops: stops,
       tileMode: tileMode,
     );
@@ -191,14 +194,13 @@ class LinearGradient extends Gradient {
   ///
   /// If neither gradient is null, they must have the same number of [colors].
   static LinearGradient lerp(LinearGradient a, LinearGradient b, double t) {
-    if (a == null && b == null)
-      return null;
-    if (a == null)
-      return b.scale(t);
-    if (b == null)
-      return a.scale(1.0 - t);
-    assert(a.colors.length == b.colors.length, 'Cannot interpolate between two gradients with a different number of colors.');
-    assert(a.stops == null || b.stops == null || a.stops.length == b.stops.length);
+    if (a == null && b == null) return null;
+    if (a == null) return b.scale(t);
+    if (b == null) return a.scale(1.0 - t);
+    assert(a.colors.length == b.colors.length,
+        'Cannot interpolate between two gradients with a different number of colors.');
+    assert(
+        a.stops == null || b.stops == null || a.stops.length == b.stops.length);
     final List<Color> interpolatedColors = <Color>[];
     for (int i = 0; i < a.colors.length; i += 1)
       interpolatedColors.add(Color.lerp(a.colors[i], b.colors[i], t));
@@ -220,38 +222,34 @@ class LinearGradient extends Gradient {
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final LinearGradient typedOther = other;
     if (begin != typedOther.begin ||
         end != typedOther.end ||
         tileMode != typedOther.tileMode ||
         colors?.length != typedOther.colors?.length ||
-        stops?.length != typedOther.stops?.length)
-      return false;
+        stops?.length != typedOther.stops?.length) return false;
     if (colors != null) {
       assert(typedOther.colors != null);
       assert(colors.length == typedOther.colors.length);
       for (int i = 0; i < colors.length; i += 1) {
-        if (colors[i] != typedOther.colors[i])
-          return false;
+        if (colors[i] != typedOther.colors[i]) return false;
       }
     }
     if (stops != null) {
       assert(typedOther.stops != null);
       assert(stops.length == typedOther.stops.length);
       for (int i = 0; i < stops.length; i += 1) {
-        if (stops[i] != typedOther.stops[i])
-          return false;
+        if (stops[i] != typedOther.stops[i]) return false;
       }
     }
     return true;
   }
 
   @override
-  int get hashCode => hashValues(begin, end, tileMode, hashList(colors), hashList(stops));
+  int get hashCode =>
+      hashValues(begin, end, tileMode, hashList(colors), hashList(stops));
 
   @override
   String toString() {
@@ -389,48 +387,46 @@ class RadialGradient extends Gradient {
   final TileMode tileMode;
 
   @override
-  Shader createShader(Rect rect, { TextDirection textDirection }) {
+  Shader createShader(Rect rect, {TextDirection textDirection}) {
     return new ui.Gradient.radial(
       center.resolve(textDirection).withinRect(rect),
       radius * rect.shortestSide,
-      colors, stops, tileMode,
+      colors,
+      stops,
+      tileMode,
     );
   }
 
   @override
   bool operator ==(dynamic other) {
-    if (identical(this, other))
-      return true;
-    if (runtimeType != other.runtimeType)
-      return false;
+    if (identical(this, other)) return true;
+    if (runtimeType != other.runtimeType) return false;
     final RadialGradient typedOther = other;
     if (center != typedOther.center ||
         radius != typedOther.radius ||
         tileMode != typedOther.tileMode ||
         colors?.length != typedOther.colors?.length ||
-        stops?.length != typedOther.stops?.length)
-      return false;
+        stops?.length != typedOther.stops?.length) return false;
     if (colors != null) {
       assert(typedOther.colors != null);
       assert(colors.length == typedOther.colors.length);
       for (int i = 0; i < colors.length; i += 1) {
-        if (colors[i] != typedOther.colors[i])
-          return false;
+        if (colors[i] != typedOther.colors[i]) return false;
       }
     }
     if (stops != null) {
       assert(typedOther.stops != null);
       assert(stops.length == typedOther.stops.length);
       for (int i = 0; i < stops.length; i += 1) {
-        if (stops[i] != typedOther.stops[i])
-          return false;
+        if (stops[i] != typedOther.stops[i]) return false;
       }
     }
     return true;
   }
 
   @override
-  int get hashCode => hashValues(center, radius, tileMode, hashList(colors), hashList(stops));
+  int get hashCode =>
+      hashValues(center, radius, tileMode, hashList(colors), hashList(stops));
 
   @override
   String toString() {

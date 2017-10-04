@@ -2171,7 +2171,7 @@ class BuildOwner {
       _debugStateLockLevel += 1;
       _debugBuilding = true;
       return true;
-    });
+    }());
     Timeline.startSync('Build', arguments: timelineWhitelistArguments);
     try {
       _scheduledFlushDirtyElements = true;
@@ -2183,18 +2183,18 @@ class BuildOwner {
           debugPreviousBuildTarget = _debugCurrentBuildTarget;
           _debugCurrentBuildTarget = context;
           return true;
-        });
+        }());
         _dirtyElementsNeedsResorting = false;
         try {
           callback();
         } finally {
           assert(() {
             context._debugSetAllowIgnoredCallsToMarkNeedsBuild(false);
-            assert(_debugCurrentBuildTarget == context);
+            // assert(_debugCurrentBuildTarget == context);
             _debugCurrentBuildTarget = debugPreviousBuildTarget;
             _debugElementWasRebuilt(context);
             return true;
-          });
+          }());
         }
       }
       _dirtyElements.sort(Element._sort);
@@ -2243,7 +2243,7 @@ class BuildOwner {
               '  $_dirtyElements');
         }
         return true;
-      });
+      }());
     } finally {
       for (Element element in _dirtyElements) {
         assert(element._inDirtyList);
@@ -2259,7 +2259,7 @@ class BuildOwner {
         _debugStateLockLevel -= 1;
         if (debugPrintBuildScope) debugPrint('buildScope finished');
         return true;
-      });
+      }());
     }
     assert(_debugStateLockLevel >= 0);
   }
@@ -2795,7 +2795,7 @@ abstract class Element extends DiagnosticableTree implements BuildContext {
     assert(() {
       if (debugPrintGlobalKeyedWidgetLifecycle)
         debugPrint('Attempting to take $element from ${element._parent ??
-                "inactive elements list"} to put in $this.');
+            "inactive elements list"} to put in $this.');
       return true;
     });
     final Element parent = element._parent;
@@ -4476,6 +4476,7 @@ class MultiChildRenderObjectElement extends RenderObjectElement {
       _children.where((Element child) => !_forgottenChildren.contains(child));
 
   List<Element> _children;
+
   // We keep a set of forgotten children to avoid O(n^2) work walking _children
   // repeatedly to remove children.
   final Set<Element> _forgottenChildren = new HashSet<Element>();
@@ -4548,7 +4549,9 @@ class MultiChildRenderObjectElement extends RenderObjectElement {
 
 class _DebugCreator {
   _DebugCreator(this.element);
+
   final RenderObjectElement element;
+
   @override
   String toString() => element.debugGetCreatorChain(12);
 }

@@ -53,6 +53,7 @@ typedef bool SchedulingStrategy({int priority, SchedulerBinding scheduler});
 
 class _TaskEntry {
   const _TaskEntry(this.task, this.priority);
+
   final VoidCallback task;
   final int priority;
 }
@@ -607,7 +608,8 @@ abstract class SchedulerBinding extends BindingBase {
           frameTimeStampDescription.write('(warm-up frame)');
         }
         _debugBanner =
-            '▄▄▄▄▄▄▄▄ Frame ${_profileFrameNumber.toString().padRight(7)}   ${frameTimeStampDescription.toString().padLeft(18)} ▄▄▄▄▄▄▄▄';
+            '▄▄▄▄▄▄▄▄ Frame ${_profileFrameNumber.toString().padRight(
+            7)}   ${frameTimeStampDescription.toString().padLeft(18)} ▄▄▄▄▄▄▄▄';
         if (debugPrintBeginFrameBanner) debugPrint(_debugBanner);
       }
       return true;
@@ -689,14 +691,12 @@ abstract class SchedulerBinding extends BindingBase {
     if (timeStamp.inHours > 0)
       buffer.write(
           '${timeStamp.inHours - timeStamp.inDays * Duration.HOURS_PER_DAY}h ');
-    if (timeStamp.inMinutes > 0)
-      buffer.write(
-          '${timeStamp.inMinutes - timeStamp.inHours * Duration.MINUTES_PER_HOUR}m ');
-    if (timeStamp.inSeconds > 0)
-      buffer.write(
-          '${timeStamp.inSeconds - timeStamp.inMinutes * Duration.SECONDS_PER_MINUTE}s ');
-    buffer.write(
-        '${timeStamp.inMilliseconds - timeStamp.inSeconds * Duration.MILLISECONDS_PER_SECOND}');
+    if (timeStamp.inMinutes > 0) buffer.write('${timeStamp.inMinutes -
+              timeStamp.inHours * Duration.MINUTES_PER_HOUR}m ');
+    if (timeStamp.inSeconds > 0) buffer.write('${timeStamp.inSeconds -
+              timeStamp.inMinutes * Duration.SECONDS_PER_MINUTE}s ');
+    buffer.write('${timeStamp.inMilliseconds -
+            timeStamp.inSeconds * Duration.MILLISECONDS_PER_SECOND}');
     final int microseconds = timeStamp.inMicroseconds -
         timeStamp.inMilliseconds * Duration.MICROSECONDS_PER_MILLISECOND;
     if (microseconds > 0)

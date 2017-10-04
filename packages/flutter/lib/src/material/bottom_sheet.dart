@@ -47,13 +47,12 @@ class BottomSheet extends flur.StatelessUIPluginWidget {
   /// Typically, bottom sheets are created implicitly by
   /// [ScaffoldState.showBottomSheet], for persistent bottom sheets, or by
   /// [showModalBottomSheet], for modal bottom sheets.
-  const BottomSheet({
-    Key key,
-    this.animationController,
-    @required this.onClosing,
-    @required this.builder
-  }) :
-        super(key: key);
+  const BottomSheet(
+      {Key key,
+      this.animationController,
+      @required this.onClosing,
+      @required this.builder})
+      : super(key: key);
 
   /// The animation that controls the bottom sheet's position.
   ///
@@ -112,5 +111,6 @@ Future<T> showModalBottomSheet<T>({
   @required BuildContext context,
   @required WidgetBuilder builder,
 }) {
-  return flur.UIPlugin.current.showModalBottomSheet(context:context, builder:builder);
+  return flur.UIPlugin.current
+      .showModalBottomSheet(context: context, builder: builder);
 }

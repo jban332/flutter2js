@@ -5,19 +5,12 @@ void main() {
   group("DeviceInfo: ", () {
     test("Default", () {
       final info = DeviceInfo.current;
-      expect(info.platformType, PlatformType.flutter);
+      expect(info.platformType, PlatformType.browser);
       expect(info.isMobile, true);
       expect(info.userAgent, null);
       expect(info.operatingSystemType, OperatingSystemType.android);
     });
     group("Browser: ", () {
-      test("Default", () {
-        final info = new DeviceInfo.withBrowser();
-        expect(info.platformType, PlatformType.browser);
-        expect(info.isMobile, false);
-        expect(info.userAgent, null);
-        expect(info.operatingSystemType, null);
-      });
       test("'user-agent' parsing", () {
         final userAgents = <OperatingSystemType, List<String>>{
           OperatingSystemType.android: [
@@ -29,20 +22,10 @@ void main() {
         };
         userAgents.forEach((operatingSystemType, list) {
           for (var item in list) {
-            expect(
-                new DeviceInfo.withBrowser(userAgent: item).operatingSystemType,
-                operatingSystemType);
+            final deviceInfo = new DeviceInfo.fromBrowser(userAgent: item);
+            expect(deviceInfo.operatingSystemType, operatingSystemType);
           }
         });
-      });
-    });
-    group("React Native: ", () {
-      test("Default", () {
-        final info = new DeviceInfo.withReactNative();
-        expect(info.platformType, PlatformType.reactNative);
-        expect(info.isMobile, true);
-        expect(info.userAgent, null);
-        expect(info.operatingSystemType, null);
       });
     });
   });
