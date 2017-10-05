@@ -1,34 +1,37 @@
 # Flur [![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Flur is an experiment to make [Flutter](https://flutter.io) apps run in browser.
+Flur aims to make [Flutter](https://flutter.io) apps run in browser.
 
-Like the project? Contributions and sponsorships are welcome!
+It helps you to:
+* Release a browser version of your Flutter app.
+* Support devices not supported by Flutter.
+* Ease migration between different technologies.
 
-## Use cases
-* Release a (basic) web version of your Flutter app without additional development.
+Contributions are welcome!
 
 ## Status
-* [X] Runs "Hello World" level apps.
+## Done
+* [X] Patched a recent (October 2017) version of Flutter.
+* [X] _StatelessWidget_, _StatefulWidget_, and _HtmlElementWidget_ work.
 * [X] Flutter SDK example apps compile.
-  * "Hello world" example is approximately 120 kB after gzipping (checked mode). 
-  * "Stocks" example is approximately 220 kB after gzipping (checked mode). 
-  * "Gallery" example is approximately 600 kB after gzipping (checked mode). With checked mode disabled, this comes down to 260kb.
+  * "Hello world" example is approximately 120 kB after gzipping (assertions enabled). 
+  * "Stocks" example is approximately 220 kB after gzipping (assertions enabled). 
+  * "Flutter Gallery" example is approximately 600 kB after gzipping (assertions enabled). With assertions disabled, this comes down to 260kb.
 
-Most Flutter widgets and features do not work adequately.
+## Next
+* [ ] Get Flutter SDK example apps to render. Fix routing and other issues blocking this.
 
 ## Authors
   * jban332 <jban332@gmail.com>
   * Contributor? Add your name/email here.
 
 ## How it works?
-We modified _"package:flutter"_ so that fundamental built-in widgets (_Text_, _TextInput_, _CupertinoTabBar_, etc.) delegate building to an instance of _UIPlugin_.
-
-The framework contains _HtmlElementWidget_, which allows you to render HTML elements. In Flur, it will render a HTML element. Outside Flur, it will render an error message.
-
-When you compile your Flutter app to Javascript, you just tell package manager to use the Flur version of Flutter.
+You simply configure _pubspec.yaml_ so that  _"package:flutter"_ is overriden with Flur version of Flutter SDK.
 
 ### UIPlugin
-By overriding methods of [UIPlugin](https://github.com/jban332/flur/blob/master/packages/flur/lib/src/ui_plugin.dart), we can define how built-in widgets are rendered.
+Most Flutter SDK widgets (_Text_, _TextInput_, _CupertinoTabBar_, etc.) delegate building to an instance of  [UIPlugin](https://github.com/jban332/flur/blob/master/packages/flur/lib/src/ui_plugin.dart) in _"package:flur"_.
+
+By overriding its methods, we can define how built-in widgets are rendered. The framework contains _HtmlElementWidget_, which makes it possible to compose widgets out of HTML elements.
 
 For example:
 
@@ -41,8 +44,18 @@ class MyUIPlugin extends flur.UIPlugin {
   Widget buildCheckbox(BuildContext context, Checkbox widget) {
     return new HtmlElementWidget("input", attributes:{
       "type": "checkbox",
+      // ....
     });
   }
+}
+
+void main() {
+ // Configure Flur
+ flur.UIPlugin.current = new MyUIPlugin();
+ 
+ runApp(new Center(
+  child: new Checkbox(),
+ ));
 }
 ```
 
