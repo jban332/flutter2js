@@ -10,7 +10,7 @@ It helps you to:
 Contributions are welcome!
 
 ## Status
-## Done
+### Done
 * [X] Patched a recent (October 2017) version of Flutter.
 * [X] _StatelessWidget_, _StatefulWidget_, and _HtmlElementWidget_ work.
 * [X] Flutter SDK example apps compile.
@@ -18,7 +18,7 @@ Contributions are welcome!
   * "Stocks" example is approximately 220 kB after gzipping (assertions enabled). 
   * "Flutter Gallery" example is approximately 600 kB after gzipping (assertions enabled). With assertions disabled, this comes down to 260kb.
 
-## Next
+### Next
 * [ ] Get Flutter SDK example apps to render. Fix routing and other issues blocking this.
 
 ## Authors
