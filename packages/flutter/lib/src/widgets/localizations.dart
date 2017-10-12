@@ -168,47 +168,54 @@ abstract class WidgetsLocalizations {
   }
 }
 
-/// Localized values for widgets.
-class DefaultWidgetsLocalizations implements WidgetsLocalizations {
-  /// Construct an object that defines the localized values for the widgets
-  /// library for the given `locale`.
-  ///
-  /// [LocalizationsDelegate] implementations typically call the static [load]
-  /// function, rather than constructing this class directly.
-  DefaultWidgetsLocalizations(this.locale) {
-    final String language = locale.languageCode.toLowerCase();
-    _textDirection = _rtlLanguages.contains(language)
-        ? TextDirection.rtl
-        : TextDirection.ltr;
-  }
-
-  // See http://en.wikipedia.org/wiki/Right-to-left
-  static const List<String> _rtlLanguages = const <String>[
-    'ar', // Arabic
-    'fa', // Farsi
-    'he', // Hebrew
-    'ps', // Pashto
-    'sd', // Sindhi
-    'ur', // Urdu
-  ];
-
-  /// The locale for which the values of this class's localized resources
-  /// have been translated.
-  final Locale locale;
+class _WidgetsLocalizationsDelegate
+    extends LocalizationsDelegate<WidgetsLocalizations> {
+  const _WidgetsLocalizationsDelegate();
 
   @override
-  TextDirection get textDirection => _textDirection;
-  TextDirection _textDirection;
+  Future<WidgetsLocalizations> load(Locale locale) =>
+      DefaultWidgetsLocalizations.load(locale);
 
-  /// Creates an object that provides localized resource values for the
-  /// lowest levels of the Flutter framework.
+  @override
+  bool shouldReload(_WidgetsLocalizationsDelegate old) => false;
+}
+
+/// US English localizations for the widgets library.
+///
+/// See also:
+///
+///  * [GlobalWidgetsLocalizations], which provides widgets localizations for
+///    many languages.
+///  * [WidgetsApp.delegates], which automatically includes
+///    [DefaultWidgetsLocalizations.delegate] by default.
+class DefaultWidgetsLocalizations implements WidgetsLocalizations {
+  /// Construct an object that defines the localized values for the widgets
+  /// library for US English (only).
+  ///
+  /// [LocalizationsDelegate] implementations typically call the static [load]
+  const DefaultWidgetsLocalizations();
+
+  @override
+  TextDirection get textDirection => TextDirection.ltr;
+
+  /// Creates an object that provides US English resource values for the
+  /// lowest levels of the widgets library.
+  ///
+  /// The [locale] parameter is ignored.
   ///
   /// This method is typically used to create a [LocalizationsDelegate].
   /// The [WidgetsApp] does so by default.
   static Future<WidgetsLocalizations> load(Locale locale) {
     return new SynchronousFuture<WidgetsLocalizations>(
-        new DefaultWidgetsLocalizations(locale));
+        const DefaultWidgetsLocalizations());
   }
+
+  /// A [LocalizationsDelegate] that uses [DefaultWidgetsLocalizations.load]
+  /// to create an instance of this class.
+  ///
+  /// [WidgetsApp] automatically adds this value to [WidgetApp.localizationsDelegates].
+  static const LocalizationsDelegate<WidgetsLocalizations> delegate =
+      const _WidgetsLocalizationsDelegate();
 }
 
 class _LocalizationsScope extends InheritedWidget {
@@ -216,19 +223,21 @@ class _LocalizationsScope extends InheritedWidget {
     Key key,
     @required this.locale,
     @required this.localizationsState,
+    @required this.typeToResources,
     Widget child,
   })
       : super(key: key, child: child) {
     assert(localizationsState != null);
+    assert(typeToResources != null);
   }
 
   final Locale locale;
   final _LocalizationsState localizationsState;
+  final Map<Type, dynamic> typeToResources;
 
   @override
   bool updateShouldNotify(_LocalizationsScope old) {
-    // Changes in Localizations.locale trigger a load(), see _LocalizationsState.didUpdateWidget()
-    return false;
+    return typeToResources != old.typeToResources;
   }
 }
 
@@ -338,7 +347,7 @@ class Localizations extends StatefulWidget {
 
   /// Overrides the inherited [Locale] or [LocalizationsDelegate]s for `child`.
   ///
-  /// This factory constructor is used for the (usually rare) situtation where part
+  /// This factory constructor is used for the (usually rare) situation where part
   /// of an app should be localized for a different locale than the one defined
   /// for the device, or if its localizations should come from a different list
   /// of [LocalizationsDelegate]s than the list defined by
@@ -393,10 +402,16 @@ class Localizations extends StatefulWidget {
 
   /// The locale of the Localizations widget for the widget tree that
   /// corresponds to [BuildContext] `context`.
-  static Locale localeOf(BuildContext context) {
+  ///
+  /// If no [Localizations] widget is in scope then the [Localizations.localeOf]
+  /// method will throw an exception, unless the `nullOk` argument is set to
+  /// true, in which case it returns null.
+  static Locale localeOf(BuildContext context, {bool nullOk: false}) {
     assert(context != null);
+    assert(nullOk != null);
     final _LocalizationsScope scope =
         context.inheritFromWidgetOfExactType(_LocalizationsScope);
+    if (nullOk && scope == null) return null;
     assert(scope != null, 'a Localizations ancestor was not found');
     return scope.localizationsState.locale;
   }
@@ -413,10 +428,13 @@ class Localizations extends StatefulWidget {
         scope.localizationsState.widget.delegates);
   }
 
-  /// Returns the 'type' localized resources for the widget tree that
-  /// corresponds to [BuildContext] `context`.
+  /// Returns the localized resources object of the given `type` for the widget
+  /// tree that corresponds to the given `context`.
   ///
-  /// This method is typically used by a static factory method on the 'type'
+  /// Returns null if no resources object of the given `type` exists within
+  /// the given `context`.
+  ///
+  /// This method is typically used by a static factory method on the `type`
   /// class. For example Flutter's MaterialLocalizations class looks up Material
   /// resources with a method defined like this:
   ///
@@ -430,8 +448,7 @@ class Localizations extends StatefulWidget {
     assert(type != null);
     final _LocalizationsScope scope =
         context.inheritFromWidgetOfExactType(_LocalizationsScope);
-    assert(scope != null, 'a Localizations ancestor was not found');
-    return scope.localizationsState.resourcesFor<T>(type);
+    return scope?.localizationsState?.resourcesFor<T>(type);
   }
 
   @override
@@ -506,15 +523,14 @@ class _LocalizationsState extends State<Localizations> {
       // have finished loading. Until then the old locale will continue to be used.
       // - If we're running at app startup time then defer reporting the first
       // "useful" frame until after the async load has completed.
+      WidgetsBinding.instance.deferFirstFrameReport();
       typeToResourcesFuture.then((Map<Type, dynamic> value) {
+        WidgetsBinding.instance.allowFirstFrameReport();
         if (!mounted) return;
         setState(() {
           _typeToResources = value;
           _locale = locale;
         });
-        final InheritedElement scopeElement =
-            _localizedResourcesScopeKey.currentContext;
-        scopeElement?.dispatchDidChangeDependencies();
       });
     }
   }
@@ -539,6 +555,7 @@ class _LocalizationsState extends State<Localizations> {
       key: _localizedResourcesScopeKey,
       locale: _locale,
       localizationsState: this,
+      typeToResources: _typeToResources,
       child: new Directionality(
         textDirection: _textDirection,
         child: widget.child,

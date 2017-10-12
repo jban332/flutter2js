@@ -1215,7 +1215,7 @@ class DoubleProperty extends _NumProperty<double> {
   }
 
   @override
-  String numberToString() => value?.toStringAsFixed(1);
+  String numberToString() => value?.toString();
 }
 
 /// An int valued property with an optional unit the value is measured in.

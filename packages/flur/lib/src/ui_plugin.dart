@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+import 'internal/card.dart' as card;
+import 'internal/chip.dart' as chip;
+import 'internal/gesture_detector.dart' as gestureDetector;
+
 abstract class UIPlugin {
   static UIPlugin current;
 
@@ -52,7 +56,9 @@ abstract class UIPlugin {
     return unimplementedWidget(context, widget);
   }
 
-  Widget buildCard(BuildContext context, Card widget);
+  Widget buildCard(BuildContext context, Card widget) {
+    return card.buildCard(context, widget);
+  }
 
   Widget buildCheckbox(BuildContext context, Checkbox widget);
 
@@ -61,7 +67,9 @@ abstract class UIPlugin {
     return unimplementedWidget(context, widget);
   }
 
-  Widget buildChip(BuildContext context, Chip widget);
+  Widget buildChip(BuildContext context, Chip widget) {
+    return chip.buildChip(context, widget);
+  }
 
   Widget buildCircularProgressIndicator(
       BuildContext context, CircularProgressIndicator widget) {
@@ -98,7 +106,10 @@ abstract class UIPlugin {
     return unimplementedWidget(context, widget);
   }
 
-  Widget buildCupertinoScaffold(BuildContext context, CupertinoScaffold widget);
+  Widget buildCupertinoPageScaffold(
+      BuildContext context, CupertinoPageScaffold widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildCupertinoSlider(BuildContext context, CupertinoSlider widget) {
     return new Slider(
@@ -117,7 +128,16 @@ abstract class UIPlugin {
   }
 
   Widget buildCupertinoTabBar(BuildContext context, CupertinoTabBar widget) {
-    return new BottomNavigationBar(items: widget.items);
+    return new BottomNavigationBar(items: widget.items, onTap: widget.onTap);
+  }
+
+  Widget buildCupertinoTabScaffold(
+      BuildContext context, CupertinoTabScaffold widget) {
+    return unimplementedWidget(context, widget);
+  }
+
+  Widget buildCupertinoTabView(BuildContext context, CupertinoTabView widget) {
+    return unimplementedWidget(context, widget);
   }
 
   Widget buildCustomMultiChildLayout(
@@ -125,7 +145,9 @@ abstract class UIPlugin {
     return unimplementedWidget(context, widget);
   }
 
-  Widget buildCustomPaint(BuildContext context, CustomPaint widget);
+  Widget buildCustomPaint(BuildContext context, CustomPaint widget) {
+    return unimplementedWidget(context, widget);
+  }
 
   Widget buildCustomSingleChildLayout(
       BuildContext context, CustomSingleChildLayout widget) {
@@ -148,10 +170,6 @@ abstract class UIPlugin {
 
   Widget buildDragTarget(BuildContext context, DragTarget widget) {
     return widget.builder(context, const [], const []);
-  }
-
-  Widget buildDrawer(BuildContext context, Drawer widget) {
-    return unimplementedWidget(context, widget);
   }
 
   Widget buildDropdownButton(BuildContext context, DropdownButton widget);
@@ -213,7 +231,7 @@ abstract class UIPlugin {
   }
 
   Widget buildGestureDetector(BuildContext context, GestureDetector widget) {
-    return unimplementedSingleChildWidget(context, widget);
+    return gestureDetector.buildGestureDetector(context, widget);
   }
 
   Widget buildGridTile(BuildContext context, GridTile widget) {
@@ -311,7 +329,10 @@ abstract class UIPlugin {
     return unimplementedSingleChildWidget(context, widget);
   }
 
-  Widget buildMonthPicker(BuildContext context, MonthPicker widget);
+  Widget buildMonthPicker(BuildContext context, MonthPicker widget) {
+    return new EditableText(
+        controller: null, focusNode: null, style: null, cursorColor: null);
+  }
 
   Widget buildNavigationToolbar(BuildContext context, NavigationToolbar widget);
 
@@ -328,8 +349,6 @@ abstract class UIPlugin {
   Widget buildOverflowBox(BuildContext context, OverflowBox widget) {
     return unimplementedSingleChildWidget(context, widget);
   }
-
-  Widget buildOverlay(BuildContext context, Overlay widget);
 
   Widget buildPadding(BuildContext context, Padding widget) {
     return unimplementedSingleChildWidget(context, widget);
@@ -379,8 +398,6 @@ abstract class UIPlugin {
   Widget buildRotatedBox(BuildContext context, RotatedBox widget) {
     return unimplementedWidget(context, widget);
   }
-
-  Widget buildScaffold(BuildContext context, Scaffold widget);
 
   Widget buildScrollView(BuildContext context, ScrollView widget);
 
@@ -452,8 +469,6 @@ abstract class UIPlugin {
 
   Widget buildStack(BuildContext context, Stack widget);
 
-  Widget buildStatefulWidget(BuildContext context, StatefulWidget widget);
-
   Widget buildStepper(BuildContext context, Stepper widget);
 
   Widget buildSwitch(BuildContext context, Switch widget);
@@ -490,9 +505,18 @@ abstract class UIPlugin {
 
   Widget buildWrap(BuildContext context, Wrap widget);
 
-  Widget buildYearPicker(BuildContext context, YearPicker widget);
+  Widget buildYearPicker(BuildContext context, YearPicker widget) {
+    return new EditableText(
+        controller: null, focusNode: null, style: null, cursorColor: null);
+  }
 
-  OverlayState createOverlayState(Overlay overlay);
+  DrawerControllerState createDrawerControllerState();
+
+  OverlayState createOverlayState() {
+    throw new UnimplementedError();
+  }
+
+  ScaffoldState createScaffoldState();
 
   Future<DateTime> showDatePicker({
     @required BuildContext context,
@@ -534,8 +558,8 @@ abstract class UIPlugin {
   Widget unimplementedSingleChildWidget(
       BuildContext context, SingleChildUIPluginWidget widget) {
     assert(() {
-      print(
-          "Ignoring unsupported widget '${widget.runtimeType}' with child '${widget.child.runtimeType}'");
+      print("Ignoring unsupported widget '${widget
+          .runtimeType}' with child '${widget.child.runtimeType}'");
       return true;
     }());
     return widget.child;
@@ -543,8 +567,8 @@ abstract class UIPlugin {
 
   Widget unimplementedWidget(BuildContext context, Widget widget) {
     assert(() {
-      print(
-          "Encounted unsupported widget '${widget.runtimeType}': ${context.toString()}");
+      print("Encounted unsupported widget '${widget.runtimeType}': ${context
+          .toString()}");
       return true;
     }());
     return new ErrorWidget(

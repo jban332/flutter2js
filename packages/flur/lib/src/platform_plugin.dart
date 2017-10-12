@@ -9,11 +9,13 @@ import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+import 'route_adapter.dart';
 import 'uri_handler.dart';
 
 final _flutterEventChannelControllers = <String, StreamController<String>>{};
 
 final _flutterMethodChannelHandlers = <String, MethodChannelHandler>{};
+
 typedef Future MethodChannelHandler(String name, List args);
 
 /// Contains various non-visual methods that are rarely customized by
@@ -21,7 +23,9 @@ typedef Future MethodChannelHandler(String name, List args);
 abstract class PlatformPlugin {
   static PlatformPlugin current;
 
-  String get defaultRouteName => "/";
+  RouteAdapter get routeAdapter;
+
+  void scheduleFrame() {}
 
   ui.Locale locale = new ui.Locale("en", "US");
 

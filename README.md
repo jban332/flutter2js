@@ -175,7 +175,7 @@ void main() {
     <script defer src="packages/browser/dart.js"></script>
 </head>
 <body>
-    <div id="flur"></div>
+    <div id="flutter"></div>
 </body>
 </html>
 

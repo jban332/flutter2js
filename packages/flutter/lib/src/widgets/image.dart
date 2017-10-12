@@ -3,14 +3,15 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io' show File;
 import 'dart:typed_data';
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'basic.dart';
 import 'framework.dart';
+import 'localizations.dart';
 import 'media_query.dart';
 
 export 'package:flutter/services.dart'
@@ -36,7 +37,8 @@ ImageConfiguration createLocalImageConfiguration(BuildContext context,
     bundle: DefaultAssetBundle.of(context),
     devicePixelRatio:
         MediaQuery.of(context, nullOk: true)?.devicePixelRatio ?? 1.0,
-    // TODO(ianh): provide the locale
+    locale: Localizations.localeOf(context, nullOk: true),
+    textDirection: Directionality.of(context),
     size: size,
     platform: defaultTargetPlatform,
   );
@@ -97,13 +99,14 @@ Future<Null> precacheImage(ImageProvider provider, BuildContext context,
 /// See also:
 ///
 ///  * [Icon]
-class Image extends StatefulWidget implements flur.UIPluginWidget {
+class Image extends StatefulWidget {
   /// Creates a widget that displays an image.
   ///
   /// To show an image from the network or from an asset bundle, consider using
   /// [new Image.network] and [new Image.asset] respectively.
   ///
-  /// The [image] and [repeat] arguments must not be null.
+  /// The [image], [alignment], [repeat], and [matchTextDirection] arguments
+  /// must not be null.
   const Image({
     Key key,
     @required this.image,
@@ -112,9 +115,10 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
     this.color,
     this.colorBlendMode,
     this.fit,
-    this.alignment,
+    this.alignment: Alignment.center,
     this.repeat: ImageRepeat.noRepeat,
     this.centerSlice,
+    this.matchTextDirection: false,
     this.gaplessPlayback: false,
     this.package,
   })
@@ -132,9 +136,10 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
     this.color,
     this.colorBlendMode,
     this.fit,
-    this.alignment,
+    this.alignment: Alignment.center,
     this.repeat: ImageRepeat.noRepeat,
     this.centerSlice,
+    this.matchTextDirection: false,
     this.gaplessPlayback: false,
     this.package,
   })
@@ -163,8 +168,9 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   // ///   size-aware asset resolution will be attempted also, with the given
   // ///   dimensions interpreted as logical pixels.
   // ///
-  // /// * If the images have platform or locale variants, the current platform
-  // ///   and locale is taken into account during asset resolution as well.
+  // /// * If the images have platform, locale, or directionality variants, the
+  // ///   current platform, locale, and directionality are taken into account
+  // ///   during asset resolution as well.
   ///
   /// The [name] and [repeat] arguments must not be null.
   ///
@@ -215,12 +221,12 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   /// Assets used by the package itself should also be displayed using the
   /// [package] argument as above.
   ///
-  /// If the desired asset is specified in the [pubspec.yaml] of the package, it
+  /// If the desired asset is specified in the `pubspec.yaml` of the package, it
   /// is bundled automatically with the app. In particular, assets used by the
-  /// package itself must be specified in its [pubspec.yaml].
+  /// package itself must be specified in its `pubspec.yaml`.
   ///
   /// A package can also choose to have assets in its 'lib/' folder that are not
-  /// specified in its [pubspec.yaml]. In this case for those images to be
+  /// specified in its `pubspec.yaml`. In this case for those images to be
   /// bundled, the app has to specify which ones to include. For instance a
   /// package named `fancy_backgrounds` could have:
   ///
@@ -230,7 +236,7 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   /// lib/backgrounds/background3.png
   ///```
   ///
-  /// To include, say the first image, the [pubspec.yaml] of the app should
+  /// To include, say the first image, the `pubspec.yaml` of the app should
   /// specify it in the assets section:
   ///
   /// ```yaml
@@ -260,9 +266,10 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
     this.color,
     this.colorBlendMode,
     this.fit,
-    this.alignment,
+    this.alignment: Alignment.center,
     this.repeat: ImageRepeat.noRepeat,
     this.centerSlice,
+    this.matchTextDirection: false,
     this.gaplessPlayback: false,
     this.package,
   })
@@ -270,7 +277,11 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
             ? new ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
             : new AssetImage(name, bundle: bundle, package: package),
-        super(key: key);
+        super(key: key) {
+    assert(alignment != null);
+    assert(repeat != null);
+    assert(matchTextDirection != null);
+  }
 
   /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
   ///
@@ -284,14 +295,19 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
     this.color,
     this.colorBlendMode,
     this.fit,
-    this.alignment,
+    this.alignment: Alignment.center,
     this.repeat: ImageRepeat.noRepeat,
     this.centerSlice,
+    this.matchTextDirection: false,
     this.gaplessPlayback: false,
     this.package,
   })
       : image = new MemoryImage(bytes, scale: scale),
-        super(key: key);
+        super(key: key) {
+    assert(alignment != null);
+    assert(repeat != null);
+    assert(matchTextDirection != null);
+  }
 
   /// The image to display.
   final ImageProvider image;
@@ -329,10 +345,23 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
 
   /// How to align the image within its bounds.
   ///
-  /// An alignment of (0.0, 0.0) aligns the image to the top-left corner of its
-  /// layout bounds.  An alignment of (1.0, 0.5) aligns the image to the middle
-  /// of the right edge of its layout bounds.
-  final Alignment alignment;
+  /// The alignment aligns the given position in the image to the given position
+  /// in the layout bounds. For example, a [Alignment] alignment of (-1.0,
+  /// -1.0) aligns the image to the top-left corner of its layout bounds, while a
+  /// [Alignment] alignment of (1.0, 1.0) aligns the bottom right of the
+  /// image with the bottom right corner of its layout bounds. Similarly, an
+  /// alignment of (0.0, 1.0) aligns the bottom middle of the image with the
+  /// middle of the bottom edge of its layout bounds.
+  ///
+  /// To display a subpart of an image, consider using a [CustomPainter] and
+  /// [Canvas.drawImageRect].
+  ///
+  /// If the [alignment] is [TextDirection]-dependent (i.e. if it is a
+  /// [AlignmentDirectional]), then an ambient [Directionality] widget
+  /// must be in scope.
+  ///
+  /// Defaults to [Alignment.center].
+  final AlignmentGeometry alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -345,6 +374,23 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
   final Rect centerSlice;
+
+  /// Whether to paint the image in the direction of the [TextDirection].
+  ///
+  /// If this is true, then in [TextDirection.ltr] contexts, the image will be
+  /// drawn with its origin in the top left (the "normal" painting direction for
+  /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
+  /// a scaling factor of -1 in the horizontal direction so that the origin is
+  /// in the top right.
+  ///
+  /// This is occasionally used with images in right-to-left environments, for
+  /// images that were designed for left-to-right locales. Be careful, when
+  /// using this, to not flip images with integral shadows, text, or other
+  /// effects that will look incorrect when flipped.
+  ///
+  /// If this is true, there must be an ambient [Directionality] widget in
+  /// scope.
+  final bool matchTextDirection;
 
   /// Whether to continue showing the old image (true), or briefly show nothing
   /// (false), when the image provider changes.
@@ -369,17 +415,15 @@ class Image extends StatefulWidget implements flur.UIPluginWidget {
         'colorBlendMode', colorBlendMode,
         defaultValue: null));
     description.add(new EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    description.add(new DiagnosticsProperty<Alignment>('alignment', alignment,
+    description.add(new DiagnosticsProperty<AlignmentGeometry>(
+        'alignment', alignment,
         defaultValue: null));
     description.add(new EnumProperty<ImageRepeat>('repeat', repeat,
         defaultValue: ImageRepeat.noRepeat));
     description.add(new DiagnosticsProperty<Rect>('centerSlice', centerSlice,
         defaultValue: null));
-  }
-
-  @override
-  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
-    return plugin.buildImage(context, this);
+    description.add(new FlagProperty('matchTextDirection',
+        value: matchTextDirection, ifTrue: 'match text direction'));
   }
 }
 
@@ -438,16 +482,18 @@ class _ImageState extends State<Image> {
   @override
   Widget build(BuildContext context) {
     return new RawImage(
-        image: _imageInfo?.image,
-        width: widget.width,
-        height: widget.height,
-        scale: _imageInfo?.scale ?? 1.0,
-        color: widget.color,
-        colorBlendMode: widget.colorBlendMode,
-        fit: widget.fit,
-        alignment: widget.alignment,
-        repeat: widget.repeat,
-        centerSlice: widget.centerSlice);
+      image: _imageInfo?.image,
+      width: widget.width,
+      height: widget.height,
+      scale: _imageInfo?.scale ?? 1.0,
+      color: widget.color,
+      colorBlendMode: widget.colorBlendMode,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      repeat: widget.repeat,
+      centerSlice: widget.centerSlice,
+      matchTextDirection: widget.matchTextDirection,
+    );
   }
 
   @override

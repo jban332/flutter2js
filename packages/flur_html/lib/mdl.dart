@@ -1,6 +1,7 @@
 library flur_html.mdl;
 
-import 'package:flur/flur.dart';
+import 'dart:html' as html;
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,186 +9,173 @@ import 'package:flutter/widgets.dart';
 import 'flur.dart';
 
 class MdlUIPlugin extends HtmlUIPlugin {
-  MdlUIStyle get style => const MdlUIStyle();
-
-  @override
-  Widget buildDrawer(BuildContext context, Drawer widget) {
-    return new HtmlElementWidget("div",
-        debugCreator: widget, children: [widget.child]);
-  }
   @override
   Widget buildSnackBar(BuildContext context, SnackBar widget) {
     final children = [
-      new HtmlElementWidget("div",
+      new DomElementWidget.withTag("div",
           className: "mdl-snackbar__text", children: [widget.content])
     ];
     if (widget.action != null) {
-      children.add(new HtmlElementWidget("button",
+      children.add(new DomElementWidget.withTag("button",
           className: "mdl-snackbar__action",
           attributes: const {"type": "button"}));
     }
-    return new HtmlElementWidget("div",
-        debugCreator: widget,
-        className: "mdl-snackbar", children: children);
+    return new DomElementWidget.withTag("div",
+        creator: widget, className: "mdl-snackbar", children: children);
   }
 
   @override
-  Widget buildTabBar(BuildContext context, TabBar widget) {
-    final buttons = <Widget>[];
-    final tabs = <Widget>[];
+  Widget buildChip(BuildContext context, Chip widget) {
+    final node = new html.DivElement();
+    debugDomElement(context, node, widget);
 
-    var i = -1;
-    for (var item in widget.tabs) {
-      i++;
-      final tab = item as Tab;
-      buttons.add(new HtmlElementWidget("a",
-          className: "mdl-layout__tab",
-          attributes: {"href": "#tab-${i}"},
-          children: [
-            tab.text,
-          ]));
-      tabs.add(new HtmlElementWidget("section",
-          className: "mdl-layout__tab-panel",
-          attributes: {"id": "#tab-${i}"},
-          children: [
-            tab.build(context),
-          ]));
+    final children = [];
+    children.add(new DomElementWidget.withTag("span", children: [
+      textFromWidget(widget.label),
+    ]));
+    if (widget.onDeleted != null) {
+      final actionButton = new html.AnchorElement()
+        ..className = "mdl-chip__action"
+        ..onClick.listen((_) {
+          widget.onDeleted();
+        });
+      children.add(
+          new DomElementWidget(actionButton, child: new Icon(Icons.cancel)));
+    }
+    return new DomElementWidget(node);
+  }
+
+  @override
+  Widget buildListTile(BuildContext context, ListTile widget) {
+    //
+    final primaryChildren = <Widget>[];
+    final leading = widget.leading;
+    if (leading != null) {
+      primaryChildren
+          .add(elementWithClassName("i", "mdl-list__item-avatar", leading));
+    }
+    final title = widget.title;
+    if (title != null) {
+      primaryChildren.add(title);
+    }
+    final subtitle = widget.subtitle;
+    if (subtitle != null) {
+      primaryChildren.add(
+          elementWithClassName("span", "mdl-list__item-sub-title", subtitle));
+    }
+    final secondaryChildren = <Widget>[];
+    final trailing = widget.trailing;
+    if (trailing != null) {
+      secondaryChildren.add(trailing);
     }
 
-    final header = new HtmlElementWidget("header", children: [
-      new HtmlElementWidget("div",
-          className: "mdl-layout__tab-bar mdl-js-ripple-effect",
-          children: buttons)
+    final itemNode = new html.Element.li();
+    itemNode.className = "mdl-list__item mdl-list__item--two-line";
+    final item = new DomElementWidget(itemNode, children: [
+      new DomElementWidget.withTag("span",
+          className: "mdl-list__item-primary-content",
+          children: primaryChildren),
+      new DomElementWidget.withTag("span",
+          className: "mdl-list__item-secondary-content",
+          children: secondaryChildren),
     ]);
 
-    final main = new HtmlElementWidget("main", children: tabs);
-    return new HtmlElementWidget(
-      "div",
-      debugCreator: widget,
-      className: "mdl-layout mdl-js-layout mdl-layout--fixed-header",
-      children: [
-        header,
-        main,
-      ],
-    );
+    final onTap = widget.onTap;
+    if (onTap != null) {
+      itemNode.style.cursor = "pointer";
+      itemNode.style.touchAction = "manipulation";
+      itemNode.onClick.listen((domEvent) {
+        onTap();
+      });
+    }
+    final onLongPress = widget.onLongPress;
+    if (onLongPress != null) {
+      return new ErrorWidget(
+          "Long presses are not supported by ${this.runtimeType}.");
+    }
+
+    final node = new html.Element.ul();
+    debugDomElement(context, node, widget);
+    node.className = "mdl-list";
+    return new DomElementWidget(node, child: item);
   }
 
   @override
   Widget buildTooltip(BuildContext context, Tooltip widget) {
+    final node = new html.DivElement();
+    debugDomElement(context, node, widget);
+
     final id = generateHtmlElementId();
+    final tooltipDom = new html.DivElement()
+      ..className = "mdl-tooltip"
+      ..setAttribute("data-mdl-for", id);
+    final tooltip =
+        new DomElementWidget(tooltipDom, children: [widget.message]);
+
     final children = [
-      new HtmlElementWidget("div",
+      new DomElementWidget.withTag("div",
           attributes: {"id": id}, children: [widget.child]),
-      new HtmlElementWidget(
-        "div",
-        attributes: {
-          "classNames": "mdl-tooltip",
-          "data-mdl-for": id,
-        },
-        children: [widget.message],
-      )
+      tooltip,
     ];
-    return new HtmlElementWidget("div",
-        debugCreator: widget, children: children);
-  }
-}
-
-class MdlUIStyle extends HtmlUIStyle {
-  const MdlUIStyle();
-
-  @override
-  String buildCard(BuildContext context, Card widget) {
-    return "demo-card-wide mdl-card mdl-shadow--2dp";
+    return new DomElementWidget.withTag("div",
+        creator: widget, children: children);
   }
 
   @override
-  String buildCheckbox(BuildContext context, Checkbox widget) {
-    return "mdl-checkbox__input";
+  Widget buildFlatButton(BuildContext context, FlatButton widget) {
+    final built = super.buildFlatButton(context, widget);
+    return _styled(built, "mdl-button mdl-js-button mdl-js-ripple-effect");
   }
 
   @override
-  String buildChip(BuildContext context, Chip widget) {
-    return "mdl-chip__text";
+  Widget buildMaterialButton(BuildContext context, MaterialButton widget) {
+    final built = super.buildMaterialButton(context, widget);
+    return _styled(built, "mdl-button mdl-js-button mdl-button--raised");
   }
 
   @override
-  String buildDrawer(BuildContext context, Drawer widget) {
-    return "mdl-layout__drawer";
+  Widget buildRaisedButton(BuildContext context, RaisedButton widget) {
+    final built = super.buildRaisedButton(context, widget);
+    return _styled(built, "mdl-button mdl-js-button mdl-button--raised");
   }
 
   @override
-  String buildEditableText_textArea(BuildContext context, EditableText widget) {
-    return "mdl-textfield__input";
+  Widget buildSwitch(BuildContext context, Switch widget) {
+    final built = super.buildSwitch(context, widget);
+    return _styled(built, "mdl-switch__input");
   }
 
   @override
-  String buildEditableText_wrapper(BuildContext context, EditableText widget) {
-    return "mdl-textfield mdl-js-textfield";
+  Widget buildCheckbox(BuildContext context, Checkbox widget) {
+    var built = super.buildCheckbox(context, widget);
+    built = _styled(built, "mdl-checkbox__input");
+    return _wrapper(
+        "div", "mdl-switch mdl-js-switch mdl-js-ripple-effect", built);
   }
 
   @override
-  String buildFlatButton(BuildContext context, FlatButton widget) {
-    return "mdl-button mdl-js-button mdl-js-ripple-effect";
+  Widget buildIconButton(BuildContext context, IconButton widget) {
+    final built = super.buildIconButton(context, widget);
+    return _styled(
+        built, "mdl-button mdl-js-button mdl-button--icon mdl-button--colored");
   }
 
   @override
-  String buildListView(BuildContext context, ListView widget) {
-    return "mdl-list";
-  }
-
-  @override
-  String buildListView_item(BuildContext context, ListView widget) {
-    return "mdl-list__item";
-  }
-
-  @override
-  String buildCheckbox_wrapper(BuildContext context, Checkbox widget) {
-    return "mdl-button mdl-js-button mdl-js-ripple-effect";
-  }
-
-  @override
-  String buildFloatingActionButton(
+  Widget buildFloatingActionButton(
       BuildContext context, FloatingActionButton widget) {
-    return "mdl-button mdl-js-button mdl-button--fab mdl-button--colored";
+    final built = super.buildFloatingActionButton(context, widget);
+    return _styled(
+        built, "mdl-button mdl-js-button mdl-button--fab mdl-button--colored");
   }
 
-  @override
-  String buildIconButton(BuildContext context, IconButton widget) {
-    return "mdl-button mdl-js-button mdl-button--icon mdl-button--colored";
+  Widget _styled(Widget widget, String className) {
+    final domElement = widget as DomElementWidget;
+    domElement.node.className = className;
+    return domElement;
   }
 
-  @override
-  String buildMaterialButton(BuildContext context, MaterialButton widget) {
-    return "mdl-button mdl-js-button mdl-button--raised";
-  }
-
-  @override
-  String buildRadio(BuildContext context, Radio widget) {
-    return "mdl-radio__button";
-  }
-
-  @override
-  String buildRaisedButton(BuildContext context, RaisedButton widget) {
-    return "mdl-button mdl-js-button mdl-button--raised";
-  }
-
-  @override
-  String buildScaffold(BuildContext context, Scaffold widget) {
-    return "mdl-layout mdl-js-layout";
-  }
-
-  @override
-  String buildSwitch(BuildContext context, Switch widget) {
-    return "mdl-switch__input";
-  }
-
-  @override
-  String buildSwitch_wrapper(BuildContext context, Switch widget) {
-    return "mdl-switch mdl-js-switch mdl-js-ripple-effect";
-  }
-
-  @override
-  String buildTooltip(BuildContext context, Tooltip widget) {
-    return "mdl-tooltip";
+  Widget _wrapper(String tagName, String className, Widget child) {
+    return new DomElementWidget.withTag(tagName,
+        className: className, children: [child]);
   }
 }

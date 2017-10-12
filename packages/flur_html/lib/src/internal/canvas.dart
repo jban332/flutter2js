@@ -4,13 +4,14 @@ import 'dart:typed_data';
 import 'package:flutter/ui.dart';
 
 import 'image.dart';
+import 'paragraph.dart';
 
 /// Implements [Canvas] ('dart:ui') that may be used by [CustomPaint] widget ('package:flutter/widgets.dart').
 /// TODO: Implement methods.
-class HtmlFlutterCanvas implements Canvas {
+class HtmlCanvas implements Canvas {
   html.CanvasRenderingContext2D context;
 
-  HtmlFlutterCanvas(this.context);
+  HtmlCanvas(this.context);
 
   @override
   void drawShadow(
@@ -42,12 +43,16 @@ class HtmlFlutterCanvas implements Canvas {
 
   @override
   void drawPoints(PointMode pointMode, List<Offset> points, Paint paint) {
-    throw new UnimplementedError();
+    final path = new html.Path2D();
+    for (var point in points) {
+      path.lineTo(point.dx, point.dy);
+    }
+    context.stroke(path);
   }
 
   @override
   void drawParagraph(Paragraph paragraph, Offset offset) {
-
+    (paragraph as HtmlParagraph).draw(context, offset);
   }
 
   @override
@@ -71,7 +76,7 @@ class HtmlFlutterCanvas implements Canvas {
   }
 
   html.CanvasImageSource getCanvasImageSource(Image image) {
-    return new html.ImageElement(src: (image as HtmlFlutterImage).uri);
+    return new html.ImageElement(src: (image as HtmlEngineImage).uri);
   }
 
   @override

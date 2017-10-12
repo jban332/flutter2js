@@ -312,7 +312,8 @@ class Window {
 
   /// The route or path that the operating system requested when the application
   /// was launched.
-  String get defaultRouteName => flur.PlatformPlugin.current.defaultRouteName;
+  String get defaultRouteName =>
+      flur.PlatformPlugin.current.routeAdapter.current;
 
   /// Requests that, at the next appropriate opportunity, the [onBeginFrame]
   /// and [onDrawFrame] callbacks be invoked.
@@ -321,7 +322,9 @@ class Window {
   ///
   ///  * [SchedulerBinding], the Flutter framework class which manages the
   ///    scheduling of frames.
-  void scheduleFrame() {}
+  void scheduleFrame() {
+    flur.PlatformPlugin.current.scheduleFrame();
+  }
 
   /// Whether the user has requested that [updateSemantics] be called when
   /// the semantic contents of window changes.

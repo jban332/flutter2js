@@ -767,7 +767,7 @@ class FractionalTranslation extends flur.SingleChildUIPluginWidget {
       : super(key: key, child: child);
 
   /// The offset by which to translate the child, as a multiple of its size.
-  final Alignment translation;
+  final Offset translation;
 
   /// Whether to apply the translation when performing hit tests.
   final bool transformHitTests;
@@ -3308,19 +3308,22 @@ class RichText extends flur.StatelessUIPluginWidget {
 class RawImage extends flur.StatelessUIPluginWidget {
   /// Creates a widget that displays an image.
   ///
-  /// The [scale] and [repeat] arguments must not be null.
-  const RawImage(
-      {Key key,
-      this.image,
-      this.width,
-      this.height,
-      this.scale: 1.0,
-      this.color,
-      this.colorBlendMode,
-      this.fit,
-      this.alignment,
-      this.repeat: ImageRepeat.noRepeat,
-      this.centerSlice})
+  /// The [scale], [alignment], [repeat], and [matchTextDirection] arguments must
+  /// not be null.
+  const RawImage({
+    Key key,
+    this.image,
+    this.width,
+    this.height,
+    this.scale: 1.0,
+    this.color,
+    this.colorBlendMode,
+    this.fit,
+    this.alignment: Alignment.center,
+    this.repeat: ImageRepeat.noRepeat,
+    this.centerSlice,
+    this.matchTextDirection: false,
+  })
       : super(key: key);
 
   /// The image to display.
@@ -3364,10 +3367,23 @@ class RawImage extends flur.StatelessUIPluginWidget {
 
   /// How to align the image within its bounds.
   ///
-  /// An alignment of (0.0, 0.0) aligns the image to the top-left corner of its
-  /// layout bounds.  An alignment of (1.0, 0.5) aligns the image to the middle
-  /// of the right edge of its layout bounds.
-  final Alignment alignment;
+  /// The alignment aligns the given position in the image to the given position
+  /// in the layout bounds. For example, a [Alignment] alignment of (-1.0,
+  /// -1.0) aligns the image to the top-left corner of its layout bounds, while a
+  /// [Alignment] alignment of (1.0, 1.0) aligns the bottom right of the
+  /// image with the bottom right corner of its layout bounds. Similarly, an
+  /// alignment of (0.0, 1.0) aligns the bottom middle of the image with the
+  /// middle of the bottom edge of its layout bounds.
+  ///
+  /// To display a subpart of an image, consider using a [CustomPainter] and
+  /// [Canvas.drawImageRect].
+  ///
+  /// If the [alignment] is [TextDirection]-dependent (i.e. if it is a
+  /// [AlignmentDirectional]), then an ambient [Directionality] widget
+  /// must be in scope.
+  ///
+  /// Defaults to [Alignment.center].
+  final AlignmentGeometry alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -3380,6 +3396,23 @@ class RawImage extends flur.StatelessUIPluginWidget {
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
   final Rect centerSlice;
+
+  /// Whether to paint the image in the direction of the [TextDirection].
+  ///
+  /// If this is true, then in [TextDirection.ltr] contexts, the image will be
+  /// drawn with its origin in the top left (the "normal" painting direction for
+  /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
+  /// a scaling factor of -1 in the horizontal direction so that the origin is
+  /// in the top right.
+  ///
+  /// This is occasionally used with images in right-to-left environments, for
+  /// images that were designed for left-to-right locales. Be careful, when
+  /// using this, to not flip images with integral shadows, text, or other
+  /// effects that will look incorrect when flipped.
+  ///
+  /// If this is true, there must be an ambient [Directionality] widget in
+  /// scope.
+  final bool matchTextDirection;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {

@@ -201,98 +201,21 @@ enum TextDecorationStyle {
   wavy
 }
 
-// This encoding must match the C++ version of ParagraphBuilder::pushStyle.
-//
-// The encoded array buffer has 8 elements.
-//
-//  - Element 0: A bit field where the ith bit indicates wheter the ith element
-//    has a non-null value. Bits 8 to 12 indicate whether |fontFamily|,
-//    |fontSize|, |letterSpacing|, |wordSpacing|, and |height| are non-null,
-//    respectively. Bit 0 is unused.
-//
-//  - Element 1: The |color| in ARGB with 8 bits per channel.
-//
-//  - Element 2: A bit field indicating which text decorations are present in
-//    the |textDecoration| list. The ith bit is set if there's a TextDecoration
-//    with enum index i in the list.
-//
-//  - Element 3: The |decorationColor| in ARGB with 8 bits per channel.
-//
-//  - Element 4: The bit field of the |decorationStyle|.
-//
-//  - Element 5: The index of the |fontWeight|.
-//
-//  - Element 6: The enum index of the |fontStyle|.
-//
-//  - Element 7: The enum index of the |textBaseline|.
-//
-Int32List _encodeTextStyle(
-    Color color,
-    TextDecoration decoration,
-    Color decorationColor,
-    TextDecorationStyle decorationStyle,
-    FontWeight fontWeight,
-    FontStyle fontStyle,
-    TextBaseline textBaseline,
-    String fontFamily,
-    double fontSize,
-    double letterSpacing,
-    double wordSpacing,
-    double height) {
-  Int32List result = new Int32List(8);
-  if (color != null) {
-    result[0] |= 1 << 1;
-    result[1] = color.value;
-  }
-  if (decoration != null) {
-    result[0] |= 1 << 2;
-    result[2] = decoration._mask;
-  }
-  if (decorationColor != null) {
-    result[0] |= 1 << 3;
-    result[3] = decorationColor.value;
-  }
-  if (decorationStyle != null) {
-    result[0] |= 1 << 4;
-    result[4] = decorationStyle.index;
-  }
-  if (fontWeight != null) {
-    result[0] |= 1 << 5;
-    result[5] = fontWeight.index;
-  }
-  if (fontStyle != null) {
-    result[0] |= 1 << 6;
-    result[6] = fontStyle.index;
-  }
-  if (textBaseline != null) {
-    result[0] |= 1 << 7;
-    result[7] = textBaseline.index;
-  }
-  if (fontFamily != null) {
-    result[0] |= 1 << 8;
-    // Passed separately to native.
-  }
-  if (fontSize != null) {
-    result[0] |= 1 << 9;
-    // Passed separately to native.
-  }
-  if (letterSpacing != null) {
-    result[0] |= 1 << 10;
-    // Passed separately to native.
-  }
-  if (wordSpacing != null) {
-    result[0] |= 1 << 11;
-    // Passed separately to native.
-  }
-  if (height != null) {
-    result[0] |= 1 << 12;
-    // Passed separately to native.
-  }
-  return result;
-}
-
 /// An opaque object that determines the size, position, and rendering of text.
 class TextStyle {
+  final Color color;
+  final TextDecoration decoration;
+  final Color decorationColor;
+  final TextDecorationStyle decorationStyle;
+  final FontWeight fontWeight;
+  final FontStyle fontStyle;
+  final TextBaseline textBaseline;
+  final String fontFamily;
+  final double fontSize;
+  final double letterSpacing;
+  final double wordSpacing;
+  final double height;
+
   /// Creates a new TextStyle object.
   ///
   /// * `color`: The color to use when painting the text.
@@ -308,163 +231,60 @@ class TextStyle {
   /// * `textBaseline`: The common baseline that should be aligned between this text span and its parent text span, or, for the root text spans, with the line box.
   /// * `height`: The height of this text span, as a multiple of the font size.
   TextStyle(
-      {Color color,
-      TextDecoration decoration,
-      Color decorationColor,
-      TextDecorationStyle decorationStyle,
-      FontWeight fontWeight,
-      FontStyle fontStyle,
-      TextBaseline textBaseline,
-      String fontFamily,
-      double fontSize,
-      double letterSpacing,
-      double wordSpacing,
-      double height})
-      : _encoded = _encodeTextStyle(
-            color,
-            decoration,
-            decorationColor,
-            decorationStyle,
-            fontWeight,
-            fontStyle,
-            textBaseline,
-            fontFamily,
-            fontSize,
-            letterSpacing,
-            wordSpacing,
-            height),
-        _fontFamily = fontFamily ?? '',
-        _fontSize = fontSize,
-        _letterSpacing = letterSpacing,
-        _wordSpacing = wordSpacing,
-        _height = height;
-
-  final Int32List _encoded;
-  final String _fontFamily;
-  final double _fontSize;
-  final double _letterSpacing;
-  final double _wordSpacing;
-  final double _height;
+      {this.color,
+      this.decoration,
+      this.decorationColor,
+      this.decorationStyle,
+      this.fontWeight,
+      this.fontStyle,
+      this.textBaseline,
+      this.fontFamily,
+      this.fontSize,
+      this.letterSpacing,
+      this.wordSpacing,
+      this.height});
 
   bool operator ==(dynamic other) {
     if (identical(this, other)) return true;
     if (other is! TextStyle) return false;
     final TextStyle typedOther = other;
-    if (_fontFamily != typedOther._fontFamily ||
-        _fontSize != typedOther._fontSize ||
-        _letterSpacing != typedOther._letterSpacing ||
-        _wordSpacing != typedOther._wordSpacing ||
-        _height != typedOther._height) return false;
-    for (int index = 0; index < _encoded.length; index += 1) {
-      if (_encoded[index] != typedOther._encoded[index]) return false;
-    }
+    if (fontFamily != typedOther.fontFamily ||
+        fontSize != typedOther.fontSize ||
+        letterSpacing != typedOther.letterSpacing ||
+        wordSpacing != typedOther.wordSpacing ||
+        height != typedOther.height) return false;
     return true;
   }
 
-  int get hashCode => hashValues(hashList(_encoded), _fontFamily, _fontSize,
-      _letterSpacing, _wordSpacing, _height);
+  int get hashCode =>
+      hashValues(fontFamily, fontSize, letterSpacing, wordSpacing, height);
 
   String toString() {
     return 'TextStyle('
-        'color: ${ _encoded[0] & 0x0002 == 0x0002
-        ? new Color(_encoded[1])
+        'color: ${color != null ? color
         : "unspecified"}, '
-        'decoration: ${ _encoded[0] & 0x0004 == 0x0004 ? new TextDecoration._(
-        _encoded[2]) : "unspecified"}, '
-        'decorationColor: ${_encoded[0] & 0x0008 == 0x0008 ? new Color(
-        _encoded[3]) : "unspecified"}, '
-        'decorationStyle: ${_encoded[0] & 0x0010 == 0x0010 ? TextDecorationStyle
-        .values[_encoded[4]] : "unspecified"}, '
-        'fontWeight: ${ _encoded[0] & 0x0020 == 0x0020 ? FontWeight
-        .values[_encoded[5]] : "unspecified"}, '
-        'fontStyle: ${ _encoded[0] & 0x0040 == 0x0040 ? FontStyle
-        .values[_encoded[6]] : "unspecified"}, '
-        'textBaseline: ${ _encoded[0] & 0x0080 == 0x0080 ? TextBaseline
-        .values[_encoded[7]] : "unspecified"}, '
-        'fontFamily: ${ _encoded[0] & 0x0100 == 0x0100
-        ? _fontFamily
+        'decoration: ${decoration != null ? decoration : "unspecified"}, '
+        'decorationColor: ${decorationColor != null
+        ? decorationColor
         : "unspecified"}, '
-        'fontSize: ${ _encoded[0] & 0x0200 == 0x0200
-        ? _fontSize
+        'decorationStyle: ${decorationStyle != null
+        ? decorationStyle
         : "unspecified"}, '
-        'letterSpacing: ${ _encoded[0] & 0x0400 == 0x0400
-        ? "${_letterSpacing}x"
+        'fontWeight: ${ fontWeight != null ? fontWeight : "unspecified"}, '
+        'fontStyle: ${fontStyle != null ? fontStyle : "unspecified"}, '
+        'textBaseline: ${ textBaseline != null
+        ? textBaseline
         : "unspecified"}, '
-        'wordSpacing: ${ _encoded[0] & 0x0800 == 0x0800
-        ? "${_wordSpacing}x"
+        'fontFamily: ${ fontFamily != null ? fontFamily
         : "unspecified"}, '
-        'height: ${ _encoded[0] & 0x1000 == 0x1000
-        ? "${_height}x"
-        : "unspecified"}'
+        'fontSize: ${fontSize != null ? fontSize : "unspecified"}, '
+        'letterSpacing: ${ letterSpacing != null ? "${letterSpacing}x"
+        : "unspecified"}, '
+        'wordSpacing: ${wordSpacing != null ? "${wordSpacing}x"
+        : "unspecified"}, '
+        'height: ${ height != null ? "${height}x" : "unspecified"}'
         ')';
   }
-}
-
-// This encoding must match the C++ version ParagraphBuilder::build.
-//
-// The encoded array buffer has 5 elements.
-//
-//  - Element 0: A bit mask indicating which fields are non-null.
-//    Bit 0 is unused. Bits 1-n are set if the corresponding index in the
-//    encoded array is non-null.  The remaining bits represent fields that
-//    are passed separately from the array.
-//
-//  - Element 1: The enum index of the |textAlign|.
-//
-//  - Element 2: The index of the |fontWeight|.
-//
-//  - Element 3: The enum index of the |fontStyle|.
-//
-//  - Element 4: The value of |maxLines|.
-//
-Int32List _encodeParagraphStyle(
-    TextAlign textAlign,
-    TextDirection textDirection,
-    FontWeight fontWeight,
-    FontStyle fontStyle,
-    int maxLines,
-    String fontFamily,
-    double fontSize,
-    double lineHeight,
-    String ellipsis) {
-  Int32List result = new Int32List(6); // also update paragraph_builder.cc
-  if (textAlign != null) {
-    result[0] |= 1 << 1;
-    result[1] = textAlign.index;
-  }
-  if (textDirection != null) {
-    result[0] |= 1 << 2;
-    result[2] = textDirection.index;
-  }
-  if (fontWeight != null) {
-    result[0] |= 1 << 3;
-    result[3] = fontWeight.index;
-  }
-  if (fontStyle != null) {
-    result[0] |= 1 << 4;
-    result[4] = fontStyle.index;
-  }
-  if (maxLines != null) {
-    result[0] |= 1 << 5;
-    result[5] = maxLines;
-  }
-  if (fontFamily != null) {
-    result[0] |= 1 << 6;
-    // Passed separately to native.
-  }
-  if (fontSize != null) {
-    result[0] |= 1 << 7;
-    // Passed separately to native.
-  }
-  if (lineHeight != null) {
-    result[0] |= 1 << 8;
-    // Passed separately to native.
-  }
-  if (ellipsis != null) {
-    result[0] |= 1 << 9;
-    // Passed separately to native.
-  }
-  return result;
 }
 
 /// An opaque object that determines the configuration used by
@@ -514,71 +334,53 @@ class ParagraphStyle {
   ///   the [Paragraph.layout] method. The empty string and the null value are
   ///   considered equivalent and turn off this behavior.
   ParagraphStyle({
-    TextAlign textAlign,
-    TextDirection textDirection,
-    FontWeight fontWeight,
-    FontStyle fontStyle,
-    int maxLines,
-    String fontFamily,
-    double fontSize,
-    double lineHeight,
-    String ellipsis,
-  })
-      : _encoded = _encodeParagraphStyle(textAlign, textDirection, fontWeight,
-            fontStyle, maxLines, fontFamily, fontSize, lineHeight, ellipsis),
-        _fontFamily = fontFamily,
-        _fontSize = fontSize,
-        _lineHeight = lineHeight,
-        _ellipsis = ellipsis;
+    this.textAlign,
+    this.textDirection,
+    this.fontWeight,
+    this.fontStyle,
+    this.maxLines,
+    this.fontFamily,
+    this.fontSize,
+    this.lineHeight,
+    this.ellipsis,
+  });
 
-  final Int32List _encoded;
-  final String _fontFamily;
-  final double _fontSize;
-  final double _lineHeight;
-  final String _ellipsis;
+  final TextAlign textAlign;
+  final TextDirection textDirection;
+  final FontWeight fontWeight;
+  final FontStyle fontStyle;
+  final int maxLines;
+  final String fontFamily;
+  final double fontSize;
+  final double lineHeight;
+  final String ellipsis;
 
   bool operator ==(dynamic other) {
     if (identical(this, other)) return true;
     if (other.runtimeType != runtimeType) return false;
     final ParagraphStyle typedOther = other;
-    if (_fontFamily != typedOther._fontFamily ||
-        _fontSize != typedOther._fontSize ||
-        _lineHeight != typedOther._lineHeight ||
-        _ellipsis != typedOther._ellipsis) return false;
-    for (int index = 0; index < _encoded.length; index += 1) {
-      if (_encoded[index] != typedOther._encoded[index]) return false;
-    }
+    if (fontFamily != typedOther.fontFamily ||
+        fontSize != typedOther.fontSize ||
+        lineHeight != typedOther.lineHeight ||
+        ellipsis != typedOther.ellipsis) return false;
     return true;
   }
 
-  int get hashCode => hashValues(
-      hashList(_encoded), _fontFamily, _fontSize, _lineHeight, _ellipsis);
+  int get hashCode => hashValues(fontFamily, fontSize, lineHeight, ellipsis);
 
   String toString() {
     return '$runtimeType('
-        'textAlign: ${ _encoded[0] & 0x002 == 0x002 ? TextAlign
-        .values[_encoded[1]] : "unspecified"}, '
-        'textDirection: ${ _encoded[0] & 0x004 == 0x004 ? TextDirection
-        .values[_encoded[2]] : "unspecified"}, '
-        'fontWeight: ${ _encoded[0] & 0x008 == 0x008 ? FontWeight
-        .values[_encoded[3]] : "unspecified"}, '
-        'fontStyle: ${ _encoded[0] & 0x010 == 0x010 ? FontStyle
-        .values[_encoded[4]] : "unspecified"}, '
-        'maxLines: ${ _encoded[0] & 0x020 == 0x020
-        ? _encoded[5]
+        'textAlign: ${textAlign != null ? textAlign : "unspecified"}, '
+        'textDirection: ${textDirection != null
+        ? textDirection
         : "unspecified"}, '
-        'fontFamily: ${ _encoded[0] & 0x040 == 0x040
-        ? _fontFamily
-        : "unspecified"}, '
-        'fontSize: ${ _encoded[0] & 0x080 == 0x080
-        ? _fontSize
-        : "unspecified"}, '
-        'lineHeight: ${ _encoded[0] & 0x100 == 0x100
-        ? "${_lineHeight}x"
-        : "unspecified"}, '
-        'ellipsis: ${ _encoded[0] & 0x200 == 0x200
-        ? "\"$_ellipsis\""
-        : "unspecified"}'
+        'fontWeight: ${fontWeight != null ? fontWeight : "unspecified"}, '
+        'fontStyle: ${fontStyle != null ? fontStyle : "unspecified"}, '
+        'maxLines: ${ maxLines != null ? maxLines : "unspecified"}, '
+        'fontFamily: ${fontFamily != null ? fontFamily : "unspecified"}, '
+        'fontSize: : ${fontSize != null ? fontSize : "unspecified"}, '
+        'lineHeight: : ${lineHeight != null ? lineHeight : "unspecified"}, '
+        'ellipsis: : ${ellipsis != null ? ellipsis : "unspecified"}'
         ')';
   }
 }

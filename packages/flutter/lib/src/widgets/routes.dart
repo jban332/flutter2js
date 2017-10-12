@@ -307,7 +307,7 @@ class LocalHistoryEntry {
 /// pop internally if its list of local history entries is non-empty. Rather
 /// than being removed as the current route, the most recent [LocalHistoryEntry]
 /// is removed from the list and its [LocalHistoryEntry.onRemove] is called.
-abstract class LocalHistoryRoute<T> implements Route<T> {
+abstract class LocalHistoryRoute<T> extends Route<T> {
   List<LocalHistoryEntry> _localHistory;
 
   /// Adds a local history entry to this route.
@@ -377,13 +377,17 @@ abstract class LocalHistoryRoute<T> implements Route<T> {
 }
 
 class _ModalScopeStatus extends InheritedWidget {
-  const _ModalScopeStatus(
+  _ModalScopeStatus(
       {Key key,
       @required this.isCurrent,
       @required this.canPop,
       @required this.route,
       @required Widget child})
-      : super(key: key, child: child);
+      : super(key: key, child: child) {
+    assert(isCurrent != null);
+    assert(canPop != null);
+    assert(route != null);
+  }
 
   final bool isCurrent;
   final bool canPop;
@@ -407,12 +411,14 @@ class _ModalScopeStatus extends InheritedWidget {
 }
 
 class _ModalScope extends StatefulWidget {
-  const _ModalScope({
+  _ModalScope({
     Key key,
     this.route,
     @required this.page,
   })
-      : super(key: key);
+      : super(key: key) {
+    assert(page != null);
+  }
 
   final ModalRoute<dynamic> route;
   final Widget page;
@@ -540,6 +546,11 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
     if (_localHistory.isEmpty) changedInternalState();
   }
 
+  Future<RoutePopDisposition> _LocalHistoryEntry_willPop() async {
+    if (willHandlePopInternally) return RoutePopDisposition.pop;
+    return await super.willPop();
+  }
+
   @override
   bool didPop(T result) {
     if (_localHistory != null && _localHistory.isNotEmpty) {
@@ -576,7 +587,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   /// ```
   ///
   /// The given [BuildContext] will be rebuilt if the state of the route changes
-  /// (specifically, if [Route.isCurrent] or [Route.canPop] change value).
+  /// (specifically, if [isCurrent] or [canPop] change value).
   static ModalRoute<dynamic> of(BuildContext context) {
     final _ModalScopeStatus widget =
         context.inheritFromWidgetOfExactType(_ModalScopeStatus);
@@ -693,8 +704,8 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   ///    ) {
   ///     return new SlideTransition(
   ///       position: new AlignmentTween(
-  ///         begin: Alignment.bottomLeft,
-  ///         end: Alignment.topLeft
+  ///         begin: Alignment.bottomCenter,
+  ///         end: Alignment.topCenter,
   ///       ).animate(animation),
   ///       child: child, // child is the value returned by pageBuilder
   ///     );
@@ -730,13 +741,13 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   ///   ) {
   ///     return new SlideTransition(
   ///       position: new AlignmentTween(
-  ///         begin: Alignment.bottomLeft,
-  ///         end: Alignment.topLeft,
+  ///         begin: Alignment.bottomCenter,
+  ///         end: Alignment.topCenter,
   ///       ).animate(animation),
   ///       child: new SlideTransition(
   ///         position: new AlignmentTween(
-  ///           begin: Alignment.topLeft,
-  ///           end: Alignment.bottomLeft,
+  ///           begin: Alignment.topCenter,
+  ///           end: Alignment.bottomCenter,
   ///         ).animate(secondaryAnimation),
   ///         child: child,
   ///       ),
@@ -796,13 +807,46 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   // The API for subclasses to override - used by this class
 
   /// Whether you can dismiss this route by tapping the modal barrier.
+  ///
+  /// The modal barrier is the scrim that is rendered behind each route, which
+  /// generally prevents the user from interacting with the route below the
+  /// current route, and normally partially obscures such routes.
+  ///
+  /// For example, when a dialog is on the screen, the page below the dialog is
+  /// usually darkened by the modal barrier.
+  ///
+  /// If [barrierDismissible] is true, then tapping this barrier will cause the
+  /// current route to be popped (see [Navigator.pop]) with null as the value.
+  ///
+  /// If [barrierDismissible] is false, then tapping the barrier has no effect.
+  ///
+  /// See also:
+  ///
+  ///  * [barrierColor], which controls the color of the scrim for this route.
+  ///  * [ModalBarrier], the widget that implements this feature.
   bool get barrierDismissible;
 
   /// The color to use for the modal barrier. If this is null, the barrier will
   /// be transparent.
   ///
+  /// The modal barrier is the scrim that is rendered behind each route, which
+  /// generally prevents the user from interacting with the route below the
+  /// current route, and normally partially obscures such routes.
+  ///
+  /// For example, when a dialog is on the screen, the page below the dialog is
+  /// usually darkened by the modal barrier.
+  ///
   /// The color is ignored, and the barrier made invisible, when [offstage] is
   /// true.
+  ///
+  /// While the route is animating into position, the color is animated from
+  /// transparent to the specified color.
+  ///
+  /// See also:
+  ///
+  ///  * [barrierDismissible], which controls the behavior of the barrier when
+  ///    tapped.
+  ///  * [ModalBarrier], the widget that implements this feature.
   Color get barrierColor;
 
   /// Whether the route should remain in memory when it is inactive. If this is
@@ -873,7 +917,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
         in new List<WillPopCallback>.from(scope._willPopCallbacks)) {
       if (!await callback()) return RoutePopDisposition.doNotPop;
     }
-    return await super.willPop();
+    return await _LocalHistoryEntry_willPop();
   }
 
   /// Enables this route to veto attempts by the user to dismiss it.
@@ -977,7 +1021,6 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
 
   @override
   void changedInternalState() {
-    super.changedInternalState();
     setState(() {
       /* internal state already changed */
     });

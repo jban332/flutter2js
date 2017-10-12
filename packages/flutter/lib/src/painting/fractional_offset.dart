@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/ui.dart' as ui show lerpDouble;
-
 import 'package:flutter/foundation.dart';
+import 'package:flutter/ui.dart' as ui show lerpDouble;
 
 import 'alignment.dart';
 import 'basic_types.dart';

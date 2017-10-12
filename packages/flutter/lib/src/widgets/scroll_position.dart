@@ -341,12 +341,12 @@ abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
       final double delta = value - pixels;
       if (result.abs() > delta.abs()) {
         throw new FlutterError('${physics
-                .runtimeType}.applyBoundaryConditions returned invalid overscroll value.\n'
+            .runtimeType}.applyBoundaryConditions returned invalid overscroll value.\n'
             'The method was called to consider a change from $pixels to $value, which is a '
             'delta of ${delta.toStringAsFixed(
-                1)} units. However, it returned an overscroll of '
+            1)} units. However, it returned an overscroll of '
             '${result.toStringAsFixed(
-                1)} units, which has a greater magnitude than the delta. '
+            1)} units, which has a greater magnitude than the delta. '
             'The applyBoundaryConditions method is only supposed to reduce the possible range '
             'of movement, not increase it.\n'
             'The scroll extents are $minScrollExtent .. $maxScrollExtent, and the '
@@ -600,7 +600,7 @@ abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
     super.debugFillDescription(description);
     description
         .add('range: ${minScrollExtent?.toStringAsFixed(1)}..${maxScrollExtent
-            ?.toStringAsFixed(1)}');
+        ?.toStringAsFixed(1)}');
     description.add('viewport: ${viewportDimension?.toStringAsFixed(1)}');
   }
 }

@@ -375,57 +375,18 @@ class Paint {
   // The binary format must match the deserialization code in paint.cc.
 
   final ByteData _data = new ByteData(_kDataByteCount);
-  static const int _kIsAntiAliasIndex = 0;
-  static const int _kColorIndex = 1;
-  static const int _kBlendModeIndex = 2;
-  static const int _kStyleIndex = 3;
-  static const int _kStrokeWidthIndex = 4;
-  static const int _kStrokeCapIndex = 5;
-  static const int _kStrokeJoinIndex = 6;
-  static const int _kStrokeMiterLimitIndex = 7;
-  static const int _kFilterQualityIndex = 8;
-  static const int _kColorFilterIndex = 9;
-  static const int _kColorFilterColorIndex = 10;
-  static const int _kColorFilterBlendModeIndex = 11;
-
-  static const int _kIsAntiAliasOffset = _kIsAntiAliasIndex << 2;
-  static const int _kColorOffset = _kColorIndex << 2;
-  static const int _kBlendModeOffset = _kBlendModeIndex << 2;
-  static const int _kStyleOffset = _kStyleIndex << 2;
-  static const int _kStrokeWidthOffset = _kStrokeWidthIndex << 2;
-  static const int _kStrokeCapOffset = _kStrokeCapIndex << 2;
-  static const int _kStrokeJoinOffset = _kStrokeJoinIndex << 2;
-  static const int _kStrokeMiterLimitOffset = _kStrokeMiterLimitIndex << 2;
-  static const int _kFilterQualityOffset = _kFilterQualityIndex << 2;
-  static const int _kColorFilterOffset = _kColorFilterIndex << 2;
-  static const int _kColorFilterColorOffset = _kColorFilterColorIndex << 2;
-  static const int _kColorFilterBlendModeOffset =
-      _kColorFilterBlendModeIndex << 2;
 
   // If you add more fields, remember to update _kDataByteCount.
   static const int _kDataByteCount = 48;
 
   // Binary format must match the deserialization code in paint.cc.
   List<dynamic> _objects;
-  static const int _kMaskFilterIndex = 0;
-  static const int _kShaderIndex = 1;
-  static const int _kObjectCount =
-      2; // Must be one larger than the largest index
 
   /// Whether to apply anti-aliasing to lines and images drawn on the
   /// canvas.
   ///
   /// Defaults to true.
-  bool get isAntiAlias {
-    return _data.getInt32(_kIsAntiAliasOffset, _kFakeHostEndian) == 0;
-  }
-
-  set isAntiAlias(bool value) {
-    // We encode true as zero and false as one because the default value, which
-    // we always encode as zero, is true.
-    final int encoded = value ? 0 : 1;
-    _data.setInt32(_kIsAntiAliasOffset, encoded, _kFakeHostEndian);
-  }
+  bool isAntiAlias;
 
   // Must be kept in sync with the default in paint.cc.
   static const int _kColorDefault = 0xFF000000;
@@ -442,16 +403,7 @@ class Paint {
   ///
   /// This color is not used when compositing. To colorize a layer, use
   /// [colorFilter].
-  Color get color {
-    final int encoded = _data.getInt32(_kColorOffset, _kFakeHostEndian);
-    return new Color(encoded ^ _kColorDefault);
-  }
-
-  set color(Color value) {
-    assert(value != null);
-    final int encoded = value.value ^ _kColorDefault;
-    _data.setInt32(_kColorOffset, encoded, _kFakeHostEndian);
-  }
+  Color color;
 
   // Must be kept in sync with the default in paint.cc.
   static final int _kBlendModeDefault = BlendMode.srcOver.index;
@@ -467,60 +419,25 @@ class Paint {
   /// layer is being composited.
   ///
   /// Defaults to [BlendMode.srcOver].
-  BlendMode get blendMode {
-    final int encoded = _data.getInt32(_kBlendModeOffset, _kFakeHostEndian);
-    return BlendMode.values[encoded ^ _kBlendModeDefault];
-  }
-
-  set blendMode(BlendMode value) {
-    assert(value != null);
-    final int encoded = value.index ^ _kBlendModeDefault;
-    _data.setInt32(_kBlendModeOffset, encoded, _kFakeHostEndian);
-  }
+  BlendMode blendMode;
 
   /// Whether to paint inside shapes, the edges of shapes, or both.
   ///
   /// Defaults to [PaintingStyle.fill].
-  PaintingStyle get style {
-    return PaintingStyle
-        .values[_data.getInt32(_kStyleOffset, _kFakeHostEndian)];
-  }
-
-  set style(PaintingStyle value) {
-    assert(value != null);
-    final int encoded = value.index;
-    _data.setInt32(_kStyleOffset, encoded, _kFakeHostEndian);
-  }
+  PaintingStyle style;
 
   /// How wide to make edges drawn when [style] is set to
   /// [PaintingStyle.stroke]. The width is given in logical pixels measured in
   /// the direction orthogonal to the direction of the path.
   ///
   /// Defaults to 0.0, which correspond to a hairline width.
-  double get strokeWidth {
-    return _data.getFloat32(_kStrokeWidthOffset, _kFakeHostEndian);
-  }
-
-  set strokeWidth(double value) {
-    assert(value != null);
-    final double encoded = value;
-    _data.setFloat32(_kStrokeWidthOffset, encoded, _kFakeHostEndian);
-  }
+  double strokeWidth;
 
   /// The kind of finish to place on the end of lines drawn when
   /// [style] is set to [PaintingStyle.stroke].
   ///
   /// Defaults to [StrokeCap.butt], i.e. no caps.
-  StrokeCap get strokeCap {
-    return StrokeCap
-        .values[_data.getInt32(_kStrokeCapOffset, _kFakeHostEndian)];
-  }
-
-  set strokeCap(StrokeCap value) {
-    assert(value != null);
-    final int encoded = value.index;
-    _data.setInt32(_kStrokeCapOffset, encoded, _kFakeHostEndian);
-  }
+  StrokeCap strokeCap;
 
   /// The kind of finish to place on the joins between segments.
   ///
@@ -529,16 +446,7 @@ class Paint {
   ///
   /// Defaults to [StrokeJoin.miter], i.e. sharp corners. See also
   /// [strokeMiterLimit] to control when miters are replaced by bevels.
-  StrokeJoin get strokeJoin {
-    return StrokeJoin
-        .values[_data.getInt32(_kStrokeJoinOffset, _kFakeHostEndian)];
-  }
-
-  set strokeJoin(StrokeJoin value) {
-    assert(value != null);
-    final int encoded = value.index;
-    _data.setInt32(_kStrokeJoinOffset, encoded, _kFakeHostEndian);
-  }
+  StrokeJoin strokeJoin;
 
   // Must be kept in sync with the default in paint.cc.
   static final double _kStrokeMiterLimitDefault = 4.0;
@@ -553,29 +461,13 @@ class Paint {
   ///
   /// Defaults to 4.0.  Using zero as a limit will cause a [StrokeJoin.bevel]
   /// join to be used all the time.
-  double get strokeMiterLimit {
-    return _data.getFloat32(_kStrokeMiterLimitOffset, _kFakeHostEndian);
-  }
-
-  set strokeMiterLimit(double value) {
-    assert(value != null);
-    final double encoded = value - _kStrokeMiterLimitDefault;
-    _data.setFloat32(_kStrokeMiterLimitOffset, encoded, _kFakeHostEndian);
-  }
+  double strokeMiterLimit;
 
   /// A mask filter (for example, a blur) to apply to a shape after it has been
   /// drawn but before it has been composited into the image.
   ///
   /// See [MaskFilter] for details.
-  MaskFilter get maskFilter {
-    if (_objects == null) return null;
-    return _objects[_kMaskFilterIndex];
-  }
-
-  set maskFilter(MaskFilter value) {
-    _objects ??= new List<dynamic>(_kObjectCount);
-    _objects[_kMaskFilterIndex] = value;
-  }
+  MaskFilter maskFilter;
 
   /// Controls the performance vs quality trade-off to use when applying
   /// filters, such as [maskFilter], or when drawing images, as with
@@ -583,16 +475,7 @@ class Paint {
   ///
   /// Defaults to [FilterQuality.none].
   // TODO(ianh): verify that the image drawing methods actually respect this
-  FilterQuality get filterQuality {
-    return FilterQuality
-        .values[_data.getInt32(_kFilterQualityOffset, _kFakeHostEndian)];
-  }
-
-  set filterQuality(FilterQuality value) {
-    assert(value != null);
-    final int encoded = value.index;
-    _data.setInt32(_kFilterQualityOffset, encoded, _kFakeHostEndian);
-  }
+  FilterQuality filterQuality;
 
   /// The shader to use when stroking or filling a shape.
   ///
@@ -604,15 +487,7 @@ class Paint {
   ///  * [ImageShader], a shader that tiles an [Image].
   ///  * [colorFilter], which overrides [shader].
   ///  * [color], which is used if [shader] and [colorFilter] are null.
-  Shader get shader {
-    if (_objects == null) return null;
-    return _objects[_kShaderIndex];
-  }
-
-  set shader(Shader value) {
-    _objects ??= new List<dynamic>(_kObjectCount);
-    _objects[_kShaderIndex] = value;
-  }
+  Shader shader;
 
   /// A color filter to apply when a shape is drawn or when a layer is
   /// composited.
@@ -620,31 +495,7 @@ class Paint {
   /// See [ColorFilter] for details.
   ///
   /// When a shape is being drawn, [colorFilter] overrides [color] and [shader].
-  ColorFilter get colorFilter {
-    final bool isNull =
-        _data.getInt32(_kColorFilterOffset, _kFakeHostEndian) == 0;
-    if (isNull) return null;
-    return new ColorFilter.mode(
-        new Color(_data.getInt32(_kColorFilterColorOffset, _kFakeHostEndian)),
-        BlendMode.values[
-            _data.getInt32(_kColorFilterBlendModeOffset, _kFakeHostEndian)]);
-  }
-
-  set colorFilter(ColorFilter value) {
-    if (value == null) {
-      _data.setInt32(_kColorFilterOffset, 0, _kFakeHostEndian);
-      _data.setInt32(_kColorFilterColorOffset, 0, _kFakeHostEndian);
-      _data.setInt32(_kColorFilterBlendModeOffset, 0, _kFakeHostEndian);
-    } else {
-      assert(value._color != null);
-      assert(value._blendMode != null);
-      _data.setInt32(_kColorFilterOffset, 1, _kFakeHostEndian);
-      _data.setInt32(
-          _kColorFilterColorOffset, value._color.value, _kFakeHostEndian);
-      _data.setInt32(_kColorFilterBlendModeOffset, value._blendMode.index,
-          _kFakeHostEndian);
-    }
-  }
+  ColorFilter colorFilter;
 
   @override
   String toString() {

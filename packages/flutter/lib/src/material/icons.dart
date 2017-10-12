@@ -2481,7 +2481,7 @@ class Icons {
   static const IconData opacity =
       const IconData(0xe91c, fontFamily: 'MaterialIcons');
 
-  /// <p><i class="material-icons md-36">open_in_browser</i> &#x2014; material icon named "open in browser".</p>
+  /// <p><i class="material-icons md-36">open_in_browser</i> &#x2014; material icon named "open in stocks_for_browser".</p>
   static const IconData open_in_browser =
       const IconData(0xe89d, fontFamily: 'MaterialIcons');
 

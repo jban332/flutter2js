@@ -1,22 +1,24 @@
+import 'dart:html' as html;
+
 import 'package:flutter/ui.dart';
 
 /// Implements [Image] ('dart:ui') that may be used by [CustomPaint] widget ('package:flutter/widgets.dart').
 /// For examples, "Stocks" examples app uses the widget.
-class HtmlFlutterImage implements Image {
+class HtmlEngineImage implements Image {
   final String uri;
 
-  const HtmlFlutterImage(this.uri);
+  @override
+  final int width;
 
   @override
-  int get width {
-    throw new UnimplementedError();
+  final int height;
+
+  HtmlEngineImage(this.uri, {this.width: 300, this.height: 150}) {
+    assert(uri != null);
   }
 
   @override
-  void dispose() {}
-
-  @override
-  int get height {
-    throw new UnimplementedError();
+  void dispose() {
+    html.Url.revokeObjectUrl(uri);
   }
 }

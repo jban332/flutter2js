@@ -1,4 +1,3 @@
-import 'package:flur/js.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' as flutter;
 
@@ -18,13 +17,14 @@ enum OperatingSystemType {
   other,
 }
 
-const bool isRunningInFlur = !(const bool.fromEnvironment("dart.ui"));
+const bool isRunningInFlutter = const bool.fromEnvironment("dart.ui");
+const bool isRunningInFlur = !isRunningInFlutter;
 
 class DeviceInfo {
   /// By default, obtains device information from Flutter APIs.
   static DeviceInfo current = new DeviceInfo.fromSystem();
 
-  /// Platform (browser, React Native, etc.).
+  /// Platform (stocks_for_browser, React Native, etc.).
   /// Usually known at compile time.
   /// Must be non-null.
   final PlatformType platformType;
@@ -40,12 +40,8 @@ class DeviceInfo {
   DeviceInfo({this.platformType, this.userAgent, this.operatingSystemType});
 
   factory DeviceInfo.fromSystem() {
-    if (JsValue.global != null) {
-      // Running in browser.
-      return new DeviceInfo.fromBrowser();
-    }
     if (isRunningInFlur) {
-      // Running in Flur, but not in browser.
+      // Running in Flur, but not in stocks_for_browser.
       // This can happen in tests.
       return new DeviceInfo(
         platformType: PlatformType.browser,
@@ -60,10 +56,7 @@ class DeviceInfo {
   }
 
   factory DeviceInfo.fromBrowser(
-      {String userAgent, OperatingSystemType osType}) {
-    if (userAgent == null) {
-      userAgent = _getUserAgent();
-    }
+      {@required String userAgent, OperatingSystemType osType}) {
     return new DeviceInfo(
         platformType: PlatformType.browser,
         userAgent: userAgent,
@@ -128,10 +121,5 @@ class DeviceInfo {
       return OperatingSystemType.ios;
     }
     return OperatingSystemType.other;
-  }
-
-  static String _getUserAgent() {
-    return (JsValue.global?.get("navigator")?.get("userAgent")?.asDartObject()
-        as String);
   }
 }

@@ -6,9 +6,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
+import 'theme.dart';
+
 // Fractional offset from 1/4 screen below the top to fully on screen.
-final AlignmentTween _kBottomUpTween =
-    new AlignmentTween(begin: Alignment.bottomLeft, end: Alignment.topLeft);
+final Tween<Offset> _kBottomUpTween = new Tween<Offset>(
+  begin: const Offset(0.0, 0.25),
+  end: Offset.zero,
+);
 
 // Used for Android and Fuchsia.
 class _MountainViewPageTransition extends StatelessWidget {
@@ -23,7 +27,7 @@ class _MountainViewPageTransition extends StatelessWidget {
         )),
         super(key: key);
 
-  final Animation<Alignment> _positionAnimation;
+  final Animation<Offset> _positionAnimation;
   final Widget child;
 
   @override
@@ -67,13 +71,37 @@ class MaterialPageRoute<T> extends PageRoute<T> {
     this.maintainState: true,
     bool fullscreenDialog: false,
   })
-      : super(settings: settings, fullscreenDialog: fullscreenDialog);
+      : super(settings: settings, fullscreenDialog: fullscreenDialog) {
+    assert(builder != null);
+    assert(opaque);
+  }
 
   /// Builds the primary contents of the route.
   final WidgetBuilder builder;
 
   @override
   final bool maintainState;
+
+  /// A delegate PageRoute to which iOS themed page operations are delegated to.
+  /// It's lazily created on first use.
+  CupertinoPageRoute<T> get _cupertinoPageRoute {
+    assert(_useCupertinoTransitions);
+    _internalCupertinoPageRoute ??= new CupertinoPageRoute<T>(
+      builder: builder, // Not used.
+      fullscreenDialog: fullscreenDialog,
+      hostRoute: this,
+    );
+    return _internalCupertinoPageRoute;
+  }
+
+  CupertinoPageRoute<T> _internalCupertinoPageRoute;
+
+  /// Whether we should currently be using Cupertino transitions. This is true
+  /// if the theme says we're on iOS, or if we're in an active gesture.
+  bool get _useCupertinoTransitions {
+    return _internalCupertinoPageRoute?.popGestureInProgress == true ||
+        Theme.of(navigator.context).platform == TargetPlatform.iOS;
+  }
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 300);
@@ -95,6 +123,12 @@ class MaterialPageRoute<T> extends PageRoute<T> {
   }
 
   @override
+  void dispose() {
+    _internalCupertinoPageRoute?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildPage(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation) {
     final Widget result = builder(context);
@@ -105,17 +139,22 @@ class MaterialPageRoute<T> extends PageRoute<T> {
             'Route builders must never return null.');
       }
       return true;
-    });
+    }());
     return result;
   }
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    return new _MountainViewPageTransition(
-      routeAnimation: animation,
-      child: child,
-    );
+    if (_useCupertinoTransitions) {
+      return _cupertinoPageRoute.buildTransitions(
+          context, animation, secondaryAnimation, child);
+    } else {
+      return new _MountainViewPageTransition(
+        routeAnimation: animation,
+        child: child,
+      );
+    }
   }
 
   @override

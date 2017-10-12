@@ -199,26 +199,3 @@ class MockUIPlugin extends Mock implements flur.UIPlugin {}
 class MockPlatformPlugin extends Mock implements flur.PlatformPlugin {}
 
 class MockBuildContext extends Mock implements BuildContext {}
-
-//
-// States
-//
-// Flur has added some protected methods that are normally private.
-//
-
-class OverlayStateImpl extends OverlayState {
-  @override
-  void insert(OverlayEntry entry, {OverlayEntry above}) {}
-
-  // Added by Flur
-  @override
-  void remove(OverlayEntry entry) {}
-
-  @override
-  void insertAll(Iterable<OverlayEntry> entries, {OverlayEntry above}) {}
-
-  @override
-  Widget build(BuildContext context) {
-    return null;
-  }
-}

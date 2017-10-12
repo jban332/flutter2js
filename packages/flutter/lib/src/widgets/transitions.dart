@@ -94,13 +94,17 @@ class _AnimatedState extends State<AnimatedWidget> {
 }
 
 /// Animates the position of a widget relative to its normal position.
+///
+/// The translation is expressed as a [Offset] scaled to the child's size. For
+/// example, an [Offset] with a `dx` of 0.25 will result in a horizontal
+/// translation of one quarter the width of the child.
 class SlideTransition extends AnimatedWidget {
   /// Creates a fractional translation transition.
   ///
   /// The [position] argument must not be null.
   const SlideTransition({
     Key key,
-    @required Animation<AlignmentGeometry> position,
+    @required Animation<Offset> position,
     this.transformHitTests: true,
     this.child,
   })
@@ -108,9 +112,10 @@ class SlideTransition extends AnimatedWidget {
 
   /// The animation that controls the position of the child.
   ///
-  /// If the current value of the position animation is (dx, dy), the child will
-  /// be translated horizontally by width * dx and vertically by height * dy.
-  Animation<AlignmentGeometry> get position => listenable;
+  /// If the current value of the position animation is `(dx, dy)`, the child
+  /// will be translated horizontally by `width * dx` and vertically by
+  /// `height * dy`.
+  Animation<Offset> get position => listenable;
 
   /// Whether hit testing should be affected by the slide animation.
   ///
@@ -157,7 +162,7 @@ class ScaleTransition extends AnimatedWidget {
   /// takes place, relative to the size of the box.
   ///
   /// For example, to set the origin of the scale to bottom middle, you can use
-  /// an alignment of (0.5, 1.0).
+  /// an alignment of (0.0, 1.0).
   final Alignment alignment;
 
   /// The widget below this widget in the tree.
@@ -217,13 +222,13 @@ class SizeTransition extends AnimatedWidget {
   /// Creates a size transition.
   ///
   /// The [sizeFactor] argument must not be null. The [axis] argument defaults
-  /// to [Axis.vertical]. The [axisAlignment] defaults to 0.5, which centers the
+  /// to [Axis.vertical]. The [axisAlignment] defaults to 0.0, which centers the
   /// child along the main axis during the transition.
   const SizeTransition({
     Key key,
     this.axis: Axis.vertical,
     @required Animation<double> sizeFactor,
-    this.axisAlignment: 0.5,
+    this.axisAlignment: 0.0,
     this.child,
   })
       : super(key: key, listenable: sizeFactor);
@@ -246,9 +251,9 @@ class SizeTransition extends AnimatedWidget {
   Widget build(BuildContext context) {
     AlignmentDirectional alignment;
     if (axis == Axis.vertical)
-      alignment = new AlignmentDirectional(0.0, axisAlignment);
+      alignment = new AlignmentDirectional(-1.0, axisAlignment);
     else
-      alignment = new AlignmentDirectional(axisAlignment, 0.0);
+      alignment = new AlignmentDirectional(axisAlignment, -1.0);
     return new ClipRect(
         child: new Align(
       alignment: alignment,

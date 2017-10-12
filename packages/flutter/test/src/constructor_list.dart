@@ -17,7 +17,6 @@ final constructors = <WidgetConstructor>[
   () => new ConstrainedBox(constraints: null),
   () => new CupertinoButton(child: null, onPressed: null),
   () => new CupertinoNavigationBar(middle: null),
-  () => new CupertinoScaffold(child: null),
   () => new CupertinoSlider(value: 0.0, onChanged: null),
   () => new CupertinoSwitch(value: false, onChanged: null),
   () => new CupertinoTabBar(items: []),

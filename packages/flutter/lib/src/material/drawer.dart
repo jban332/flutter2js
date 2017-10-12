@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
+import 'package:flur/flur.dart' as flur;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+import 'list_tile.dart';
+import 'material.dart';
 
 // TODO(eseidel): Draw width should vary based on device size:
 // http://material.google.com/layout/structure.html#structure-side-nav
@@ -58,7 +62,7 @@ const Duration _kBaseSettleDuration = const Duration(milliseconds: 246);
 ///    display and animation of the drawer.
 ///  * [ScaffoldState.openDrawer], which displays its [Drawer], if any.
 ///  * <https://material.google.com/patterns/navigation-drawer.html>
-class Drawer extends flur.StatelessUIPluginWidget {
+class Drawer extends StatelessWidget {
   /// Creates a material design drawer.
   ///
   /// Typically used in the [Scaffold.drawer] property.
@@ -81,7 +85,68 @@ class Drawer extends flur.StatelessUIPluginWidget {
   final Widget child;
 
   @override
-  Widget buildWithUIPlugin(BuildContext context, flur.UIPlugin plugin) {
-    return plugin.buildDrawer(context, this);
+  Widget build(BuildContext context) {
+    return new ConstrainedBox(
+      constraints: const BoxConstraints.expand(width: _kWidth),
+      child: new Material(
+        elevation: elevation,
+        child: child,
+      ),
+    );
   }
+}
+
+/// Provides interactive behavior for [Drawer] widgets.
+///
+/// Rarely used directly. Drawer controllers are typically created automatically
+/// by [Scaffold] widgets.
+///
+/// The draw controller provides the ability to open and close a drawer, either
+/// via an animation or via user interaction. When closed, the drawer collapses
+/// to a translucent gesture detector that can be used to listen for edge
+/// swipes.
+///
+/// See also:
+///
+///  * [Drawer]
+///  * [Scaffold.drawer]
+class DrawerController extends StatefulWidget {
+  /// Creates a controller for a [Drawer].
+  ///
+  /// Rarely used directly.
+  ///
+  /// The [child] argument must not be null and is typically a [Drawer].
+  const DrawerController({
+    GlobalKey key,
+    @required this.child,
+  })
+      : super(key: key);
+
+  /// The widget below this widget in the tree.
+  ///
+  /// Typically a [Drawer].
+  final Widget child;
+
+  @override
+  DrawerControllerState createState() => new DrawerControllerState();
+}
+
+/// State for a [DrawerController].
+///
+/// Typically used by a [Scaffold] to [open] and [close] the drawer.
+abstract class DrawerControllerState
+    extends SingleTickerProviderStateMixin<DrawerController> {
+  factory DrawerControllerState() {
+    return flur.UIPlugin.current.createDrawerControllerState();
+  }
+
+  DrawerControllerState.constructor();
+
+  /// Starts an animation to open the drawer.
+  ///
+  /// Typically called by [ScaffoldState.openDrawer].
+  void open();
+
+  /// Starts an animation to close the drawer.
+  void close();
 }

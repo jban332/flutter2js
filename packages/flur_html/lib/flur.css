@@ -1,5 +1,5 @@
 @font-face {
-    font-family: 'MaterialIcons';
+    font-family: 'Material Icons';
     font-style: normal;
     font-weight: 400;
     src: url(third_party/icons/MaterialIcons-Regular.eot); /* For IE6-8 */
@@ -8,4 +8,44 @@
     url(third_party/icons/MaterialIcons-Regular.woff2) format('woff2'),
     url(third_party/icons/MaterialIcons-Regular.woff) format('woff'),
     url(third_party/icons/MaterialIcons-Regular.ttf) format('truetype');
+}
+
+#flutter {
+    font-family: 'Roboto', sans-serif;
+}
+
+.flutter-overlay {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: auto;
+}
+
+.flutter-overlay-entry {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: auto;
+}
+
+.flutter-TabBar {
+    clear: both;
+}
+
+.flutter-TabBar-tab {
+    background: silver;
+    border: 1px solid black;
+    border-radius: 0.5em;
+    padding: 1em;
+    float: left;
+}
+
+.flutter-TabBar-tab-active {
+    background: silver;
 }

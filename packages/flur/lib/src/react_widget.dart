@@ -1,41 +1,65 @@
-import 'package:flur/js.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'render_tree_plugin.dart';
-import 'react_props.dart';
 
 /// Renders React component.
 ///
 /// In non-React platforms, renders [ErrorWidget].
 @immutable
 class ReactWidget extends StatelessWidget {
-  /// React component class.
-  final JsValue type;
+  final Object type;
 
-  /// Must be valid props in React.
-  final ReactProps props;
+  final ReactProps _props;
 
-  /// Must be valid props in React.
-  final ReactProps style;
+  final ReactProps _style;
 
-  /// Children. They can be anything.
-  /// If an item is not [Widget], it's rendered as text.
+  final ValueChanged<dynamic> _onRef;
+
   final List children;
 
-  /// If set, the callback will receive the underlying React component.
-  ///
-  /// This is useful for stateful React components when you want to observe or
-  /// mutate the state.
-  final ValueChanged<JsValue> onRef;
-
-  /// Type must be string or JsValue.
   const ReactWidget(this.type,
-      {Key key, this.props, this.style, this.children, this.onRef})
-      : super(key: key);
+      {Key key,
+      ReactProps props,
+      ReactProps style,
+      this.children,
+      ValueChanged<dynamic> onRef})
+      : this._props = props,
+        this._style = style,
+        this._onRef = onRef,
+        super(key: key);
+
+  void forEachReactProp(void f(String name, Object value)) {
+    _props?.forEachReactProp(f);
+    if (_style != null) {
+      f("style", _style);
+    }
+    if (_onRef != null) {
+      f("ref", _onRef);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return RenderTreePlugin.current.buildReactWidget(context, this);
+  }
+}
+
+@immutable
+abstract class ReactProps {
+  const factory ReactProps(Map<String, Object> props) = _ReactProps;
+
+  /// Visits each prop.
+  void forEachReactProp(void f(String name, Object value));
+}
+
+class _ReactProps implements ReactProps {
+  final Map<String, Object> _map;
+
+  const _ReactProps(this._map);
+
+  @override
+  void forEachReactProp(void f(String name, Object value)) {
+    _map.forEach(f);
   }
 }

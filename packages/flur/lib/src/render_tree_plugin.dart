@@ -14,6 +14,8 @@ abstract class RenderTreePlugin {
 
   void runApp(Widget widget);
 
+  Widget buildTheatre({Stack onstage, List<Widget> offstage});
+
   Widget buildHtmlElementWidget(
       BuildContext context, HtmlElementWidget widget) {
     throw new UnimplementedError(
@@ -30,6 +32,7 @@ abstract class RenderTreePlugin {
     try {
       return UIPlugin.current.buildErrorWidget(context, widget);
     } catch (e) {
+      print("Building 'ErrorWidget' failed! ${e}");
       return new Text(widget.message);
     }
   }

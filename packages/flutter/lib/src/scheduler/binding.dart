@@ -692,11 +692,11 @@ abstract class SchedulerBinding extends BindingBase {
       buffer.write(
           '${timeStamp.inHours - timeStamp.inDays * Duration.HOURS_PER_DAY}h ');
     if (timeStamp.inMinutes > 0) buffer.write('${timeStamp.inMinutes -
-              timeStamp.inHours * Duration.MINUTES_PER_HOUR}m ');
+        timeStamp.inHours * Duration.MINUTES_PER_HOUR}m ');
     if (timeStamp.inSeconds > 0) buffer.write('${timeStamp.inSeconds -
-              timeStamp.inMinutes * Duration.SECONDS_PER_MINUTE}s ');
+        timeStamp.inMinutes * Duration.SECONDS_PER_MINUTE}s ');
     buffer.write('${timeStamp.inMilliseconds -
-            timeStamp.inSeconds * Duration.MILLISECONDS_PER_SECOND}');
+        timeStamp.inSeconds * Duration.MILLISECONDS_PER_SECOND}');
     final int microseconds = timeStamp.inMicroseconds -
         timeStamp.inMilliseconds * Duration.MICROSECONDS_PER_MILLISECOND;
     if (microseconds > 0)

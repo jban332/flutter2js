@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:flur/flur_for_modified_flutter.dart' as flur;
+import 'package:flur/flur.dart' as flur;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -63,7 +63,11 @@ class OverlayEntry {
     bool maintainState: false,
   })
       : _opaque = opaque,
-        _maintainState = maintainState;
+        _maintainState = maintainState {
+    assert(builder != null);
+    assert(opaque != null);
+    assert(maintainState != null);
+  }
 
   /// This entry will include the widget built by this builder in the overlay at
   /// the entry's position.
@@ -84,8 +88,7 @@ class OverlayEntry {
     if (_opaque == value) return;
     _opaque = value;
     assert(_overlay != null);
-    // ignore: INVALID_USE_OF_PROTECTED_MEMBER
-    _overlay.setState(() {});
+    _overlay._didChangeEntryOpacity();
   }
 
   /// Whether this entry must be included in the tree even if there is a fully
@@ -110,8 +113,7 @@ class OverlayEntry {
     if (_maintainState == value) return;
     _maintainState = value;
     assert(_overlay != null);
-    // ignore: INVALID_USE_OF_PROTECTED_MEMBER
-    _overlay.setState(() {});
+    _overlay._didChangeEntryOpacity();
   }
 
   OverlayState _overlay;
@@ -136,10 +138,10 @@ class OverlayEntry {
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
       SchedulerBinding.instance.addPostFrameCallback((Duration duration) {
-        overlay.remove(this);
+        overlay._remove(this);
       });
     } else {
-      overlay.remove(this);
+      overlay._remove(this);
     }
   }
 
@@ -156,7 +158,9 @@ class OverlayEntry {
 }
 
 class _OverlayEntry extends StatefulWidget {
-  _OverlayEntry(this.entry) : super(key: entry._key);
+  _OverlayEntry(this.entry) : super(key: entry._key) {
+    assert(entry != null);
+  }
 
   final OverlayEntry entry;
 
@@ -194,7 +198,7 @@ class _OverlayEntryState extends State<_OverlayEntry> {
 ///  * [OverlayState].
 ///  * [WidgetsApp].
 ///  * [MaterialApp].
-class Overlay extends flur.StatefulUIPluginWidget {
+class Overlay extends StatefulWidget {
   /// Creates an overlay.
   ///
   /// The initial entries will be inserted into the overlay when its associated
@@ -202,8 +206,10 @@ class Overlay extends flur.StatefulUIPluginWidget {
   ///
   /// Rather than creating an overlay, consider using the overlay that is
   /// created by the [WidgetsApp] or the [MaterialApp] for the application.
-  const Overlay({Key key, this.initialEntries: const <OverlayEntry>[]})
-      : super(key: key);
+  Overlay({Key key, this.initialEntries: const <OverlayEntry>[]})
+      : super(key: key) {
+    assert(initialEntries != null);
+  }
 
   /// The entries to include in the overlay initially.
   ///
@@ -243,41 +249,141 @@ class Overlay extends flur.StatefulUIPluginWidget {
             : '';
         throw new FlutterError('No Overlay widget found.\n'
             '${debugRequiredFor
-            .runtimeType} widgets require an Overlay widget ancestor for correct operation.\n'
+                .runtimeType} widgets require an Overlay widget ancestor for correct operation.\n'
             'The most common way to add an Overlay to an application is to include a MaterialApp or Navigator widget in the runApp() call.\n'
             'The specific widget that failed to find an overlay was:\n'
             '  $debugRequiredFor'
             '$additional');
       }
       return true;
-    });
+    }());
     return result;
   }
 
   @override
-  OverlayState createStateWithUIPlugin(flur.UIPlugin engine) {
-    return flur.UIPlugin.current.createOverlayState(this);
-  }
+  OverlayState createState() => new OverlayState();
 }
 
 /// The current state of an [Overlay].
 ///
 /// Used to insert [OverlayEntry]s into the overlay using the [insert] and
 /// [insertAll] functions.
-abstract class OverlayState extends TickerProviderStateMixin<Overlay> {
+class OverlayState extends TickerProviderStateMixin<Overlay> {
+  final List<OverlayEntry> _entries = <OverlayEntry>[];
+
+  @override
+  void initState() {
+    super.initState();
+    insertAll(widget.initialEntries);
+  }
+
   /// Insert the given entry into the overlay.
   ///
   /// If [above] is non-null, the entry is inserted just above [above].
   /// Otherwise, the entry is inserted on top.
-  void insert(OverlayEntry entry, {OverlayEntry above});
+  void insert(OverlayEntry entry, {OverlayEntry above}) {
+    assert(entry._overlay == null);
+    assert(
+        above == null || (above._overlay == this && _entries.contains(above)));
+    entry._overlay = this;
+    setState(() {
+      final int index =
+          above == null ? _entries.length : _entries.indexOf(above) + 1;
+      _entries.insert(index, entry);
+    });
+  }
 
   /// Insert all the entries in the given iterable.
   ///
   /// If [above] is non-null, the entries are inserted just above [above].
   /// Otherwise, the entries are inserted on top.
-  void insertAll(Iterable<OverlayEntry> entries, {OverlayEntry above});
+  void insertAll(Iterable<OverlayEntry> entries, {OverlayEntry above}) {
+    assert(
+        above == null || (above._overlay == this && _entries.contains(above)));
+    if (entries.isEmpty) return;
+    for (OverlayEntry entry in entries) {
+      assert(entry._overlay == null);
+      entry._overlay = this;
+    }
+    setState(() {
+      final int index =
+          above == null ? _entries.length : _entries.indexOf(above) + 1;
+      _entries.insertAll(index, entries);
+    });
+  }
 
-  // Needed for Flur
-  @protected
-  void remove(OverlayEntry entry);
+  void _remove(OverlayEntry entry) {
+    if (mounted) {
+      _entries.remove(entry);
+      setState(() {
+        /* entry was removed */
+      });
+    }
+  }
+
+  /// (DEBUG ONLY) Check whether a given entry is visible (i.e., not behind an
+  /// opaque entry).
+  ///
+  /// This is an O(N) algorithm, and should not be necessary except for debug
+  /// asserts. To avoid people depending on it, this function is implemented
+  /// only in checked mode.
+  bool debugIsVisible(OverlayEntry entry) {
+    bool result = false;
+    assert(_entries.contains(entry));
+    assert(() {
+      for (int i = _entries.length - 1; i > 0; i -= 1) {
+        final OverlayEntry candidate = _entries[i];
+        if (candidate == entry) {
+          result = true;
+          break;
+        }
+        if (candidate.opaque) break;
+      }
+      return true;
+    }());
+    return result;
+  }
+
+  void _didChangeEntryOpacity() {
+    setState(() {
+      // We use the opacity of the entry in our build function, which means we
+      // our state has changed.
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // These lists are filled backwards. For the offstage children that
+    // does not matter since they aren't rendered, but for the onstage
+    // children we reverse the list below before adding it to the tree.
+    final List<Widget> onstageChildren = <Widget>[];
+    final List<Widget> offstageChildren = <Widget>[];
+    bool onstage = true;
+    for (int i = _entries.length - 1; i >= 0; i -= 1) {
+      final OverlayEntry entry = _entries[i];
+      if (onstage) {
+        onstageChildren.add(new _OverlayEntry(entry));
+        if (entry.opaque) onstage = false;
+      } else if (entry.maintainState) {
+        offstageChildren.add(
+            new TickerMode(enabled: false, child: new _OverlayEntry(entry)));
+      }
+    }
+    return flur.RenderTreePlugin.current.buildTheatre(
+      onstage: new Stack(
+        fit: StackFit.expand,
+        children: onstageChildren.reversed.toList(growable: false),
+      ),
+      offstage: offstageChildren,
+    );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder description) {
+    super.debugFillProperties(description);
+    // TODO(jacobr): use IterableProperty instead as that would
+    // provide a slightly more consistent string summary of the List.
+    description
+        .add(new DiagnosticsProperty<List<OverlayEntry>>('entries', _entries));
+  }
 }

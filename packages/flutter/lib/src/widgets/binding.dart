@@ -345,6 +345,10 @@ abstract class WidgetsBinding extends RendererBinding {
   /// This flag is not used in release builds.
   @protected
   bool debugBuildingDirtyElements = false;
+
+  void deferFirstFrameReport() {}
+
+  void allowFirstFrameReport() {}
 }
 
 /// Inflate the given widget and attach it to the screen.
