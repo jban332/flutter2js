@@ -8,20 +8,43 @@ import 'package:flutter/widgets.dart';
 
 import 'flur.dart';
 
+class MdlCssNames extends CssNames {
+  @override
+  String get nameForCheckbox => "mdl-switch mdl-js-switch mdl-js-ripple-effect";
+
+  @override
+  String get nameForFlatButton =>
+      "mdl-button mdl-js-button mdl-js-ripple-effect";
+
+  @override
+  String get nameForFloatingActionButton =>
+      "mdl-button mdl-js-button mdl-button--fab mdl-button--colored";
+
+  @override
+  String get nameForIconButton =>
+      "mdl-button mdl-js-button mdl-button--icon mdl-button--colored";
+
+  @override
+  String get nameForMaterialButton =>
+      "mdl-button mdl-js-button mdl-button--raised";
+
+  @override
+  String get nameForRadio => "mdl-switch__input";
+
+  @override
+  String get nameForRaisedButton =>
+      "mdl-button mdl-js-button mdl-js-ripple-effect";
+
+  @override
+  String get nameForSwitch => "mdl-switch__input";
+}
+
 class MdlUIPlugin extends HtmlUIPlugin {
   @override
-  Widget buildSnackBar(BuildContext context, SnackBar widget) {
-    final children = [
-      new DomElementWidget.withTag("div",
-          className: "mdl-snackbar__text", children: [widget.content])
-    ];
-    if (widget.action != null) {
-      children.add(new DomElementWidget.withTag("button",
-          className: "mdl-snackbar__action",
-          attributes: const {"type": "button"}));
-    }
-    return new DomElementWidget.withTag("div",
-        creator: widget, className: "mdl-snackbar", children: children);
+  Widget buildCheckbox(BuildContext context, Checkbox widget) {
+    final built = super.buildCheckbox(context, widget);
+    return _wrapper(
+        "div", "mdl-switch mdl-js-switch mdl-js-ripple-effect", built);
   }
 
   @override
@@ -101,6 +124,69 @@ class MdlUIPlugin extends HtmlUIPlugin {
   }
 
   @override
+  Widget buildPopupMenuButton(BuildContext context, PopupMenuButton widget) {
+    final List<PopupMenuEntry> items = widget.itemBuilder(context);
+    final onSelected = widget.onSelected;
+    var divider = false;
+    final menuChildren = items.map((PopupMenuEntry item) {
+      if (item is PopupMenuDivider) {
+        divider = true;
+      } else if (item is PopupMenuItem) {
+        final node = new html.LIElement();
+        node.className = "mdl-menu__item";
+        if (divider) {
+          node.className += " mdl-menu__item--full-bleed-divider";
+          divider = false;
+        }
+        node.onClick.listen((event) {
+          onSelected(item.value);
+        });
+        return new DomElementWidget(node);
+      }
+    }).toList();
+    final buttonId = generateHtmlElementId();
+    final menu = new HtmlElementWidget(
+      "ul",
+      attributes: <String, String>{
+        "for": buttonId,
+      },
+      className:
+          "mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect",
+      children: menuChildren,
+    );
+    final button = buildIconButton(
+        context,
+        new IconButton(
+            icon: widget.icon,
+            padding: widget.padding,
+            tooltip: widget.tooltip,
+            onPressed: onSelected == null
+                ? null
+                : () {
+                    final menuDom = html.querySelector("#${buttonId}");
+                    menuDom.style.display = "";
+                  })) as DomElementWidget;
+
+    return new DomElementWidget.withTag("div",
+        creator: widget, children: [menu, button]);
+  }
+
+  @override
+  Widget buildSnackBar(BuildContext context, SnackBar widget) {
+    final children = [
+      new DomElementWidget.withTag("div",
+          className: "mdl-snackbar__text", children: [widget.content])
+    ];
+    if (widget.action != null) {
+      children.add(new DomElementWidget.withTag("button",
+          className: "mdl-snackbar__action",
+          attributes: const {"type": "button"}));
+    }
+    return new DomElementWidget.withTag("div",
+        creator: widget, className: "mdl-snackbar", children: children);
+  }
+
+  @override
   Widget buildTooltip(BuildContext context, Tooltip widget) {
     final node = new html.DivElement();
     debugDomElement(context, node, widget);
@@ -119,59 +205,6 @@ class MdlUIPlugin extends HtmlUIPlugin {
     ];
     return new DomElementWidget.withTag("div",
         creator: widget, children: children);
-  }
-
-  @override
-  Widget buildFlatButton(BuildContext context, FlatButton widget) {
-    final built = super.buildFlatButton(context, widget);
-    return _styled(built, "mdl-button mdl-js-button mdl-js-ripple-effect");
-  }
-
-  @override
-  Widget buildMaterialButton(BuildContext context, MaterialButton widget) {
-    final built = super.buildMaterialButton(context, widget);
-    return _styled(built, "mdl-button mdl-js-button mdl-button--raised");
-  }
-
-  @override
-  Widget buildRaisedButton(BuildContext context, RaisedButton widget) {
-    final built = super.buildRaisedButton(context, widget);
-    return _styled(built, "mdl-button mdl-js-button mdl-button--raised");
-  }
-
-  @override
-  Widget buildSwitch(BuildContext context, Switch widget) {
-    final built = super.buildSwitch(context, widget);
-    return _styled(built, "mdl-switch__input");
-  }
-
-  @override
-  Widget buildCheckbox(BuildContext context, Checkbox widget) {
-    var built = super.buildCheckbox(context, widget);
-    built = _styled(built, "mdl-checkbox__input");
-    return _wrapper(
-        "div", "mdl-switch mdl-js-switch mdl-js-ripple-effect", built);
-  }
-
-  @override
-  Widget buildIconButton(BuildContext context, IconButton widget) {
-    final built = super.buildIconButton(context, widget);
-    return _styled(
-        built, "mdl-button mdl-js-button mdl-button--icon mdl-button--colored");
-  }
-
-  @override
-  Widget buildFloatingActionButton(
-      BuildContext context, FloatingActionButton widget) {
-    final built = super.buildFloatingActionButton(context, widget);
-    return _styled(
-        built, "mdl-button mdl-js-button mdl-button--fab mdl-button--colored");
-  }
-
-  Widget _styled(Widget widget, String className) {
-    final domElement = widget as DomElementWidget;
-    domElement.node.className = className;
-    return domElement;
   }
 
   Widget _wrapper(String tagName, String className, Widget child) {

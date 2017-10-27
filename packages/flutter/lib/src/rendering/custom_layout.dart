@@ -2,10 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-
 import 'box.dart';
 import 'object.dart';
+
+// Flur-only class
+abstract class MultiChildLayoutDelegateHelper {
+  final MultiChildLayoutDelegate delegate;
+  MultiChildLayoutDelegateHelper(this.delegate);
+
+  bool hasChild(Object childId);
+  Size layoutChild(Object childId, BoxConstraints constraints);
+  void positionChild(Object childId, Offset offset);
+
+  void performLayout(Size size) {
+    delegate._helper = this;
+    try {
+      delegate.performLayout(size);
+    } finally {
+      delegate._helper = null;
+    }
+  }
+}
 
 /// A delegate that controls the layout of multiple children.
 ///
@@ -66,15 +83,14 @@ import 'object.dart';
 /// child list, regardless of the order in which [layoutChild] is called on
 /// them.
 abstract class MultiChildLayoutDelegate {
-  Map<Object, RenderBox> _idToChild;
-  Set<RenderBox> _debugChildrenNeedingLayout;
+  MultiChildLayoutDelegateHelper _helper;
 
   /// True if a non-null LayoutChild was provided for the specified id.
   ///
   /// Call this from the [performLayout] or [getSize] methods to
   /// determine which children are available, if the child list might
   /// vary.
-  bool hasChild(Object childId) => _idToChild[childId] != null;
+  bool hasChild(Object childId) => _helper.hasChild(childId);
 
   /// Ask the child to update its layout within the limits specified by
   /// the constraints parameter. The child's size is returned.
@@ -83,32 +99,7 @@ abstract class MultiChildLayoutDelegate {
   /// child. Every child must be laid out using this function exactly
   /// once each time the [performLayout] function is called.
   Size layoutChild(Object childId, BoxConstraints constraints) {
-    final RenderBox child = _idToChild[childId];
-    assert(() {
-      if (child == null) {
-        throw new FlutterError(
-            'The $this custom multichild layout delegate tried to lay out a non-existent child.\n'
-            'There is no child with the id "$childId".');
-      }
-      if (!_debugChildrenNeedingLayout.remove(child)) {
-        throw new FlutterError(
-            'The $this custom multichild layout delegate tried to lay out the child with id "$childId" more than once.\n'
-            'Each child must be laid out exactly once.');
-      }
-      try {
-        assert(constraints.debugAssertIsValid(isAppliedConstraint: true));
-      } on AssertionError catch (exception) {
-        throw new FlutterError(
-            'The $this custom multichild layout delegate provided invalid box constraints for the child with id "$childId".\n'
-            '$exception\n'
-            'The minimum width and height must be greater than or equal to zero.\n'
-            'The maximum width must be greater than or equal to the minimum width.\n'
-            'The maximum height must be greater than or equal to the minimum height.');
-      }
-      return true;
-    });
-    ;
-    return null;
+    return _helper.layoutChild(childId, constraints);
   }
 
   /// Specify the child's origin relative to this origin.
@@ -118,19 +109,7 @@ abstract class MultiChildLayoutDelegate {
   /// remain unchanged. Children initially have their position set to
   /// (0,0), i.e. the top left of the [RenderCustomMultiChildLayoutBox].
   void positionChild(Object childId, Offset offset) {
-    final RenderBox child = _idToChild[childId];
-    assert(() {
-      if (child == null) {
-        throw new FlutterError(
-            'The $this custom multichild layout delegate tried to position out a non-existent child:\n'
-            'There is no child with the id "$childId".');
-      }
-      if (offset == null) {
-        throw new FlutterError(
-            'The $this custom multichild layout delegate provided a null position for the child with id "$childId".');
-      }
-      return true;
-    });
+    return _helper.positionChild(childId, offset);
   }
 
   /// Override this method to return the size of this object given the

@@ -3,6 +3,7 @@ import 'dart:html' as html;
 
 import 'package:flur/flur.dart';
 import 'package:flur_html/flur.dart';
+import 'package:flur_html/src/controllable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,46 +12,114 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'controllable.dart';
-import 'dom_widget.dart';
+import 'dom_element_widget.dart';
+import 'dom_modification_widget.dart';
+import 'dom_sliver_widget.dart';
+import 'dom_text_widget.dart';
 import 'internal/canvas.dart';
+import 'internal/custom_layout.dart' as custom_layout;
 import 'internal/drag_target.dart';
 import 'internal/drawer.dart';
 import 'internal/scaffold.dart';
+
+class CssNames {
+  const CssNames();
+
+  String get nameForAlign => "fl-Align";
+
+  String get nameForCheckbox => "fl-Checkbox";
+
+  String get nameForColumn => "fl-Column";
+
+  String get nameForDropdownButton => "fl-DropdownButton";
+
+  String get nameForEditableText => "fl-EditableText";
+
+  String get nameForFloatingActionButton => "fl-FloatingActionButton";
+
+  String get nameForIcon => "fl-Icon";
+
+  String get nameForIconButton => "fl-IconButton";
+
+  String get nameForMaterialButton => "fl-MaterialButton";
+
+  String get nameForRadio => "fl-Radio";
+
+  String get nameForRichText => "fl-RichText";
+
+  String get nameForRow => "fl-Row";
+
+  String get nameForSlider => "fl-Slider";
+
+  String get nameForStack => "fl-Stack";
+
+  String get nameForSwitch => "fl-Switch";
+
+  String get nameForTab => "fl-Tab";
+
+  String get nameForTabBar => "fl-TabBar";
+
+  String get nameForText => "fl-Text";
+
+  String get nameForTextField => "fl-TextField";
+}
 
 abstract class HtmlUIPlugin extends UIPlugin {
   /// Used by [generateHtmlElementId].
   int _gid = 0;
 
+  CssNames get cssNames => const CssNames();
+
   @override
   Widget buildAbsorbPointer(BuildContext context, AbsorbPointer widget) {
-    final node = _newDiv(context, widget);
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.pointerEvents ??= "";
+    });
   }
 
   @override
   Widget buildAlign(BuildContext context, Align widget) {
-    return withStyle(context, widget, widget.child, (style) {
+    final node = new html.DivElement();
+    node.className = cssNames.nameForAlign;
+    final style = node.style;
+    if (widget.alignment != Alignment.center) {
+      // Resolve offset
       final alignment = widget.alignment;
-      if (alignment != null) {
-        final offset = widget.alignment
-            .resolve(Directionality.of(context) ?? TextDirection.ltr);
-        if (offset.x != 0.0 && offset.y != 0.0) {
-          style.position = "relative";
-          style.left = cssFromFactional(offset.x - 0.5);
-          style.top = cssFromFactional(offset.y - 0.5);
-          style.right = "auto";
-          style.bottom = "auto";
+      final offset = alignment == null
+          ? null
+          : alignment.resolve(Directionality.of(context) ?? TextDirection.ltr);
+      final x = offset.x;
+      if (x != 0.0) {
+        if (x < 0.0) {
+          style.textAlign = "left";
+          final m = 0.5 * (x + 1.0);
+          if (m != 0.0) {
+            style.marginLeft = cssFromFactional(m);
+          }
+        } else {
+          style.textAlign = "right";
+          final m = 0.5 * (x - 1.0);
+          if (m != 0.0) {
+            style.marginRight = cssFromFactional(m);
+          }
         }
       }
-      style.width = cssFromFactional(widget.widthFactor);
-      style.height = cssFromFactional(widget.heightFactor);
-    });
+    }
+    final w = widget.widthFactor;
+    if (w != 1.0) {
+      style.width = cssFromFactional(w);
+    }
+    final h = widget.heightFactor;
+    if (h != 1.0) {
+      style.width = cssFromFactional(h);
+    }
+    return new DomElementWidget(node, child: widget.child);
   }
 
   @override
   Widget buildAppBar(BuildContext context, AppBar widget) {
     final node = _newDiv(context, widget);
+
     final children = [];
     final leading = widget.leading;
     if (leading != null) {
@@ -78,8 +147,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildBottomNavigationBar(
       BuildContext context, BottomNavigationBar widget) {
-    final node = new html.Element.div();
-    debugDomElement(context, node, widget);
+    final node = _newDiv(context, widget);
 
     final children = <Widget>[];
     for (var item in widget.items) {
@@ -92,8 +160,9 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildCheckbox(BuildContext context, Checkbox widget) {
     final node = new html.CheckboxInputElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForCheckbox;
 
+    // Attributes
     node.checked = widget.value;
     {
       final value = widget.onChanged;
@@ -110,94 +179,87 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildClipOval(BuildContext context, ClipOval widget) {
-    final node = _newDiv(context, widget);
-
     final clip = widget.clipper.getClip(const Size(100.0, 100.0));
     final center = clip.center;
-    node.style.clipPath =
-        "ellipse(${clip.width}% ${clip.height}% at ${center.dx}% ${center.dy}%)";
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.clipPath =
+          "ellipse(${clip.width}% ${clip.height}% at ${center.dx}% ${center.dy}%)";
+    });
   }
 
   @override
   Widget buildClipRect(BuildContext context, ClipRect widget) {
-    final node = _newDiv(context, widget);
-
     final clip = widget.clipper.getClip(const Size(100.0, 100.0));
-    node.style.clipPath =
-        "inset(${clip.left}% ${clip.right}% ${clip.height}% ${clip.bottomRight}%)";
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.clipPath =
+          "inset(${clip.left}% ${clip.right}% ${clip.height}% ${clip.bottomRight}%)";
+    });
   }
 
   @override
   Widget buildClipRRect(BuildContext context, ClipRRect widget) {
-    final node = _newDiv(context, widget);
-
     final clip = widget.clipper.getClip(const Size(100.0, 100.0));
-    node.style.clipPath =
-        "inset(${clip.left}% ${clip.right}% ${clip.top}% ${clip
-        .bottom}%) radius ${clip.blRadius}";
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.clipPath = "inset(${clip.left}% ${clip.right}% ${clip.top}% ${clip
+          .bottom}%) radius ${clip.blRadius}";
+    });
   }
 
   @override
   Widget buildConstrainedBox(BuildContext context, ConstrainedBox widget) {
-    final node = _newDiv(context, widget);
-
-    return new DomElementWidget(node, children: [widget.child]);
+    final constraints = widget.constraints;
+    final minWidth = cssFromLogicalPixels(constraints.minWidth);
+    final maxWidth = cssFromLogicalPixels(constraints.maxWidth);
+    final minHeight = cssFromLogicalPixels(constraints.minHeight);
+    final maxHeight = cssFromLogicalPixels(constraints.maxHeight);
+    return withStyle(context, widget, widget.child, (style) {
+      style.minWidth = minWidth;
+      style.maxWidth = maxWidth;
+      style.minHeight = minHeight;
+      style.maxHeight = maxHeight;
+    });
   }
 
   @override
   Widget buildCustomMultiChildLayout(
       BuildContext context, CustomMultiChildLayout widget) {
-    final node = _newDiv(context, widget);
-
-    return new DomElementWidget(node, children: widget.children);
+    return custom_layout.build(context, widget);
   }
 
   @override
   Widget buildCustomPaint(BuildContext context, CustomPaint widget) {
-    final size = widget.size ?? const Size(100.0, 100.0);
-
-    // Create HTML canvas
-    final canvasElement = new html.CanvasElement(
-        width: size.width.toInt(), height: size.height.toInt());
-    final canvasWidget = new DomElementWidget(canvasElement);
-    final canvas = new HtmlCanvas(canvasElement.context2D);
+    var size = widget.size;
+    if (size == null || size == Size.zero) {
+      size = const Size(100.0, 100.0);
+    }
+    final children = <Widget>[];
 
     // Paint background
-    {
-      final painter = widget.painter;
-      if (painter != null) {
-        painter.paint(canvas, size);
-      }
+    final painter = widget.painter;
+    if (painter != null) {
+      final node = new html.CanvasElement(
+          width: size.width.toInt(), height: size.height.toInt());
+      painter.paint(new HtmlCanvas(node), size);
+      children.add(new DomElementWidget(node));
+    }
+
+    // Paint child
+    var child = widget.child;
+    if (child != null) {
+      final node = new html.DivElement();
+      children.add(new DomElementWidget(node, child: child));
     }
 
     // Paint foreground
-    {
-      final foregroundPainter = widget.foregroundPainter;
-      if (foregroundPainter != null) {
-        foregroundPainter.paint(canvas, size);
-      }
+    final foregroundPainter = widget.foregroundPainter;
+    if (foregroundPainter != null) {
+      final node = new html.CanvasElement(
+          width: size.width.toInt(), height: size.height.toInt());
+      foregroundPainter.paint(new HtmlCanvas(node), size);
+      children.add(new DomElementWidget(node));
     }
 
-    // Wrap child
-    final childWrapperNode = new html.DivElement();
-    final childWrapperStyle = childWrapperNode.style;
-    childWrapperStyle.position = "absolute";
-    childWrapperStyle.left = "0px";
-    childWrapperStyle.right = "0px";
-    childWrapperStyle.top = "0px";
-    childWrapperStyle.bottom = "0px";
-    final childWrapperWidget =
-        new DomElementWidget(childWrapperNode, child: widget.child);
-
-    // Actual HTML element
-    final node = _newDiv(context, widget);
-    return new DomElementWidget(node, children: [
-      canvasWidget,
-      childWrapperWidget,
-    ]);
+    return new Stack(children: children);
   }
 
   @override
@@ -238,33 +300,36 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildDecoratedBox(BuildContext context, DecoratedBox widget) {
-    final node = _newDiv(context, widget);
-
-    final style = node.style;
     final decoration = widget.decoration;
     if (decoration is BoxDecoration) {
-      if (decoration.color != null) {
-        style.backgroundColor = cssFromColor(decoration.color);
-      }
-      final border = decoration.border;
-      if (border != null) {
-        style.borderLeft = cssFromBorderSide(border.left);
-        style.borderRight = cssFromBorderSide(border.right);
-        style.borderTop = cssFromBorderSide(border.top);
-        style.borderBottom = cssFromBorderSide(border.bottom);
-      }
-      final borderRadius = decoration.borderRadius;
-      if (borderRadius != null) {
-        style.borderTopLeftRadius = cssFromRadius(borderRadius.topLeft);
-        style.borderTopRightRadius = cssFromRadius(borderRadius.topRight);
-        style.borderBottomLeftRadius = cssFromRadius(borderRadius.bottomLeft);
-        style.borderBottomRightRadius = cssFromRadius(borderRadius.bottomRight);
-      }
+      return new DomModificationWidget(
+          child: widget.child,
+          onBuild: (html.Element node) {
+            final style = node.style;
+            if (decoration.color != null) {
+              style.backgroundColor = cssFromColor(decoration.color);
+            }
+            final border = decoration.border;
+            if (border != null) {
+              style.borderLeft = cssFromBorderSide(border.left);
+              style.borderRight = cssFromBorderSide(border.right);
+              style.borderTop = cssFromBorderSide(border.top);
+              style.borderBottom = cssFromBorderSide(border.bottom);
+            }
+            final borderRadius = decoration.borderRadius;
+            if (borderRadius != null) {
+              style.borderTopLeftRadius = cssFromRadius(borderRadius.topLeft);
+              style.borderTopRightRadius = cssFromRadius(borderRadius.topRight);
+              style.borderBottomLeftRadius =
+                  cssFromRadius(borderRadius.bottomLeft);
+              style.borderBottomRightRadius =
+                  cssFromRadius(borderRadius.bottomRight);
+            }
+          });
     } else {
       print("Unsupported box decoration: '${decoration.runtimeType}'");
+      return widget.child;
     }
-
-    return new DomElementWidget(node, child: widget.child);
   }
 
   @override
@@ -299,19 +364,24 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildDropdownButton(BuildContext context, DropdownButton widget) {
     final node = new html.SelectElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForDropdownButton;
 
+    //
+    // Events
+    //
     final items = widget.items;
-    {
-      final onChanged = widget.onChanged;
-      if (onChanged == null) {
-        node.disabled = true;
-      } else {
-        node.onChange.listen((event) {
-          onChanged(items[node.selectedIndex].value);
-        });
-      }
+    final onChanged = widget.onChanged;
+    if (onChanged == null) {
+      node.disabled = true;
+    } else {
+      node.onChange.listen((event) {
+        onChanged(items[node.selectedIndex].value);
+      });
     }
+
+    //
+    // Children
+    //
     final widgetValue = widget.value;
     final children = <Widget>[];
     var i = -1;
@@ -332,35 +402,26 @@ abstract class HtmlUIPlugin extends UIPlugin {
     final controller = widget.controller;
     return new ValueControllable(controller, (context, value) {
       final node = new html.TextAreaElement();
-      debugDomElement(context, node, widget);
-
-      //
-      // Attributes
-      //
+      node.className = cssNames.nameForEditableText;
 
       //
       // Events
       //
-      {
-        final value = widget.onChanged;
-        if (value == null) {
-          node.disabled = true;
-        } else {
-          node.onChange.listen((event) {
-            value(node.value);
-          });
-        }
+      final onChanged = widget.onChanged;
+      if (onChanged == null) {
+        node.disabled = true;
+      } else {
+        node.onChange.listen((event) {
+          onChanged(node.value);
+        });
       }
-      {
-        final value = widget.onSelectionChanged;
-        if (value != null) {
-          node.onSelect.listen((event) {
-            final textSelection = new TextSelection(
-                baseOffset: node.selectionStart,
-                extentOffset: node.selectionEnd);
-            value(textSelection, false);
-          });
-        }
+      final onSelectionChanged = widget.onSelectionChanged;
+      if (onSelectionChanged != null) {
+        node.onSelect.listen((event) {
+          final textSelection = new TextSelection(
+              baseOffset: node.selectionStart, extentOffset: node.selectionEnd);
+          onSelectionChanged(textSelection, false);
+        });
       }
       return new DomElementWidget(node);
     });
@@ -372,78 +433,30 @@ abstract class HtmlUIPlugin extends UIPlugin {
   }
 
   @override
-  Widget buildFlatButton(BuildContext context, FlatButton widget) {
-    final node = new html.TextAreaElement();
-    debugDomElement(context, node, widget);
-
-    //
-    // Style
-    //
-    final style = node.style;
-    {
-      final textColor = widget.textColor;
-      if (textColor != null) {
-        style.color = cssFromColor(textColor);
-      }
-    }
-    {
-      final color = widget.color;
-      if (color != null) {
-        style.backgroundColor = cssFromColor(color);
-      }
-    }
-    {
-      final disabledColor = widget.disabledColor;
-      if (disabledColor != null) {
-        style.backgroundColor = cssFromColor(disabledColor);
-      }
-    }
-
-    //
-    // Events
-    //
-    final onPressed = widget.onPressed;
-    if (onPressed == null) {
-      node.disabled = true;
-    } else {
-      node.onClick.listen((event) {
-        onPressed();
-      });
-    }
-
-    return new DomElementWidget(node, child: widget.child);
-  }
-
-  @override
   Widget buildFlex(BuildContext context, Flex widget) {
-    final node = _newDiv(context, widget);
+    final node = new html.DivElement();
 
-    //
-    // Style
-    //
-    final style = node.style;
-    style.display = "flex";
-
-    // Direction
+    // Set CSS class name
     {
-      String cssValue;
       switch (widget.direction) {
         case Axis.vertical:
-          cssValue = "column";
+          node.className = cssNames.nameForColumn;
           break;
         case Axis.horizontal:
-          cssValue = "row";
+          node.className = cssNames.nameForRow;
           break;
       }
-      style.flexDirection = cssValue;
     }
+
+    // Get style
+    final style = node.style;
 
     // Main axis alignment
     {
       String cssValue;
       switch (widget.mainAxisAlignment) {
         case MainAxisAlignment.start:
-          cssValue = "start";
+          // Default value
           break;
         case MainAxisAlignment.end:
           cssValue = "end";
@@ -452,13 +465,18 @@ abstract class HtmlUIPlugin extends UIPlugin {
           cssValue = "center";
           break;
         case MainAxisAlignment.spaceAround:
+          cssValue = "space-around";
           break;
         case MainAxisAlignment.spaceBetween:
+          cssValue = "space-between";
           break;
         case MainAxisAlignment.spaceEvenly:
+          cssValue = "space-evenly";
           break;
       }
-      style.justifyContent = cssValue;
+      if (cssValue != null) {
+        style.justifyContent = cssValue;
+      }
     }
 
     // Cross axis alignment
@@ -472,15 +490,18 @@ abstract class HtmlUIPlugin extends UIPlugin {
           cssValue = "end";
           break;
         case CrossAxisAlignment.center:
-          cssValue = "center";
+          // Default!
           break;
         case CrossAxisAlignment.stretch:
           cssValue = "stretch";
           break;
         case CrossAxisAlignment.baseline:
+          cssValue = "baseline";
           break;
       }
-      style.alignItems = cssValue;
+      if (cssValue != null) {
+        style.alignItems = cssValue;
+      }
     }
     return new DomElementWidget(node, children: widget.children);
   }
@@ -513,11 +534,10 @@ abstract class HtmlUIPlugin extends UIPlugin {
   Widget buildFractionalTranslation(
       BuildContext context, FractionalTranslation widget) {
     return withStyle(context, widget, widget.child, (style) {
+      style.position = "relative";
       final translation = widget.translation;
       style.left = cssFromFactional(translation.dx);
       style.top = cssFromFactional(translation.dy);
-      style.right = "auto";
-      style.bottom = "auto";
     });
   }
 
@@ -538,7 +558,24 @@ abstract class HtmlUIPlugin extends UIPlugin {
     final node = new html.TableElement();
     debugDomElement(context, node, widget);
 
-    final rows = [];
+    // Get delegate
+    final delegate = widget.childrenDelegate;
+
+    // TODO: Real slivers
+    var count = delegate.estimatedChildCount;
+    if (count > 10) {
+      count = 10;
+    }
+
+    // Build rows
+    final rows = <Widget>[];
+    for (var i = 0; i < count; i++) {
+      final item = delegate.build(context, i);
+      rows.add(new DomElementWidget.withTag("tr",
+          child: new DomElementWidget.withTag("td", child: item)));
+    }
+
+    // Build tbody
     final tbody = new html.Element.tag("tbody");
     new HtmlElementWidget("tbody", debugCreator: null, children: rows);
     return new DomElementWidget(node, child: new DomElementWidget(tbody));
@@ -552,9 +589,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildIcon(BuildContext context, Icon widget) {
     final node = new html.SpanElement();
-    debugDomElement(context, node, widget);
-
-    node.className = "material-icons";
+    node.className = cssNames.nameForIcon;
     node.text = new String.fromCharCode(widget.icon.codePoint);
     return new DomElementWidget(node);
   }
@@ -562,23 +597,19 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildIconButton(BuildContext context, IconButton widget) {
     final node = new html.ButtonElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForIconButton;
 
     final onPressed = widget.onPressed;
     if (onPressed == null) {
       node.disabled = true;
-      {
-        final value = widget.disabledColor;
-        if (value != null) {
-          node.style.backgroundColor = cssFromColor(value);
-        }
+      final disabledColor = widget.disabledColor;
+      if (disabledColor != null) {
+        node.style.backgroundColor = cssFromColor(disabledColor);
       }
     } else {
-      {
-        final value = widget.color;
-        if (value != null) {
-          node.style.backgroundColor = cssFromColor(value);
-        }
+      final color = widget.color;
+      if (color != null) {
+        node.style.backgroundColor = cssFromColor(color);
       }
       node.onClick.listen((event) {
         onPressed();
@@ -589,10 +620,9 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildIgnorePointer(BuildContext context, IgnorePointer widget) {
-    final node = _newDiv(context, widget);
-
-    node.style.pointerEvents = widget.ignoring ? "none" : "auto";
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.pointerEvents ??= widget.ignoring ? "none" : "auto";
+    });
   }
 
   @override
@@ -651,11 +681,11 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
     final previousPositions = <int, Offset>{};
     {
-      final value = widget.onPointerDown;
-      if (value != null) {
+      final onPointerDown = widget.onPointerDown;
+      if (onPointerDown != null) {
         node.onMouseDown.listen((html.MouseEvent event) {
           final point = event.page;
-          value(new PointerDownEvent(
+          onPointerDown(new PointerDownEvent(
             kind: PointerDeviceKind.mouse,
             position: new Offset(point.x.toDouble(), point.y.toDouble()),
           ));
@@ -663,7 +693,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
         node.onTouchStart.listen((html.TouchEvent event) {
           for (var touch in event.targetTouches) {
             final point = touch.page;
-            value(new PointerDownEvent(
+            onPointerDown(new PointerDownEvent(
               kind: PointerDeviceKind.touch,
               position: new Offset(point.x.toDouble(), point.y.toDouble()),
               pressure: touch.force,
@@ -673,12 +703,12 @@ abstract class HtmlUIPlugin extends UIPlugin {
       }
     }
     {
-      final value = widget.onPointerCancel;
-      if (value != null) {
+      final onPointerCancel = widget.onPointerCancel;
+      if (onPointerCancel != null) {
         node.onTouchCancel.listen((html.TouchEvent event) {
           previousPositions.clear();
           for (var touch in event.targetTouches) {
-            value(new PointerCancelEvent(
+            onPointerCancel(new PointerCancelEvent(
               kind: PointerDeviceKind.touch,
               pointer: touch.identifier,
             ));
@@ -687,12 +717,12 @@ abstract class HtmlUIPlugin extends UIPlugin {
       }
     }
     {
-      final value = widget.onPointerMove;
-      if (value != null) {
+      final onPointerNew = widget.onPointerMove;
+      if (onPointerNew != null) {
         node.onMouseMove.listen((html.MouseEvent event) {
           final point = event.page;
           final movement = event.movement;
-          value(new PointerMoveEvent(
+          onPointerNew(new PointerMoveEvent(
             kind: PointerDeviceKind.mouse,
             position: new Offset(point.x.toDouble(), point.y.toDouble()),
             delta: new Offset(movement.x, movement.y),
@@ -704,7 +734,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
             final position = new Offset(point.x.toDouble(), point.y.toDouble());
             final Offset previousPosition =
                 previousPositions[touch.identifier] ?? position;
-            value(new PointerMoveEvent(
+            onPointerNew(new PointerMoveEvent(
               kind: PointerDeviceKind.touch,
               pointer: touch.identifier,
               position: position,
@@ -717,11 +747,11 @@ abstract class HtmlUIPlugin extends UIPlugin {
       }
     }
     {
-      final value = widget.onPointerUp;
-      if (value != null) {
+      final onPointerUp = widget.onPointerUp;
+      if (onPointerUp != null) {
         node.onMouseUp.listen((html.MouseEvent event) {
           final point = event.page;
-          value(new PointerUpEvent(
+          onPointerUp(new PointerUpEvent(
             kind: PointerDeviceKind.mouse,
             position: new Offset(point.x.toDouble(), point.y.toDouble()),
           ));
@@ -730,7 +760,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
           previousPositions.clear();
           for (var touch in event.targetTouches) {
             final point = touch.page;
-            value(new PointerUpEvent(
+            onPointerUp(new PointerUpEvent(
               kind: PointerDeviceKind.touch,
               pointer: touch.identifier,
               position: new Offset(point.x.toDouble(), point.y.toDouble()),
@@ -750,19 +780,47 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildMaterialButton(BuildContext context, MaterialButton widget) {
     final node = new html.ButtonElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForMaterialButton;
 
-    node.style.backgroundColor = cssFromColor(widget.color);
-    {
-      final value = widget.onPressed;
-      if (value == null) {
-        node.disabled = true;
-      } else {
-        node.onClick.listen((event) {
-          value();
-        });
-      }
+    //
+    // Style
+    //
+    final style = node.style;
+    final textColor = widget.textColor;
+    if (textColor != null) {
+      style.color = cssFromColor(textColor);
     }
+    final color = widget.color;
+    if (color != null) {
+      style.backgroundColor = cssFromColor(widget.color);
+    }
+    final padding = widget.padding;
+    if (padding!=null) {
+      style.paddingLeft = cssFromLogicalPixels(padding.left);
+      style.paddingRight = cssFromLogicalPixels(padding.right);
+      style.paddingTop = cssFromLogicalPixels(padding.top);
+      style.paddingBottom = cssFromLogicalPixels(padding.bottom);
+    }
+    style.minWidth = cssFromLogicalPixels(widget.minWidth);
+    final elevation = widget.elevation;
+    if (elevation==0) {
+
+    } else {
+      style.boxShadow = "";
+    }
+
+    //
+    // Events
+    //
+    final onPressed = widget.onPressed;
+    if (onPressed == null) {
+      node.disabled = true;
+    } else {
+      node.onClick.listen((event) {
+        onPressed();
+      });
+    }
+
     return new DomElementWidget(node, child: widget.child);
   }
 
@@ -779,23 +837,27 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildOffstage(BuildContext context, Offstage widget) {
-    final node = _newDiv(context, widget);
-
-    node.className = "flutter-Offstage";
-    return new DomElementWidget(node, child: widget.child);
+    return new DomModificationWidget(
+        child: widget.child,
+        onBuild: (node) {
+          addClassName(node, "fl-Offstage");
+        });
   }
 
   @override
   Widget buildPadding(BuildContext context, Padding widget) {
-    final node = _newDiv(context, widget);
-
-    final style = node.style;
-    final padding = widget.padding.resolve(TextDirection.ltr);
-    style.paddingLeft = cssFromLogicalPixels(padding.left);
-    style.paddingRight = cssFromLogicalPixels(padding.right);
-    style.paddingTop = cssFromLogicalPixels(padding.top);
-    style.paddingBottom = cssFromLogicalPixels(padding.bottom);
-    return new DomElementWidget(node, child: widget.child);
+    final padding =
+        widget.padding.resolve(Directionality.of(context) ?? TextDirection.ltr);
+    final left = cssFromLogicalPixels(padding.left);
+    final right = cssFromLogicalPixels(padding.right);
+    final top = cssFromLogicalPixels(padding.top);
+    final bottom = cssFromLogicalPixels(padding.bottom);
+    return withStyle(context, widget, widget.child, (style) {
+      style.paddingLeft = left;
+      style.paddingRight = right;
+      style.paddingTop = top;
+      style.paddingBottom = bottom;
+    });
   }
 
   @override
@@ -847,7 +909,6 @@ abstract class HtmlUIPlugin extends UIPlugin {
                     final menuDom = html.querySelector("#${buttonId}");
                     menuDom.style.display = "";
                   })) as DomElementWidget;
-    button.node.id = buttonId;
 
     final node = _newDiv(context, widget);
     return new DomElementWidget(node, children: [menu, button]);
@@ -855,15 +916,13 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildPositioned(BuildContext context, Positioned widget) {
-    final node = _newDiv(context, widget);
-
-    final nodeStyle = node.style;
-    nodeStyle.position = "relative";
-    nodeStyle.left = cssFromPositionValue(widget.left) ?? "auto";
-    nodeStyle.right = cssFromPositionValue(widget.right) ?? "auto";
-    nodeStyle.top = cssFromPositionValue(widget.top) ?? "auto";
-    nodeStyle.bottom = cssFromPositionValue(widget.bottom) ?? "auto";
-    return new DomElementWidget(node, children: <Widget>[widget.child]);
+    return withStyle(context, widget, widget.child, (style) {
+      style.position = "relative";
+      style.left = cssFromPositionValue(widget.left) ?? "auto";
+      style.right = cssFromPositionValue(widget.right) ?? "auto";
+      style.top = cssFromPositionValue(widget.top) ?? "auto";
+      style.bottom = cssFromPositionValue(widget.bottom) ?? "auto";
+    });
   }
 
   @override
@@ -901,34 +960,11 @@ abstract class HtmlUIPlugin extends UIPlugin {
   }
 
   @override
-  Widget buildRaisedButton(BuildContext context, RaisedButton widget) {
-    final node = new html.ButtonElement();
-    debugDomElement(context, node, widget);
-
-    // TODO: improve appearance
-
-    // onPressed
-    {
-      final onPressed = widget.onPressed;
-      if (onPressed == null) {
-        node.style.backgroundColor = cssFromColor(widget.disabledColor);
-        node.disabled = true;
-      } else {
-        node.style.backgroundColor = cssFromColor(widget.color);
-        node.onClick.listen((_) {
-          onPressed();
-        });
-      }
-    }
-
-    return new DomElementWidget(node, child: widget.child);
-  }
-
-  @override
   Widget buildRawImage(BuildContext context, RawImage widget) {
     final node = new html.ImageElement();
     debugDomElement(context, node, widget);
 
+    // TODO: Use 'img' element when repeating, etc. is not used?
     final style = node.style;
     final widthCss = cssFromLogicalPixels(widget.width);
     final heightCss = cssFromLogicalPixels(widget.height);
@@ -963,27 +999,32 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildRichText(BuildContext context, RichText widget) {
-    final node = new html.ParagraphElement();
+    final node = new html.DivElement();
+    node.className = cssNames.nameForRichText;
+
+    //
+    // Set CSS properties
+    //
+    // Text overflow
     final style = node.style;
-    {
-      final value = widget.overflow;
-      if (value != null) {
-        style.textOverflow = cssFromTextOverflow(value);
-      }
+    final overflow = widget.overflow;
+    if (overflow != null) {
+      style.textOverflow = cssFromTextOverflow(overflow);
     }
-    {
-      final value = widget.textAlign;
-      if (value != null) {
-        style.textAlign = cssFromTextAlign(value);
-      }
+
+    // Text alignment
+    final align = widget.textAlign;
+    if (align != null) {
+      style.textAlign = cssFromTextAlign(align);
     }
-    {
-      final value =
-          (widget.textScaleFactor ?? MediaQuery.of(context)?.textScaleFactor);
-      if (value != null && value != 1.0) {
-        style.fontSize = "${value * 100}%";
-      }
+
+    // Text scale
+    final textScaleFactor =
+        (widget.textScaleFactor ?? MediaQuery.of(context)?.textScaleFactor);
+    if (textScaleFactor != null && textScaleFactor != 1.0) {
+      style.fontSize = "${textScaleFactor * 100}%";
     }
+
     node.insertBefore(htmlFromTextSpan(context, widget.text), null);
     return new DomElementWidget(node);
   }
@@ -1013,21 +1054,19 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildSlider(BuildContext context, Slider widget) {
     final node = new html.RangeInputElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForSlider;
 
+    // Attributes
     node.valueAsNumber = widget.value;
     node.min = "${widget.min}";
     node.max = "${widget.max}";
-
-    {
-      final value = widget.onChanged;
-      if (value == null) {
-        node.disabled = true;
-      } else {
-        node.onChange.listen((event) {
-          value(node.valueAsNumber);
-        });
-      }
+    final onChanged = widget.onChanged;
+    if (onChanged == null) {
+      node.disabled = true;
+    } else {
+      node.onChange.listen((event) {
+        onChanged(node.valueAsNumber);
+      });
     }
 
     return new DomElementWidget(node);
@@ -1035,6 +1074,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildSliverAppBar(BuildContext context, SliverAppBar widget) {
+    // We just build a regular AppBAr
     return buildAppBar(
         context,
         new AppBar(
@@ -1048,29 +1088,15 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildSliverFixedExtentList(
-      BuildContext context, SliverFixedExtentList widget) {
-    return this
-        .buildSliverList(context, new SliverList(delegate: widget.delegate));
+      // We just build a regular SliverList
+      BuildContext context,
+      SliverFixedExtentList widget) {
+    return new DomSliverWidget(widget.delegate);
   }
 
   @override
   Widget buildSliverList(BuildContext context, SliverList widget) {
-    final node = _newDiv(context, widget);
-
-    final children = <Widget>[];
-    final delegate = widget.delegate;
-    var count = delegate.estimatedChildCount;
-    if (count > 10) {
-      count = 10;
-    }
-    for (var i = 0; i < count; i++) {
-      final child = delegate.build(context, i);
-      if (child == null) {
-        break;
-      }
-      children.add(child);
-    }
-    return new DomElementWidget(node, children: children);
+    return new DomSliverWidget(widget.delegate);
   }
 
   @override
@@ -1081,42 +1107,57 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildStack(BuildContext context, Stack widget) {
     final node = _newDiv(context, widget);
-    node.className = "flutter-Stack";
-    return new DomElementWidget(node, children: widget.children?.map((item) {
-      return new DomElementWidget.withTag("div", child: item);
-    }));
+    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForStack;
+    measureNodeSize(node, (size) {
+      // Calculate max height of child
+      var maxBottom = 0;
+      for (var child in node.children) {
+        final bottom = child.client.bottom;
+        if (bottom > maxBottom) {
+          maxBottom = bottom;
+        }
+      }
+      node.style.minHeight = cssFromLogicalPixels(maxBottom.toDouble());
+      node.style.width = "100%";
+    });
+    return new DomElementWidget(node, children: widget.children);
   }
 
   @override
   Widget buildStepper(BuildContext context, Stepper widget) {
     final node = new html.RangeInputElement();
     debugDomElement(context, node, widget);
+
     return new DomElementWidget(node);
   }
 
   @override
   Widget buildSwitch(BuildContext context, Switch widget) {
     final node = new html.CheckboxInputElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForSwitch;
 
+    // value
     node.checked = widget.value;
-    {
-      final value = widget.onChanged;
-      if (value == null) {
-        node.disabled = true;
-      } else {
-        node.onChange.listen((event) {
-          value(node.checked);
-        });
-      }
+
+    // onChanged
+    final onChanged = widget.onChanged;
+    if (onChanged == null) {
+      node.disabled = true;
+    } else {
+      node.onChange.listen((event) {
+        onChanged(node.checked);
+      });
     }
 
+    // OK
     return new DomElementWidget(node);
   }
 
   @override
   Widget buildTab(BuildContext context, Tab widget) {
     final node = _newDiv(context, widget);
+    node.className = cssNames.nameForTab;
     final children = [
       widget.icon,
       widget.text,
@@ -1131,7 +1172,7 @@ abstract class HtmlUIPlugin extends UIPlugin {
     return new Controllable(controller, (context) {
       final node = new html.Element.div();
       debugDomElement(context, node, widget);
-      node.className = "flutter-TabBar";
+      node.className = cssNames.nameForTabBar;
 
       // Build tabs
       var tabIndex = -1;
@@ -1142,9 +1183,9 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
         // Build wrapper widget
         final node = new html.DivElement();
-        node.className = "flutter-TabBar-tab";
+        node.className = "fl-TabBar-item";
         if (tabIndex == currentTabIndex) {
-          node.className += " flutter-TabBar-tab-active";
+          node.className += " fl-TabBar-current";
         }
         node.onClick.listen((_) {
           controller.index = tabIndex;
@@ -1172,9 +1213,11 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildTable(BuildContext context, Table widget) {
+    // Build rows
     final htmlRows = <Widget>[];
     if (widget.children != null) {
       for (var row in widget.children) {
+        // Build cells
         final htmlCells = <Widget>[];
         for (var cell in row.children) {
           htmlCells.add(new HtmlElementWidget("td", children: [cell]));
@@ -1182,6 +1225,8 @@ abstract class HtmlUIPlugin extends UIPlugin {
         htmlRows.add(new HtmlElementWidget("tr", children: htmlCells));
       }
     }
+
+    // OK
     return new HtmlElementWidget("table", debugCreator: widget, children: [
       new HtmlElementWidget("tbody", children: htmlRows),
     ]);
@@ -1189,34 +1234,42 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildText(BuildContext context, Text widget) {
+    final textStyle = widget.style;
+    final textScaleFactor =
+        (widget.textScaleFactor ?? MediaQuery.of(context)?.textScaleFactor) ??
+            1.0;
+    final overflow = widget.overflow;
+    final textAlign = widget.textAlign;
+    if (textStyle == null &&
+        textScaleFactor == 1.0 &&
+        overflow == null &&
+        textAlign == null) {
+      return new DomTextWidget(widget.data);
+    }
+
     final node = new html.SpanElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForText;
 
     final style = node.style;
-    {
-      final textStyle = widget.style;
-      if (textStyle != null) {
-        cssFromTextStyle(textStyle, style);
-      }
+
+    // Text style
+    if (textStyle != null) {
+      cssFromTextStyle(textStyle, style);
     }
-    {
-      final textScaleFactor =
-          (widget.textScaleFactor ?? MediaQuery.of(context)?.textScaleFactor);
-      if (textScaleFactor != null && textScaleFactor != 1.0) {
-        style.fontSize = "${textScaleFactor * 100}%";
-      }
+
+    // Text scale
+    if (textScaleFactor != null && textScaleFactor != 1.0) {
+      style.fontSize = "${textScaleFactor * 100}%";
     }
-    {
-      final overflow = widget.overflow;
-      if (overflow != null) {
-        style.textOverflow = cssFromTextOverflow(overflow);
-      }
+
+    // Text overflow
+    if (overflow != null) {
+      style.textOverflow = cssFromTextOverflow(overflow);
     }
-    {
-      final textAlign = widget.textAlign;
-      if (textAlign != null) {
-        style.textAlign = cssFromTextAlign(textAlign);
-      }
+
+    // Text alignment
+    if (textAlign != null) {
+      style.textAlign = cssFromTextAlign(textAlign);
     }
     return new DomElementWidget(node, child: new DomTextWidget(widget.data));
   }
@@ -1224,12 +1277,12 @@ abstract class HtmlUIPlugin extends UIPlugin {
   @override
   Widget buildTextField(BuildContext context, TextField widget) {
     final html.InputElement node = new html.TextInputElement();
-    debugDomElement(context, node, widget);
+    node.className = cssNames.nameForTextField;
 
+    // Attributes
     if (widget.obscureText) {
       node.type = "password";
     }
-
     final onSubmitted = widget.onSubmitted;
     if (onSubmitted != null) {
       node.onSubmit.listen((event) {
@@ -1257,7 +1310,6 @@ abstract class HtmlUIPlugin extends UIPlugin {
               extentOffset: node.selectionEnd));
     }
 
-    ;
     final onChanged = widget.onChanged;
     node.onChange.listen((item) {
       updateController();
@@ -1286,11 +1338,9 @@ abstract class HtmlUIPlugin extends UIPlugin {
 
   @override
   Widget buildTransform(BuildContext context, Transform widget) {
-    final node = new html.Element.div();
-    debugDomElement(context, node, widget);
-    node.style.transform = cssFromTransformMatrix(widget.transform);
-    debugDomElement(context, node, widget);
-    return new DomElementWidget(node, child: widget.child);
+    return withStyle(context, widget, widget.child, (style) {
+      style.transform = cssFromTransformMatrix(widget.transform);
+    });
   }
 
   @override
@@ -1376,14 +1426,16 @@ abstract class HtmlUIPlugin extends UIPlugin {
   String generateHtmlElementId({Widget widget}) => "gid${_gid++}";
 
   html.SpanElement htmlFromTextSpan(BuildContext context, TextSpan widget) {
-    // Build CSS style
+    // Create HTML span
     final node = new html.SpanElement();
-    {
-      final value = widget.style;
-      if (value != null) {
-        cssFromTextStyle(value, node.style);
-      }
+
+    // Set span style
+    final style = widget.style;
+    if (style != null) {
+      cssFromTextStyle(style, node.style);
     }
+
+    // Set span text
     final text = widget.text;
     if (text == null) {
       node.insertBefore(new html.Text(text), null);
@@ -1395,6 +1447,8 @@ abstract class HtmlUIPlugin extends UIPlugin {
         }
       }
     }
+
+    // OK
     return node;
   }
 
@@ -1425,16 +1479,18 @@ abstract class HtmlUIPlugin extends UIPlugin {
         .padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}";
   }
 
+  static DomModificationWidget withStyle(BuildContext context, Widget widget,
+      Widget child, void f(html.CssStyleDeclaration style)) {
+    return new DomModificationWidget(
+        child: child,
+        onBuild: (node) {
+          f(node.style);
+        });
+  }
+
   static html.DivElement _newDiv(BuildContext context, Widget widget) {
     final node = new html.DivElement();
     debugDomElement(context, node, widget);
     return node;
-  }
-
-  static DomElementWidget withStyle(BuildContext context, Widget widget,
-      Widget child, void f(html.CssStyleDeclaration style)) {
-    final node = _newDiv(context, widget);
-    f(node.style);
-    return new DomElementWidget(node, child: child);
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flur/flur_for_modified_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -205,8 +204,6 @@ abstract class UIPlugin {
     return unimplementedWidget(context, widget);
   }
 
-  Widget buildFlatButton(BuildContext context, FlatButton widget);
-
   Widget buildFlex(BuildContext context, Flex widget);
 
   Widget buildFlexible(BuildContext context, Flexible widget) {
@@ -377,8 +374,6 @@ abstract class UIPlugin {
   Widget buildProgressIndicator(BuildContext context, ProgressIndicator widget);
 
   Widget buildRadio(BuildContext context, Radio widget);
-
-  Widget buildRaisedButton(BuildContext context, RaisedButton widget);
 
   Widget buildRawImage(BuildContext context, RawImage widget) {
     return unimplementedWidget(context, widget);

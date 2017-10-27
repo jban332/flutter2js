@@ -11,34 +11,86 @@
 }
 
 #flutter {
+    border: 1px solid black;
+}
+
+/* Text */
+.fl-Text, .fl-RichText {
     font-family: 'Roboto', sans-serif;
+    pointer-events: auto;
+    font-size: 16px;
 }
 
-.flutter-overlay {
-    margin: 0;
-    padding: 0;
-    position: relative;
+/* Editable widgets */
+#flutter, #flutter input, #flutter textarea, #flutter button, #flutter img {
+    pointer-events: auto;
+    font-size: 16px;
+}
+
+/* Buttons */
+.fl-IconButton, .fl-MaterialButton {
+    padding: 4px;
+}
+
+.fl-Align {
+    width: 100%;
+    text-align: center;
+    vertical-align: center;
+}
+
+.fl-Column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fl-Icon {
+    font-family: 'Material Icons';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    word-wrap: normal;
+    -moz-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Applied to offstage elements */
+.fl-Offstage {
+    display: none;
+}
+
+.fl-Row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.fl-Stack {
+    width: 100%;
+    pointer-events: none;
+}
+
+.fl-Stack > * {
+    pointer-events: none;
+    position: absolute;
     left: 0;
     right: 0;
     top: 0;
-    bottom: auto;
-}
-
-.flutter-overlay-entry {
     margin: 0;
     padding: 0;
-    position: relative;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: auto;
 }
 
-.flutter-TabBar {
-    clear: both;
+.fl-TabBar {
+
 }
 
-.flutter-TabBar-tab {
+.fl-TabBar-item {
     background: silver;
     border: 1px solid black;
     border-radius: 0.5em;
@@ -46,6 +98,6 @@
     float: left;
 }
 
-.flutter-TabBar-tab-active {
+.fl-TabBar-current {
     background: silver;
 }

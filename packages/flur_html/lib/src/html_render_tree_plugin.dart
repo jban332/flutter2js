@@ -5,7 +5,9 @@ import 'package:flur/flur.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import 'dom_widget.dart';
+import 'dom_element_widget.dart';
+import 'dom_render_objects.dart';
+import 'dom_text_widget.dart';
 
 /// Implements rendering using our own virtual DOM, which reuses Flutter
 /// rendering tree implementation.
@@ -47,7 +49,6 @@ class HtmlRenderTreePlugin extends RenderTreePlugin {
 
     buildOwner.onBuildScheduled = () {
       new Timer(const Duration(milliseconds: 1), () {
-        print("Building");
         buildOwner.buildScope(rootElement);
         buildOwner.finalizeTree();
       });
@@ -147,8 +148,8 @@ class DomRootRenderObjectWidget extends RenderObjectWidget {
       new DomRootRenderObjectElement(this);
 
   @override
-  DomRenderObject createRenderObject(BuildContext context) {
-    return new DomRenderObject(domElement);
+  DomElementRenderObject createRenderObject(BuildContext context) {
+    return new DomElementRenderObject(domElement);
   }
 }
 
@@ -173,7 +174,7 @@ class DomRootRenderObjectElement extends RootRenderObjectElement {
 
   @override
   void insertChildRenderObject(RenderObject child, dynamic slot) {
-    if (child is DomRenderObject) {
+    if (child is DomElementRenderObject) {
       final domParent = widget.domElement;
       final domChild = child.domNode;
       while (domParent.firstChild != null) {

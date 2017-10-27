@@ -1,6 +1,6 @@
 name: flutter
 description: A modified Flutter package that is needed by Flur framework.
-version: 0.0.2
+version: 0.0.4
 authors:
 - jban332 <jban332@gmail.com>
 homepage: https://github.com/jban332/flur_modified_flutter

@@ -11,6 +11,15 @@ import 'internal/image.dart';
 /// The number of logical pixels (Flutter concept) in a CSS 'em' unit.
 const int cssEmInLogicalPixels = 16;
 
+void addClassName(html.Element node, String name) {
+  final old = node.className;
+  if (old == null || old == "") {
+    node.className = name;
+  } else {
+    node.className = "${old} ${name}";
+  }
+}
+
 String cssFromBlendMode(BlendMode value) {
   if (value == null) {
     return null;
@@ -67,6 +76,14 @@ String cssFromColor(Color value) {
     return null;
   }
   return "#${value.toString()}";
+}
+
+/// Returns a fraction of parent box size as a CSS value.
+String cssFromFactional(double value) {
+  if (value == null) {
+    return null;
+  }
+  return "${value * 100}%";
 }
 
 String cssFromFontStyle(FontStyle value) {
@@ -127,28 +144,24 @@ String cssFromImageRepeat(ImageRepeat value) {
   }
 }
 
+/// Returns logical pixels as a CSS value.
+/// The value can be null or infinite.
 String cssFromLogicalPixels(double value) {
-  if (value == null) return "1em";
-  value = value / cssEmInLogicalPixels;
-  return "${value}em";
+  // Note that we may receive infinity from e.g. layout delegates
+  if (value == null || value.isInfinite) return null;
+  return "${value}px";
 }
 
 String cssFromPositionValue(double value) {
   return value == null ? "auto" : cssFromLogicalPixels(value);
 }
 
+/// Returns average of the two dimensions of the radius as a CSS value.
 String cssFromRadius(Radius value) {
   if (value == null) {
     return null;
   }
   return "${(value.x + value.y) * 0.5}px";
-}
-
-String cssFromFactional(double value) {
-  if (value == null) {
-    return null;
-  }
-  return "${value * 100}%";
 }
 
 String cssFromTextAlign(TextAlign value) {
@@ -270,10 +283,12 @@ String cssFromTransformMatrix(Matrix4 value) {
 }
 
 void debugDomElement(BuildContext context, html.Element node, Widget widget) {
-  assert(() {
-    node.setAttribute("data-flutter-name", widget.runtimeType.toString());
-    return true;
-  });
+  if (widget != null) {
+    assert(() {
+      node.setAttribute("data-flutter-name", widget.runtimeType.toString());
+      return true;
+    });
+  }
 }
 
 void imageSrcFromImage(ui.Image image, void callback(String uri)) {
@@ -322,4 +337,61 @@ void imageSrcFromImageProvider(
       imageSrcFromImage(info.image, callback);
     });
   }
+}
+
+/// Tells whether the browser document is one of the node ancestors.
+bool isAttachedDomNode(html.Node node) {
+  // See whether one of the a
+  while (node != null) {
+    if (identical(node, html.document.body)) return true;
+    node = node.parent;
+  }
+  return false;
+}
+
+void measureChildNodeSize(html.Element parentNode, void callback(Size size)) {
+  // Wait until child node has been inflated and DOM node attached.
+//  new Timer.periodic(const Duration(milliseconds: 10), (timer) {
+//    if (!(isAttachedDomNode(parentNode))) return;
+//
+//    // Cancel timer
+//    timer.cancel();
+//
+//    // Get child node
+//    final childNodes = parentNode.children;
+//    if (childNodes.isEmpty) {
+//      return;
+//    }
+//    final childNode = childNodes.single;
+//
+//    final width = childNode.offsetWidth.toDouble();
+//    final height = childNode.offsetHeight.toDouble();
+//    assert(width != null);
+//    assert(height != null);
+//    final size = new Size(width, height);
+//    callback(size);
+//  });
+}
+
+void measureNodeSize(html.Element node, void callback(Size size)) {
+  // Wait until node has been inflated and DOM node attached.
+//  new Timer.periodic(const Duration(milliseconds: 10), (timer) {
+//    if (!(isAttachedDomNode(node))) return;
+//
+//    // Cancel timer
+//    timer.cancel();
+//
+//    final width = node.offsetWidth;
+//    var height = node.offsetHeight;
+//    if (height == 0) {
+//      var parent = node.parent;
+//      while (parent != null) {
+//        height = parent.offsetHeight;
+//        if (height != 0) break;
+//        parent = parent.parent;
+//      }
+//    }
+//    final size = new Size(width.toDouble(), height.toDouble());
+//    callback(size);
+//  });
 }

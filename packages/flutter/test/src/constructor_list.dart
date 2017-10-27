@@ -34,7 +34,6 @@ final constructors = <WidgetConstructor>[
   () => new DropdownButton(items: null, onChanged: null),
   () => new EditableText(
       controller: null, focusNode: null, style: null, cursorColor: null),
-  () => new FlatButton(child: null, onPressed: null),
   () => new Flex(direction: null),
   () => new FloatingActionButton(child: null, onPressed: null),
   () => new FractionallySizedBox(),
@@ -59,7 +58,6 @@ final constructors = <WidgetConstructor>[
   () => new Positioned(child: null),
   () => new PreferredSize(child: null, preferredSize: null),
   () => new Radio(value: null, groupValue: null, onChanged: null),
-  () => new RaisedButton(onPressed: null),
   () => new RawImage(),
   () => new RichText(text: new TextSpan()),
   () => new RotatedBox(quarterTurns: null),

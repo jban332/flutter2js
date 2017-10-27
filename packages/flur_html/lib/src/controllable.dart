@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// A [StatefulBuilder] that listens events from a [Listenable].
+/// A [StatefulBuilder] that rebuilds the widget tree whenever an event from [Listenable] is observed.
 class Controllable extends StatefulWidget {
   final Listenable controller;
   final WidgetBuilder builder;
@@ -49,8 +49,8 @@ class _ControllableState extends State<Controllable> {
 
 typedef Widget ValueControllableBuilder<T>(BuildContext context, T value);
 
-/// A [StatefulBuilder] that listens events from a [Listenable].
-/// Widget is only rebuilt if the value is different from the previous value.
+/// A [StatefulBuilder] that rebuilds the widget tree whenever an event from [ValueNotifier] is observed.
+/// Widget is only rebuilt if the value associated with the event is not equal to the previous value.
 ///
 /// See also:
 ///   * [Controllable]

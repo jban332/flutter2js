@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'internal/image.dart';
 import 'internal/paragraph.dart';
 import 'internal/path.dart';
-import 'internal/picture_recorder.dart';
+import 'internal/picture.dart';
 import 'route_adapter.dart';
 
 /// Implements [Image] ('dart:ui') that may be used by [CustomPaint] widget ('package:flutter/widgets.dart').

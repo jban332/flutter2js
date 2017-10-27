@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:flur/flur.dart';
 
 void main() {
   group("DeviceInfo: ", () {
