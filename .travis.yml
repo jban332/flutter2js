@@ -1,0 +1,7 @@
+language: dart
+dart:
+- stable
+script:
+- (cd packages/flutter && pub get && pub run test)
+- (cd packages/flur && pub get && pub run test)
+- (cd packages/flur_html && pub get && pub run test)

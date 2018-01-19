@@ -1,4 +1,7 @@
-# Flur [![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/jban332/flur.svg?branch=master)](https://travis-ci.org/jban332/flur) [![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+Flur
+====
 
 Flur aims to make [Flutter](https://flutter.io) apps run in browser.
 
@@ -106,10 +109,6 @@ dependencies:
   hello_flutter:
     # Relative path to your previously created Flutter app
     path: "../hello_flutter"
-  
-  flur_html: "any"
-
-dependency_overrides:
   flur:
     git:
       url: "git://github.com/jban332/flur.git"
@@ -117,7 +116,10 @@ dependency_overrides:
   flur_html:
     git:
       url: "git://github.com/jban332/flur.git"
-      path: "packages/flur_html"  
+      path: "packages/flur_html"
+
+dependency_overrides:
+  # Here we replace normal Flutter SDK with our patched version
   flutter:
     git:
       url: "git://github.com/jban332/flur.git"
