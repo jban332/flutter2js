@@ -14,3 +14,7 @@ doc/api/
 # Editors
 .idea
 .vscode
+.atom/
+
+/examples/*/ios
+/examples/*/android

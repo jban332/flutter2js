@@ -23,16 +23,15 @@ class Stock {
   String marketCap;
   double percentChange;
 
-  Stock(this.symbol, this.name, this.lastSale, this.marketCap,
-      this.percentChange);
+  Stock(this.symbol, this.name, this.lastSale, this.marketCap, this.percentChange);
 
   Stock.fromFields(List<String> fields) {
     // FIXME: This class should only have static data, not lastSale, etc.
     // "Symbol","Name","LastSale","MarketCap","IPOyear","Sector","industry","Summary Quote",
     lastSale = 0.0;
-    try {
+    try{
       lastSale = double.parse(fields[2]);
-    } catch (_) {}
+    } catch(_) {}
     symbol = fields[0];
     name = fields[1];
     marketCap = fields[4];
@@ -41,17 +40,6 @@ class Stock {
 }
 
 class StockData extends ChangeNotifier {
-  static const int _kChunkCount = 30;
-
-  static bool actuallyFetchData = true;
-  final List<String> _symbols = <String>[];
-
-  final Map<String, Stock> _stocks = <String, Stock>{};
-
-  int _nextChunk = 0;
-
-  http.Client _httpClient;
-
   StockData() {
     if (actuallyFetchData) {
       _httpClient = createHttpClient();
@@ -59,11 +47,14 @@ class StockData extends ChangeNotifier {
     }
   }
 
+  final List<String> _symbols = <String>[];
+  final Map<String, Stock> _stocks = <String, Stock>{};
+
   Iterable<String> get allSymbols => _symbols;
 
-  bool get loading => _httpClient != null;
-
   Stock operator [](String symbol) => _stocks[symbol];
+
+  bool get loading => _httpClient != null;
 
   void add(List<List<String>> data) {
     for (List<String> fields in data) {
@@ -75,15 +66,19 @@ class StockData extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _end() {
-    _httpClient?.close();
-    _httpClient = null;
+  static const int _kChunkCount = 30;
+  int _nextChunk = 0;
+
+  String _urlToFetch(int chunk) {
+    return 'https://domokit.github.io/examples/stocks/data/stock_data_$chunk.json';
   }
 
+  http.Client _httpClient;
+
+  static bool actuallyFetchData = true;
+
   void _fetchNextChunk() {
-    _httpClient
-        .get(_urlToFetch(_nextChunk++))
-        .then<Null>((http.Response response) {
+    _httpClient.get(_urlToFetch(_nextChunk++)).then<Null>((http.Response response) {
       final String json = response.body;
       if (json == null) {
         debugPrint('Failed to load stock data chunk ${_nextChunk - 1}');
@@ -100,7 +95,8 @@ class StockData extends ChangeNotifier {
     });
   }
 
-  String _urlToFetch(int chunk) {
-    return 'https://domokit.github.io/examples/stocks/data/stock_data_$chunk.json';
+  void _end() {
+    _httpClient?.close();
+    _httpClient = null;
   }
 }

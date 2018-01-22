@@ -8,15 +8,12 @@ import 'stock_data.dart';
 import 'stock_row.dart';
 
 class StockList extends StatelessWidget {
-  final List<Stock> stocks;
+  const StockList({ Key key, this.stocks, this.onOpen, this.onShow, this.onAction }) : super(key: key);
 
+  final List<Stock> stocks;
   final StockRowActionCallback onOpen;
   final StockRowActionCallback onShow;
   final StockRowActionCallback onAction;
-
-  const StockList(
-      {Key key, this.stocks, this.onOpen, this.onShow, this.onAction})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +23,11 @@ class StockList extends StatelessWidget {
       itemCount: stocks.length,
       itemBuilder: (BuildContext context, int index) {
         return new StockRow(
-            stock: stocks[index],
-            onPressed: onOpen,
-            onDoubleTap: onShow,
-            onLongPressed: onAction);
+          stock: stocks[index],
+          onPressed: onOpen,
+          onDoubleTap: onShow,
+          onLongPressed: onAction
+        );
       },
     );
   }

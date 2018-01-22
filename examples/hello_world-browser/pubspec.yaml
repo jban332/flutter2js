@@ -6,19 +6,25 @@ environment:
 dependencies:
   hello_world:
     path: "../hello_world"
-  flur_html: any
-
-dependency_overrides:
-  flur:
-    path: "../../packages/flur"
-  flur_html:
-    path: "../../packages/flur_html"
-  flutter:
-    path: "../../packages/flutter"
+  flutter2js: any
 
 dev_dependencies:
   browser: ^0.10.0
-  dart_to_js_script_rewriter: ^1.0.1
+  dart_to_js_script_rewriter: ^1.0.3
+  test: any
+  flutter_test: any
+
+dependency_overrides:
+  flutter2js:
+    path: ../../
+  flutter:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter
+  flutter_test:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter_test
 
 transformers:
 - dart_to_js_script_rewriter

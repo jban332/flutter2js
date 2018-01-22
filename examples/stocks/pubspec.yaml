@@ -1,14 +1,19 @@
 name: stocks
 dependencies:
-  flutter: any
-  intl: '>=0.14.0 <0.16.0'
-  intl_translation: '>=0.14.0 <0.16.0'
-  http: '>=0.11.3+12'
-  isolate: '>=1.0.0'
-
-dependency_overrides:
   flutter:
-    path: "../../packages/flutter"
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: '^0.15.2'
+  intl_translation: '^0.16.1'
+  http: '^0.11.3+14'
+  isolate: '^1.1.0'
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
 
 flutter:
   uses-material-design: true

@@ -1,0 +1,36 @@
+name: flutter_gallery_browser
+
+environment:
+  sdk: '>=1.20.1 <2.0.0'
+
+dependencies:
+  flutter_gallery:
+    path: "../flutter_gallery"
+  flutter2js: any
+
+dev_dependencies:
+  browser: ^0.10.0
+  dart_to_js_script_rewriter: ^1.0.3
+  test: any
+  flutter_test: any
+
+dependency_overrides:
+  flutter2js:
+    path: ../../
+  flutter:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter
+  flutter_localizations:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter_localizations
+  flutter_test:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter_test
+
+transformers:
+- dart_to_js_script_rewriter
+- $dart2js:
+    checked: true

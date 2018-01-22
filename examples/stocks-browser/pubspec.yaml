@@ -6,19 +6,23 @@ environment:
 dependencies:
   stocks:
     path: "../stocks"
-  flur_html: any
+  flutter2js: any
 
 dependency_overrides:
-  flur:
-    path: "../../packages/flur"
-  flur_html:
-    path: "../../packages/flur_html"
+  flutter2js:
+    path: ../../
   flutter:
-    path: "../../packages/flutter"
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter
+  flutter_localizations:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter_localizations
 
 dev_dependencies:
   browser: ^0.10.0
-  dart_to_js_script_rewriter: ^1.0.1
+  dart_to_js_script_rewriter: ^1.0.3
 
 transformers:
 - dart_to_js_script_rewriter

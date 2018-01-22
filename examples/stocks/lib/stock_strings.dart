@@ -4,8 +4,8 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/widgets.dart';
 
 import 'i18n/stock_messages_all.dart';
 
@@ -13,23 +13,20 @@ import 'i18n/stock_messages_all.dart';
 // were generated can be found in i18n/regenerate.md.
 
 class StockStrings {
-  final String _localeName;
-
   StockStrings(Locale locale) : _localeName = locale.toString();
 
-  String market() => Intl.message(
-        'MARKET',
-        name: 'market',
-        desc: 'Label for the Market tab',
-        locale: _localeName,
-      );
+  final String _localeName;
 
-  String portfolio() => Intl.message(
-        'PORTFOLIO',
-        name: 'portfolio',
-        desc: 'Label for the Portfolio tab',
-        locale: _localeName,
-      );
+  static Future<StockStrings> load(Locale locale) {
+    return initializeMessages(locale.toString())
+      .then((Object _) {
+        return new StockStrings(locale);
+      });
+  }
+
+  static StockStrings of(BuildContext context) {
+    return Localizations.of<StockStrings>(context, StockStrings);
+  }
 
   String title() {
     return Intl.message(
@@ -40,13 +37,17 @@ class StockStrings {
     );
   }
 
-  static Future<StockStrings> load(Locale locale) {
-    return initializeMessages(locale.toString()).then((Null _) {
-      return new StockStrings(locale);
-    });
-  }
+  String market() => Intl.message(
+    'MARKET',
+    name: 'market',
+    desc: 'Label for the Market tab',
+    locale: _localeName,
+  );
 
-  static StockStrings of(BuildContext context) {
-    return Localizations.of<StockStrings>(context, StockStrings);
-  }
+  String portfolio() => Intl.message(
+    'PORTFOLIO',
+    name: 'portfolio',
+    desc: 'Label for the Portfolio tab',
+    locale: _localeName,
+  );
 }
