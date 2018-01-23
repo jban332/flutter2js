@@ -28,7 +28,9 @@ The project is work-in-progress. Interested? Become a contributor!
 
 ## Status
 * [X] Contains all Flutter SDK APIs (January 2018).
-* [ ] Example apps work.
+* [ ] Flutter SDK examples
+  * [X] Compile with dart2js
+  * [ ] Work adequately
 
 ## Authors
   * jban332 <jban332@gmail.com>
