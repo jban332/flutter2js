@@ -28,7 +28,7 @@ TextStyle abrilFatfaceRegular34(Color color) => new ShrineStyle.abrilFatface(34.
 /// the Shrine app.
 class ShrineTheme extends InheritedWidget {
   ShrineTheme({ Key key, @required Widget child })
-    : assert(child != null),
+    :
       super(key: key, child: child);
 
   final Color cardBackgroundColor = Colors.white;

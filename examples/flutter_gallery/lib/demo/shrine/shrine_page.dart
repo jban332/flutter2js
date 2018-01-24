@@ -22,8 +22,7 @@ class ShrinePage extends StatefulWidget {
     this.floatingActionButton,
     this.products,
     this.shoppingCart
-  }) : assert(body != null),
-       assert(scaffoldKey != null),
+  }) :
        super(key: key);
 
   final GlobalKey<ScaffoldState> scaffoldKey;

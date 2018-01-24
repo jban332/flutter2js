@@ -32,8 +32,10 @@ Find this useful? Become a contributor!
 
 # Getting started
 ## Method 1: Generate project with Dart2js
-### 1.Install Dart
+### 1.Install Dart SDK (dev channel)
 See [instructions at dartlang.org](https://www.dartlang.org/install).
+
+__Important__: You need the latest dev channel version of the Dart SDK (>=2.0.0-dev.19.0).
 
 ### 2.Install flutter2js
 In command line:
@@ -46,13 +48,8 @@ If your system doesn't find "pub" command, look at [pub configuration instructio
 ### 3.Generate project
 In command line:
 ```
-$ pub global run flutter2js create example --app=your_app,your_uri
+$ pub global run flutter2js create example --app-name=your_flutter_app --app-uri=path/to/flutter/app
 ```
-
-Replace:
-* "example" = Package name of your new web app.
-* "your_app" = Package name of your Flutter app.
-* "your_uri" = Location of your Flutter app. This can be a local directory ("../my_app") or a remote repository ("https://github.com/example_user/example_project").
 
 ### 4.Run your web app
 First, install dependencies:

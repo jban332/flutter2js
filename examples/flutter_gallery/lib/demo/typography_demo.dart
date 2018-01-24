@@ -11,9 +11,7 @@ class TextStyleItem extends StatelessWidget {
     @required this.name,
     @required this.style,
     @required this.text,
-  }) : assert(name != null),
-       assert(style != null),
-       assert(text != null),
+  }) :
        super(key: key);
 
   final String name;

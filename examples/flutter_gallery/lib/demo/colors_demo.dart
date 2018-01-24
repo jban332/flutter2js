@@ -47,9 +47,7 @@ class ColorItem extends StatelessWidget {
     @required this.index,
     @required this.color,
     this.prefix: '',
-  }) : assert(index != null),
-       assert(color != null),
-       assert(prefix != null),
+  }) :
        super(key: key);
 
   final int index;
@@ -87,7 +85,7 @@ class PaletteTabView extends StatelessWidget {
   PaletteTabView({
     Key key,
     @required this.colors,
-  }) : assert(colors != null && colors.isValid),
+  }) :
        super(key: key);
 
   final Palette colors;

@@ -35,8 +35,7 @@ class _RenderStatusBarPaddingSliver extends RenderSliver {
   _RenderStatusBarPaddingSliver({
     @required double maxHeight,
     @required double scrollFactor,
-  }) : assert(maxHeight != null && maxHeight >= 0.0),
-       assert(scrollFactor != null && scrollFactor >= 1.0),
+  }) :
        _maxHeight = maxHeight,
        _scrollFactor = scrollFactor;
 
@@ -79,8 +78,7 @@ class _StatusBarPaddingSliver extends SingleChildRenderObjectWidget {
     Key key,
     @required this.maxHeight,
     this.scrollFactor: 5.0,
-  }) : assert(maxHeight != null && maxHeight >= 0.0),
-       assert(scrollFactor != null && scrollFactor >= 1.0),
+  }) :
        super(key: key);
 
   final double maxHeight;
@@ -267,12 +265,7 @@ class _AllSectionsView extends AnimatedWidget {
     this.midHeight,
     this.maxHeight,
     this.sectionCards: const <Widget>[],
-  }) : assert(sections != null),
-       assert(sectionCards != null),
-       assert(sectionCards.length == sections.length),
-       assert(sectionIndex >= 0 && sectionIndex < sections.length),
-       assert(selectedIndex != null),
-       assert(selectedIndex.value >= 0.0 && selectedIndex.value < sections.length.toDouble()),
+  }) :
        super(key: key, listenable: selectedIndex);
 
   final int sectionIndex;
@@ -368,7 +361,7 @@ class _SnappingScrollPhysics extends ClampingScrollPhysics {
   const _SnappingScrollPhysics({
     ScrollPhysics parent,
     @required this.midScrollOffset,
-  }) : assert(midScrollOffset != null),
+  }) :
        super(parent: parent);
 
   final double midScrollOffset;

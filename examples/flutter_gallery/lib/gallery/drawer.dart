@@ -118,8 +118,7 @@ class GalleryDrawer extends StatelessWidget {
     this.onCheckerboardOffscreenLayersChanged,
     this.onPlatformChanged,
     this.onSendFeedback,
-  }) : assert(onThemeChanged != null),
-       assert(onTimeDilationChanged != null),
+  }) :
        super(key: key);
 
   final bool useLightTheme;

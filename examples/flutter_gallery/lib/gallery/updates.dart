@@ -13,7 +13,7 @@ typedef Future<String> UpdateUrlFetcher();
 
 class Updater extends StatefulWidget {
   const Updater({ @required this.updateUrlFetcher, this.child, Key key })
-    : assert(updateUrlFetcher != null),
+    :
       super(key: key);
 
   final UpdateUrlFetcher updateUrlFetcher;

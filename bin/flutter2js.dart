@@ -18,20 +18,14 @@ class CreateCommand extends Command {
   get description => "Compiles a Flutter project to a web project";
 
   CreateCommand() {
-    this.argParser.addOption("app", defaultsTo: null, callback: (String s) {
-      if (s==null) {
-        return;
-      }
-      final parts = s.split(",");
-      if (parts.length>=1) {
-        options.importedName = parts[0];
-      }
-      if (parts.length>=2) {
-        options.importedUri = Uri.parse(parts[1]);
-      }
-      if (parts.length>=3) {
-        options.importedMain = parts[2];
-      }
+    this.argParser.addOption("app-uri", defaultsTo: "path/to/your/app", callback: (String s) {
+      options.importedUri = Uri.parse(s);
+    });
+    this.argParser.addOption("app-name", defaultsTo: "your_flutter_app", callback: (String s) {
+      options.importedName = s;
+    });
+    this.argParser.addOption("app-main", defaultsTo: "main.dart", callback: (String s) {
+      options.importedMain = s;
     });
   }
 
@@ -67,6 +61,16 @@ class CreateCommand extends Command {
       file.writeAsStringSync(fileMap[filePath]);
     }
     print("Ok.");
+    print("");
+    print("Running 'pub get'...");
+    Process.runSync("pub", ["get"], workingDirectory: directory.path);
+    print("");
+    final packagesFile = new File.fromUri(directory.uri.resolve(".packages"));
+    if (!packagesFile.existsSync()) {
+      print("Could not find '.packages'.");
+      return;
+    }
+    // TODO: Customize 'dependency_overrides' based on used package list.
   }
 }
 
@@ -154,13 +158,6 @@ dev_dependencies:
   dart_to_js_script_rewriter: ^1.0.3
 
 dependency_overrides:
-  #
-  # Flutter2js
-  #
-  flutter2js:
-    git:
-      url: https://github.com/jban332/flutter2js
-  
   #
   # Browser-versions of Flutter packages
   #
