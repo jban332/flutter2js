@@ -3,9 +3,9 @@
 Flutter2js
 ====
 
-Flutter2js aims to make [Flutter](https://flutter.io) apps run in browser.
+Flutter2js makes [Flutter](https://flutter.io) apps run in browser.
 
-The project is work-in-progress. Interested? Become a contributor!
+Find this useful? Become a contributor!
 
 ### Use cases
 * Release a browser version of your Flutter app.
@@ -14,17 +14,11 @@ The project is work-in-progress. Interested? Become a contributor!
 
 ### Design
 * We aim to use a combination of DOM elements, CSS, and Canvas API.
-* We have defines ways to pass DOM trees from widgets to the rendering engine.
-  * _HtmlCanvas_ (subclass of _dart:ui_ class _Canvas_) methods
-  * _HtmlRenderObject_
-  * _HtmlWidget_
-* The aim is to optimize performance-critical widgets later.
-
-### Project structure
-* Patched Flutter packages live in a separate repository at: [github.com/jban332/flutter2js_packages](https://github.com/jban332/flutter2js_packages)
-* This repository contains:
-  * A browser implementation of Flutter rendering engine.
-  * A project generator (`flutter2js` executable).
+* We have defines ways to insert DOM elements in the render tree, including _HtmlCanvas_ (subclass of _dart:ui_ class _Canvas_) methods, _HtmlRenderObject_, and _HtmlWidget_.
+* The aim is to optimize performance-critical widgets later (i.e. use HTML elements + CSS styling for them)
+* We use [dart2js](https://webdev.dartlang.org/tools/dart2js). Unfortunately [dartdevc](https://webdev.dartlang.org/tools/dartdevc) seems to have issues with Flutter SDK packages.
+* Patched Flutter SDK lives in a separate repository at: [github.com/jban332/flutter2js_packages](https://github.com/jban332/flutter2js_packages)
+* This repository contains everything else.
 
 ## Status
 * [X] Contains all Flutter SDK APIs (January 2018).
@@ -37,39 +31,45 @@ The project is work-in-progress. Interested? Become a contributor!
   * Contributor? Add your name/email here.
 
 # Getting started
-## 1.Install Dart
-See instructions [here](https://www.dartlang.org/install).
+## Method 1: Generate project with Dart2js
+### 1.Install Dart
+See [instructions at dartlang.org](https://www.dartlang.org/install).
 
-Make sure you have _$HOME/.pub-cache/bin_ in your PATH.
-Otherwise flutter2js CLI activation will fail. In OS X and Linux, you can:
-```
-$ echo 'export PATH=$PATH:~/.pub-cache/bin' >> ~/.profile
-```
-
-## 2.Activate flutter2js CLI
+### 2.Install flutter2js
+In command line:
 ```
 $ pub global activate --source git https://github.com/jban332/flutter2js
 ```
 
-If you later want to deactivate, use `pub global deactivate flutter2js`.
+If your system doesn't find "pub" command, look at [pub configuration instructions](https://www.dartlang.org/tools/pub/installing).
 
-## 3.Create project
+### 3.Generate project
+In command line:
 ```
-$ flutter2js create example --app=your_app,your_uri
+$ pub global run flutter2js create example --app=your_app,your_uri
 ```
 
 Replace:
-* "your_app" with your existing app name
-* "your_uri" with URI of your existing directory ("../my_app") or repository (e.g. "https://github.com/example_user/example_project").
+* "example" = Package name of your new web app.
+* "your_app" = Package name of your Flutter app.
+* "your_uri" = Location of your Flutter app. This can be a local directory ("../my_app") or a remote repository ("https://github.com/example_user/example_project").
 
-## 4.Start local web server
+### 4.Run your web app
+First, install dependencies:
 ```
 $ cd example
 $ pub get
+```
+
+You can now start HTTP server:
+```
 $ pub serve
 ```
 
-You can now open web browser at [http://localhost:8080](http://localhost:8080)
+Your app is now running at [http://localhost:8080](http://localhost:8080)
+
+## Method 2: Manual pubspec configuration
+Look at [examples](https://github.com/jban332/flutter2js/tree/master/examples).
 
 # Common issues
 ## Problem: App doesn't render
