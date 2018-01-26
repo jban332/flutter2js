@@ -1,8 +1,8 @@
 import 'dart:html' as html;
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter2js/core.dart';
 import 'package:flutter2js/html.dart';
-import 'package:flutter/rendering.dart';
 
 class HtmlRenderNode extends RenderObject {
   final html.Element htmlElement;

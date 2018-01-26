@@ -12,5 +12,6 @@ export 'src/html/ui/html_image.dart';
 export 'src/html/ui/html_paragraph_builder.dart';
 export 'src/html/ui/html_path.dart';
 export 'src/html/ui/html_picture.dart';
+export 'src/html/ui/html_picture_recording_canvas.dart';
 export 'src/html/ui/html_scene_builder.dart';
 export 'src/html/ui/html_semantics_update_builder.dart';

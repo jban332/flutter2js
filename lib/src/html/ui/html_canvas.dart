@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/ui.dart';
 
+import '../logging.dart';
 import 'html_image.dart';
 import 'html_paragraph_builder.dart';
 import 'html_path.dart';
@@ -11,12 +12,17 @@ import 'html_picture.dart';
 
 /// Implements [Canvas] ('dart:ui') that may be used by [CustomPaint] widget ('package:flutter/widgets.dart').
 /// TODO: Implement methods.
-class HtmlCanvas implements Canvas {
+class HtmlCanvas extends Object with HasDebugName implements Canvas {
+  final String debugName;
   final html.CanvasRenderingContext2D _context;
 
-  html.CanvasRenderingContext2D get context => _context;
+  int _saveCount = 0;
 
-  HtmlCanvas(html.CanvasElement element) : _context = element.context2D;
+  HtmlCanvas(html.CanvasElement element) : _context = element.context2D, this.debugName = allocateDebugName( "Canvas") {
+    logConstructor(this);
+  }
+
+  html.CanvasRenderingContext2D get context => _context;
 
   @override
   void clipPath(Path path) {
@@ -36,53 +42,6 @@ class HtmlCanvas implements Canvas {
     context.clip();
   }
 
-  void _rrect(RRect rrect) {
-    context.beginPath();
-    // Top-left
-    {
-      final r = rrect.tlRadius;
-      final dx = r.x;
-      final dy = r.y;
-      final left = rrect.left;
-      final top = rrect.top;
-      context.ellipse(
-          left + dx, top + dy, dx, dy, 0.0, 0.5 * math.PI, math.PI, true);
-    }
-    // Top-right
-    {
-      final r = rrect.trRadius;
-      final dx = r.x;
-      final dy = r.y;
-      final right = rrect.right;
-      final top = rrect.top;
-      context.ellipse(
-          right - dx, top + dy, dx, dy, 0.0, 0.0, 0.5 * math.PI, true);
-    }
-
-    // Bottom-left
-    {
-      final r = rrect.blRadius;
-      final dx = r.x;
-      final dy = r.y;
-      final left = rrect.left;
-      final bottom = rrect.bottom;
-      context.ellipse(
-          left + dx, bottom - dy, dx, dy, 0.0, math.PI, 1.5 * math.PI, true);
-    }
-
-    // Bottom-right
-    {
-      final r = rrect.brRadius;
-      final dx = r.x;
-      final dy = r.y;
-      final right = rrect.right;
-      final bottom = rrect.bottom;
-      context.ellipse(right - dx, bottom - dy, dx, dy, 1.5 * math.PI,
-          2 * math.PI, math.PI, true);
-    }
-    context.closePath();
-  }
-
   @override
   void drawArc(Rect rect, double startAngle, double sweepAngle, bool useCenter,
       Paint paint) {
@@ -98,11 +57,6 @@ class HtmlCanvas implements Canvas {
       _drawArcPointLine(center, radius, startAngle + sweepAngle);
     }
     strokeOrFill(paint);
-  }
-
-  void _drawArcPointLine(Offset center, double radius, double angle) {
-    context.lineTo(center.dx + math.cos(angle) * radius,
-        center.dy + math.sin(angle) * radius);
   }
 
   @override
@@ -269,8 +223,6 @@ class HtmlCanvas implements Canvas {
     return new html.ImageElement(src: (image as HtmlEngineImage).uri);
   }
 
-  int _saveCount = 0;
-
   @override
   int getSaveCount() {
     return _saveCount;
@@ -332,6 +284,20 @@ class HtmlCanvas implements Canvas {
     }
   }
 
+  String lineCapFrom(StrokeCap strokeCap) {
+    if (strokeCap == null) {
+      return null;
+    }
+    switch (strokeCap) {
+      case StrokeCap.butt:
+        return "butt";
+      case StrokeCap.square:
+        return "square";
+      default:
+        return "round";
+    }
+  }
+
   @override
   void restore() {
     context.restore();
@@ -380,6 +346,11 @@ class HtmlCanvas implements Canvas {
     }
   }
 
+  @override
+  void skew(double sx, double sy) {
+    context.transform(0.0, 0.0, sx, sy, 0.0, 0.0);
+  }
+
   void strokeOrFill(Paint paint) {
     setPaint(paint);
     final style = paint.style;
@@ -390,25 +361,6 @@ class HtmlCanvas implements Canvas {
     }
   }
 
-  String lineCapFrom(StrokeCap strokeCap) {
-    if (strokeCap == null) {
-      return null;
-    }
-    switch (strokeCap) {
-      case StrokeCap.butt:
-        return "butt";
-      case StrokeCap.square:
-        return "square";
-      default:
-        return "round";
-    }
-  }
-
-  @override
-  void skew(double sx, double sy) {
-    context.transform(0.0, 0.0, sx, sy, 0.0, 0.0);
-  }
-
   @override
   void transform(Float64List matrix4) {
     context.transform(matrix4[0], matrix4[1], matrix4[2], matrix4[3], 0.0, 0.0);
@@ -417,5 +369,57 @@ class HtmlCanvas implements Canvas {
   @override
   void translate(double dx, double dy) {
     context.translate(dx, dy);
+  }
+
+  void _drawArcPointLine(Offset center, double radius, double angle) {
+    context.lineTo(center.dx + math.cos(angle) * radius,
+        center.dy + math.sin(angle) * radius);
+  }
+
+  void _rrect(RRect rrect) {
+    context.beginPath();
+    // Top-left
+    {
+      final r = rrect.tlRadius;
+      final dx = r.x;
+      final dy = r.y;
+      final left = rrect.left;
+      final top = rrect.top;
+      context.ellipse(
+          left + dx, top + dy, dx, dy, 0.0, 0.5 * math.PI, math.PI, true);
+    }
+    // Top-right
+    {
+      final r = rrect.trRadius;
+      final dx = r.x;
+      final dy = r.y;
+      final right = rrect.right;
+      final top = rrect.top;
+      context.ellipse(
+          right - dx, top + dy, dx, dy, 0.0, 0.0, 0.5 * math.PI, true);
+    }
+
+    // Bottom-left
+    {
+      final r = rrect.blRadius;
+      final dx = r.x;
+      final dy = r.y;
+      final left = rrect.left;
+      final bottom = rrect.bottom;
+      context.ellipse(
+          left + dx, bottom - dy, dx, dy, 0.0, math.PI, 1.5 * math.PI, true);
+    }
+
+    // Bottom-right
+    {
+      final r = rrect.brRadius;
+      final dx = r.x;
+      final dy = r.y;
+      final right = rrect.right;
+      final bottom = rrect.bottom;
+      context.ellipse(right - dx, bottom - dy, dx, dy, 1.5 * math.PI,
+          2 * math.PI, math.PI, true);
+    }
+    context.closePath();
   }
 }

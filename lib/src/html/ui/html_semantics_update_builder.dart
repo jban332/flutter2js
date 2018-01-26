@@ -2,7 +2,26 @@ import 'dart:typed_data';
 
 import 'package:flutter/ui.dart';
 
-class HtmlSemanticsUpdateBuilder implements SemanticsUpdateBuilder {
+import '../logging.dart';
+
+class HtmlSemanticsUpdate extends SemanticsUpdate {
+  @override
+  void dispose() {}
+}
+
+class HtmlSemanticsUpdateBuilder extends Object with HasDebugName implements SemanticsUpdateBuilder {
+  final String debugName;
+
+  HtmlSemanticsUpdateBuilder() : this.debugName = allocateDebugName( "SemanticsUpdateBuilder") {
+    logConstructor(this);
+  }
+
+  @override
+  SemanticsUpdate build() {
+    logMethod(this, "build");
+    return new HtmlSemanticsUpdate();
+  }
+
   @override
   void updateNode(
       {int id,
@@ -17,14 +36,4 @@ class HtmlSemanticsUpdateBuilder implements SemanticsUpdateBuilder {
       TextDirection textDirection,
       Float64List transform,
       Int32List children}) {}
-
-  @override
-  SemanticsUpdate build() {
-    return new HtmlSemanticsUpdate();
-  }
-}
-
-class HtmlSemanticsUpdate extends SemanticsUpdate {
-  @override
-  void dispose() {}
 }

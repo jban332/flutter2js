@@ -13,6 +13,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/browser_client.dart' as browser_http;
 
 final math.Random _rng = new math.Random();
 
@@ -42,7 +43,7 @@ class Stock {
 class StockData extends ChangeNotifier {
   StockData() {
     if (actuallyFetchData) {
-      _httpClient = createHttpClient();
+      _httpClient = new browser_http.BrowserClient();
       _fetchNextChunk();
     }
   }

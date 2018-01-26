@@ -1,22 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' as flutter;
 
-enum PlatformType {
-  flutter,
-  browser,
-  other,
-}
-
-enum OperatingSystemType {
-  ios,
-  android,
-  osx,
-  windows,
-  fuchsia,
-  other,
-}
-
 const bool isRunningInFlutter = const bool.fromEnvironment("dart.ui");
+
 const bool isRunningInFlutter2js = !isRunningInFlutter;
 
 class DeviceInfo {
@@ -38,6 +24,15 @@ class DeviceInfo {
 
   DeviceInfo({this.platformType, this.userAgent, this.operatingSystemType});
 
+  factory DeviceInfo.fromBrowser(
+      {@required String userAgent, OperatingSystemType osType}) {
+    return new DeviceInfo(
+        platformType: PlatformType.browser,
+        userAgent: userAgent,
+        operatingSystemType:
+            osType ?? getOperatingSystemTypeFromUserAgent(userAgent));
+  }
+
   factory DeviceInfo.fromSystem() {
     if (isRunningInFlutter2js) {
       return new DeviceInfo(
@@ -48,15 +43,6 @@ class DeviceInfo {
     return new DeviceInfo(
         platformType: PlatformType.flutter,
         operatingSystemType: _getOperatingSystemTypeFromFlutter());
-  }
-
-  factory DeviceInfo.fromBrowser(
-      {@required String userAgent, OperatingSystemType osType}) {
-    return new DeviceInfo(
-        platformType: PlatformType.browser,
-        userAgent: userAgent,
-        operatingSystemType:
-            osType ?? getOperatingSystemTypeFromUserAgent(userAgent));
   }
 
   bool get isMobile {
@@ -85,20 +71,6 @@ class DeviceInfo {
     }
   }
 
-  /// Obtains operating system type from Flutter.
-  static OperatingSystemType _getOperatingSystemTypeFromFlutter() {
-    switch (defaultTargetPlatform) {
-      case flutter.TargetPlatform.android:
-        return OperatingSystemType.android;
-      case flutter.TargetPlatform.iOS:
-        return OperatingSystemType.ios;
-      case flutter.TargetPlatform.fuchsia:
-        return OperatingSystemType.fuchsia;
-      default:
-        return OperatingSystemType.other;
-    }
-  }
-
   /// Attempts to determine operating system type by parsing user agent string.
   static OperatingSystemType getOperatingSystemTypeFromUserAgent(String ua) {
     if (ua == null) {
@@ -113,4 +85,32 @@ class DeviceInfo {
     }
     return OperatingSystemType.other;
   }
+
+  /// Obtains operating system type from Flutter.
+  static OperatingSystemType _getOperatingSystemTypeFromFlutter() {
+    switch (defaultTargetPlatform) {
+      case flutter.TargetPlatform.android:
+        return OperatingSystemType.android;
+      case flutter.TargetPlatform.iOS:
+        return OperatingSystemType.ios;
+      case flutter.TargetPlatform.fuchsia:
+        return OperatingSystemType.fuchsia;
+      default:
+        return OperatingSystemType.other;
+    }
+  }
+}
+enum OperatingSystemType {
+  ios,
+  android,
+  osx,
+  windows,
+  fuchsia,
+  other,
+}
+
+enum PlatformType {
+  flutter,
+  browser,
+  other,
 }

@@ -3,13 +3,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/ui.dart';
 
+import '../logging.dart';
 import 'html_canvas.dart';
 
 typedef void HtmlPathCommand(html.CanvasRenderingContext2D context);
 
-class HtmlPath implements Path {
+class HtmlPath extends Object with HasDebugName implements Path {
   // TODO: Use HTML Path
   final List<HtmlPathCommand> commands = <HtmlPathCommand>[];
+  final String debugName;
   Paint paint = new Paint();
   Offset startOffset = new Offset(0.0, 0.0);
   Offset offset = new Offset(0.0, 0.0);
@@ -17,7 +19,54 @@ class HtmlPath implements Path {
   @override
   PathFillType fillType;
 
-  HtmlPath();
+  HtmlPath() : this.debugName = allocateDebugName("Path") {
+    logConstructor(this);
+  }
+
+  @override
+  void addArc(Rect oval, double startAngle, double sweepAngle) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void addOval(Rect oval) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void addPath(Path path, Offset offset) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void addPolygon(List<Offset> points, bool close) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void addRect(Rect rect) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void addRRect(RRect rrect) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void arcTo(
+      Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
+    throw new UnimplementedError();
+  }
+
+  @override
+  void arcToPoint(Offset arcEnd,
+      {Radius radius: Radius.zero,
+      double rotation: 0.0,
+      bool largeArc: false,
+      bool clockwise: true}) {
+    throw new UnimplementedError();
+  }
 
   @override
   void close() {
@@ -36,6 +85,12 @@ class HtmlPath implements Path {
   }
 
   @override
+  bool contains(Offset point) {
+    logMethod(this, "contains");
+    return false;
+  }
+
+  @override
   void cubicTo(
       double x1, double y1, double x2, double y2, double x3, double y3) {
     offset = new Offset(x3, y3);
@@ -45,12 +100,18 @@ class HtmlPath implements Path {
   }
 
   void draw(HtmlCanvas canvas) {
+    logMethod(this, "draw", arg0:canvas);
     final context = canvas.context;
     context.beginPath();
     for (var command in commands) {
       command(context);
     }
     context.stroke();
+  }
+
+  @override
+  void extendWithPath(Path path, Offset offset) {
+    throw new UnimplementedError();
   }
 
   @override
@@ -78,6 +139,15 @@ class HtmlPath implements Path {
     commands.add((context) {
       context.quadraticCurveTo(x1, y1, x2, y2);
     });
+  }
+
+  @override
+  void relativeArcToPoint(Offset arcEndDelta,
+      {Radius radius: Radius.zero,
+      double rotation: 0.0,
+      bool largeArc: false,
+      bool clockwise: true}) {
+    throw new UnimplementedError();
   }
 
   @override
@@ -146,12 +216,8 @@ class HtmlPath implements Path {
 
   @override
   void reset() {
+    logMethod(this, "reset");
     commands.clear();
-  }
-
-  @override
-  Path transform(Float64List matrix4) {
-    throw new UnimplementedError();
   }
 
   @override
@@ -160,66 +226,7 @@ class HtmlPath implements Path {
   }
 
   @override
-  bool contains(Offset point) {
-    return false;
-  }
-
-  @override
-  void extendWithPath(Path path, Offset offset) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addPath(Path path, Offset offset) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addRRect(RRect rrect) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addPolygon(List<Offset> points, bool close) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addArc(Rect oval, double startAngle, double sweepAngle) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addOval(Rect oval) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void addRect(Rect rect) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void relativeArcToPoint(Offset arcEndDelta,
-      {Radius radius: Radius.zero,
-      double rotation: 0.0,
-      bool largeArc: false,
-      bool clockwise: true}) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void arcToPoint(Offset arcEnd,
-      {Radius radius: Radius.zero,
-      double rotation: 0.0,
-      bool largeArc: false,
-      bool clockwise: true}) {
-    throw new UnimplementedError();
-  }
-
-  @override
-  void arcTo(
-      Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
+  Path transform(Float64List matrix4) {
     throw new UnimplementedError();
   }
 }

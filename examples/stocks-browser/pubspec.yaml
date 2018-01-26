@@ -8,6 +8,10 @@ dependencies:
     path: "../stocks"
   flutter2js: any
 
+dev_dependencies:
+  browser: ^0.10.0
+  dart_to_js_script_rewriter: ^1.0.3
+
 dependency_overrides:
   flutter2js:
     path: ../../
@@ -19,10 +23,11 @@ dependency_overrides:
     git:
       url: https://github.com/jban332/flutter2js_packages
       path: packages/flutter_localizations
+  flutter_test:
+    git:
+      url: https://github.com/jban332/flutter2js_packages
+      path: packages/flutter_test
 
-dev_dependencies:
-  browser: ^0.10.0
-  dart_to_js_script_rewriter: ^1.0.3
 
 transformers:
 - dart_to_js_script_rewriter

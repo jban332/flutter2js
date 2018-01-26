@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:html' as html;
 
-import 'package:flutter2js/core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter2js/core.dart';
 
 class UrlFragmentRoutingPlugin extends RoutingPlugin {
   @override

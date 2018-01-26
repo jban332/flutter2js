@@ -2,14 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter2js/html.dart' show BrowserPlatformPlugin;
-import 'package:flutter2js/core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart' show SemanticsOwner;
 import 'package:flutter/services.dart';
 import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
+import 'package:flutter2js/core.dart';
+import 'package:flutter2js/html.dart' show BrowserPlatformPlugin;
 import 'package:meta/meta.dart';
 
 final _flutterEventChannelControllers = <String, StreamController<String>>{};
@@ -23,20 +23,11 @@ typedef Future MethodChannelHandler(String name, List args);
 abstract class PlatformPlugin {
   static final PlatformPlugin current = new BrowserPlatformPlugin();
 
-  RoutingPlugin get routingPlugin;
-
-  void scheduleFrame();
-
-  void updateSemantics(ui.SemanticsUpdate update) {
-    print("Updating semantics");
-    return null;
-  }
-
   ui.Locale locale = new ui.Locale("en", "US");
 
   Size get physicalSize;
 
-  void renderScene(ui.Scene scene);
+  RoutingPlugin get routingPlugin;
 
   /// Invoked by implementation of Flutter's [Clipboard].
   Future<ClipboardData> clipboardGetData(String format) {
@@ -57,12 +48,6 @@ abstract class PlatformPlugin {
     throw new UnimplementedError();
   }
 
-  Future<ui.Codec> instantiateImageCodec(Uint8List list) =>
-      throw new UnimplementedError();
-
-  ui.SceneHost newSceneHost(dynamic exportTokenHandle) =>
-      throw new UnimplementedError();
-
   @protected
   MethodChannelHandler getMethodChannelHandler(String name, dynamic argument) {
     return _flutterMethodChannelHandlers[name];
@@ -76,17 +61,14 @@ abstract class PlatformPlugin {
     throw new UnimplementedError();
   }
 
-  ui.SceneBuilder newSceneBuilder();
-
-  WidgetsFlutterBinding newWidgetsFlutterBinding();
+  Future<ui.Codec> instantiateImageCodec(Uint8List list) =>
+      throw new UnimplementedError();
 
   /// Invoked by implementation of Flutter's [ui.Canvas].
   ///
   /// Many type of widgets need to draw to Canvas (e.g. chart widgets) so
   /// this is important!
   ui.Canvas newCanvas(ui.PictureRecorder recorder, Rect cullRect);
-
-  ui.SemanticsUpdateBuilder newSemanticsUpdateBuilder();
 
   /// Invoked by implementation of Flutter's [ui.ParagraphBuilder].
   ui.ParagraphBuilder newParagraphBuilder(ui.ParagraphStyle style);
@@ -96,6 +78,15 @@ abstract class PlatformPlugin {
 
   /// Invoked by implementation of Flutter's [ui.PictureRecorder].
   ui.PictureRecorder newPictureRecorder();
+
+  ui.SceneBuilder newSceneBuilder();
+
+  ui.SceneHost newSceneHost(dynamic exportTokenHandle) =>
+      throw new UnimplementedError();
+
+  ui.SemanticsUpdateBuilder newSemanticsUpdateBuilder();
+
+  WidgetsFlutterBinding newWidgetsFlutterBinding();
 
   /// Invoked by implementation of Flutter's [SystemSound.play].
   void playSystemSound(SystemSoundType sound) {
@@ -112,6 +103,10 @@ abstract class PlatformPlugin {
     }
     return controller.stream.map((raw) => new JsonDecoder().convert(raw));
   }
+
+  void renderScene(ui.Scene scene);
+
+  void scheduleFrame();
 
   void semanticsUpdate(SemanticsOwner owner) {}
 
@@ -147,6 +142,11 @@ abstract class PlatformPlugin {
   @protected
   void setMethodChannelHandler(String name, MethodChannelHandler handler) {
     _flutterMethodChannelHandlers[name] = handler;
+  }
+
+  void updateSemantics(ui.SemanticsUpdate update) {
+    print("Updating semantics");
+    return null;
   }
 
   /// Invoked by implementation of Flutter's [SystemSound.play].

@@ -2,17 +2,19 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data';
 
-import 'package:flutter2js/core.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
+import 'package:flutter2js/core.dart';
 
 import 'html_routing_plugins.dart';
+import 'logging.dart';
 import 'ui/html_image.dart';
 import 'ui/html_paragraph_builder.dart';
 import 'ui/html_path.dart';
 import 'ui/html_picture.dart';
+import 'ui/html_picture_recording_canvas.dart';
 import 'ui/html_scene_builder.dart';
 import 'ui/html_semantics_update_builder.dart';
 
@@ -23,6 +25,8 @@ class BrowserPlatformPlugin extends PlatformPlugin {
   final RoutingPlugin routingPlugin;
 
   html.Element rootHtmlElement = html.document.body;
+
+  final Stopwatch _stopwatch = new Stopwatch();
 
   BrowserPlatformPlugin({RoutingPlugin routingPlugin})
       : this.routingPlugin = routingPlugin ?? new UrlFragmentRoutingPlugin();
@@ -38,6 +42,7 @@ class BrowserPlatformPlugin extends PlatformPlugin {
   @override
   Future<ui.Image> decodeImageFromList(
       Uint8List list, void complete(ui.Image image)) async {
+    logStaticMethod("decodeImageFromList", arg0:"${list.length} bytes");
     // Create a data URL
     final blob = new html.Blob([list]);
     final url = html.Url.createObjectUrlFromBlob(blob);
@@ -118,20 +123,22 @@ class BrowserPlatformPlugin extends PlatformPlugin {
 
   @override
   void renderScene(ui.Scene scene) {
-    print("Rendering scene: ${scene}");
-    final element = (scene as HtmlScene).htmlElement;
-    final root = this.rootHtmlElement;
-    while (root.firstChild!=null) {
-      print("Removing existing scene");
-      root.firstChild.remove();
+    if (scene is HtmlScene) {
+      logStaticMethod("renderScene", arg0:scene);
+      final newChild = scene.htmlElement;
+      final parent = this.rootHtmlElement;
+      while (parent.firstChild != null) {
+        parent.firstChild.remove();
+      }
+      parent.insertBefore(newChild, null);
+    } else {
+      throw new ArgumentError.value(scene);
     }
-    root.insertBefore(element, null);
   }
-
-  final Stopwatch _stopwatch = new Stopwatch();
 
   @override
   void scheduleFrame() {
+    logStaticMethod("scheduleFrame");
     new Timer(const Duration(milliseconds: 1), () {
       if (!_stopwatch.isRunning) {
         _stopwatch.start();
