@@ -11,7 +11,7 @@ class HtmlPictureRecordingCanvas extends Object
     implements Canvas {
   final String debugName;
   List<Command> commands = <Command>[];
-  int _saveCount;
+  int _saveCount = 0;
 
   HtmlPictureRecordingCanvas(HtmlPictureRecorder recorder)
       : this.commands = recorder.commands,
@@ -217,6 +217,7 @@ class HtmlPictureRecordingCanvas extends Object
 
   @override
   void save() {
+    _saveCount++;
     _add((Canvas canvas) {
       canvas.save();
     });

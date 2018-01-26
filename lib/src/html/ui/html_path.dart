@@ -25,32 +25,32 @@ class HtmlPath extends Object with HasDebugName implements Path {
 
   @override
   void addArc(Rect oval, double startAngle, double sweepAngle) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void addOval(Rect oval) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void addPath(Path path, Offset offset) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void addPolygon(List<Offset> points, bool close) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void addRect(Rect rect) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void addRRect(RRect rrect) {
-    throw new UnimplementedError();
+
   }
 
   @override
@@ -222,11 +222,11 @@ class HtmlPath extends Object with HasDebugName implements Path {
 
   @override
   Path shift(Offset offset) {
-    throw new UnimplementedError();
+    return this;
   }
 
   @override
   Path transform(Float64List matrix4) {
-    throw new UnimplementedError();
+    return this;
   }
 }

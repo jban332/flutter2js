@@ -37,7 +37,7 @@ void logConstructor(HasDebugName value, {Object arg0:_undefined, Object arg1:_un
   logMethod(value, "", arg0:arg0, arg1:arg1, arg2:arg2);
 }
 
-void logMethod(HasDebugName value, String name, {Object arg0:_undefined, Object arg1:_undefined, Object arg2:_undefined}) {
+void logMethod(HasDebugName value, String name, {Object arg0:_undefined, Object arg1:_undefined, Object arg2:_undefined, Object result:_undefined}) {
   if (!_isLogging) {
     return;
   }
@@ -58,10 +58,14 @@ void logMethod(HasDebugName value, String name, {Object arg0:_undefined, Object 
     }
   }
   sb.write(")");
+  if (!identical(result, _undefined)) {
+    sb.write(" -> ");
+    sb.write(result);
+  }
   engineLogger.fine(sb.toString(), null, getStackTrace());
 }
 
-void logStaticMethod(String name, {Object arg0:_undefined, Object arg1:_undefined, Object arg2:_undefined}) {
+void logStaticMethod(String name, {Object arg0:_undefined, Object arg1:_undefined, Object arg2:_undefined, Object result:_undefined}) {
   if (!_isLogging) {
     return;
   }
@@ -76,6 +80,10 @@ void logStaticMethod(String name, {Object arg0:_undefined, Object arg1:_undefine
     }
   }
   sb.write(")");
+  if (!identical(result, _undefined)) {
+    sb.write(" -> ");
+    sb.write(result);
+  }
   engineLogger.fine(sb.toString(), null, getStackTrace());
 }
 

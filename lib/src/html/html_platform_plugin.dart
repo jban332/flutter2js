@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/ui.dart' as ui;
 import 'package:flutter/widgets.dart';
 import 'package:flutter2js/core.dart';
+import 'package:flutter/services.dart';
 
 import 'html_routing_plugins.dart';
 import 'logging.dart';
@@ -20,7 +22,9 @@ import 'ui/html_semantics_update_builder.dart';
 
 /// Implements [Image] ('dart:ui') that may be used by [CustomPaint] widget ('package:flutter/widgets.dart').
 /// For examples, "Stocks" examples app uses the widget.
-class BrowserPlatformPlugin extends PlatformPlugin {
+class BrowserPlatformPlugin implements HasDebugName, PlatformPlugin {
+  final String debugName = "PlatformPlugin";
+
   @override
   final RoutingPlugin routingPlugin;
 
@@ -139,15 +143,104 @@ class BrowserPlatformPlugin extends PlatformPlugin {
   @override
   void scheduleFrame() {
     logStaticMethod("scheduleFrame");
-    new Timer(const Duration(milliseconds: 1), () {
+    new Timer(const Duration(milliseconds: 10), () {
       if (!_stopwatch.isRunning) {
         _stopwatch.start();
       }
-      final duration = new Duration(microseconds: _stopwatch.elapsedMicroseconds);
-      _stopwatch.reset();
+      var microseconds = _stopwatch.elapsedMicroseconds;
+      final duration = new Duration(microseconds: microseconds);
       window.onBeginFrame(duration);
       window.onDrawFrame();
     });
+  }
+
+  @override
+  ui.Locale get locale {
+    var language = html.window.navigator.language;
+    if (language == null || language.isEmpty) {
+      language = "en-US";
+    }
+    final i = language.indexOf("-");
+    if (i<0) {
+      return new ui.Locale(language);
+    }
+    return new ui.Locale(language.substring(0,i), language.substring(i+1));
+  }
+
+  @override
+  Future<ClipboardData> clipboardGetData(String format) async {
+    logMethod(this, "clipboardGetData", arg0:format);
+    return null;
+  }
+
+  @override
+  Future<Null> clipboardSetData(ClipboardData data) {
+    logMethod(this, "clipboardSetData", arg0:data);
+  }
+
+  @override
+  MethodChannelHandler getMethodChannelHandler(String name, dynamic argument) {
+    logMethod(this, "getMethodChannelHandler", arg0:name, arg1:argument);
+    return null;
+  }
+
+  @override
+  Future<ui.Codec> instantiateImageCodec(Uint8List list) async {
+    logMethod(this, "instantiateImageCode", arg0:"${list.length} bytes");
+    throw new UnimplementedError();
+  }
+
+  @override
+  ui.SceneHost newSceneHost(dynamic exportTokenHandle) {
+    logMethod(this, "newScenehost", arg0:exportTokenHandle);
+    throw new UnimplementedError();
+  }
+
+  @override
+  void playSystemSound(SystemSoundType sound) {
+    logMethod(this, "playSystemSound", arg0:sound);
+  }
+
+  @override
+  Stream<dynamic> receiveEventChannelStream(EventChannel eventChannel,
+      [dynamic arguments]) async* {
+
+  }
+
+  @override
+  void semanticsUpdate(SemanticsOwner owner) {
+
+  }
+
+  @override
+  void sendEventChannelMessage(String name, dynamic event) {
+    logMethod(this, "sendEventChannelMessgage", arg0:name, arg1:event);
+  }
+
+  @override
+  Future<dynamic> sendMethodChannelMessage(String name, dynamic argument) async {
+    logMethod(this, "sendMethodChannelMessgage", arg0:name, arg1:argument);
+  }
+
+  @override
+  void sendPlatformMessage(String name, ByteData data,
+      ui.PlatformMessageResponseCallback callback) {
+    logMethod(this, "sendPlatformMessage", arg0:name, arg1:"${data.lengthInBytes} bytes");
+  }
+
+  @override
+  void setMethodChannelHandler(String name, MethodChannelHandler handler) {
+    logMethod(this, "setMethodChannelHandler", arg0:name);
+  }
+
+  @override
+  void updateSemantics(ui.SemanticsUpdate update) {
+
+  }
+
+  @override
+  Future<Null> vibrate() async {
+    logMethod(this, "vibrate");
   }
 }
 

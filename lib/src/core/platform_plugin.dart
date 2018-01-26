@@ -23,7 +23,7 @@ typedef Future MethodChannelHandler(String name, List args);
 abstract class PlatformPlugin {
   static final PlatformPlugin current = new BrowserPlatformPlugin();
 
-  ui.Locale locale = new ui.Locale("en", "US");
+  ui.Locale get locale;
 
   Size get physicalSize;
 

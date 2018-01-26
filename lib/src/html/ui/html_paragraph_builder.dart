@@ -330,8 +330,9 @@ class HtmlParagraphBuilder extends Object with HasDebugName implements ui.Paragr
 
   @override
   HtmlParagraph build() {
-    logMethod(this, "build");
-    return new HtmlParagraph(_paragraphStyle, _boxes);
+    final result = new HtmlParagraph(_paragraphStyle, _boxes);
+    logMethod(this, "build", result:result);
+    return result;
   }
 
   @override

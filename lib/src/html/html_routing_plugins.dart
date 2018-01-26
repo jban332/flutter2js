@@ -16,6 +16,7 @@ class UrlFragmentRoutingPlugin extends RoutingPlugin {
     if (value == "") {
       return Navigator.defaultRouteName;
     }
+    print("Route is: ${value}");
 
     // Return route
     return value;

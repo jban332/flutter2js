@@ -62,7 +62,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   @override
   void drawAtlas(Image atlas, List<RSTransform> transforms, List<Rect> rects,
       List<Color> colors, BlendMode blendMode, Rect cullRect, Paint paint) {
-    throw new UnimplementedError();
+
   }
 
   @override
@@ -95,12 +95,12 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   @override
   void drawImageNine(Image image, Rect center, Rect dst, Paint paint) {
-    throw new UnimplementedError();
+
   }
 
   @override
   void drawImageRect(Image image, Rect src, Rect dst, Paint paint) {
-    throw new UnimplementedError();
+
   }
 
   @override
@@ -141,7 +141,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
     if (picture is HtmlPicture) {
       picture.draw(this);
     } else {
-      throw new UnimplementedError();
+      throw new ArgumentError.value(picture);
     }
   }
 
@@ -159,7 +159,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   @override
   void drawRawAtlas(Image atlas, Float32List rstTransforms, Float32List rects,
       Int32List colors, BlendMode blendMode, Rect cullRect, Paint paint) {
-    throw new UnimplementedError();
+
   }
 
   @override
@@ -190,7 +190,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   @override
   void drawShadow(
       Path path, Color color, double elevation, bool transparentOccluder) {
-    throw new UnimplementedError();
+
   }
 
   @override

@@ -11,11 +11,9 @@ typedef void SceneCommand(html.Element element);
 
 class HtmlScene extends Scene with HasDebugName {
   final String debugName;
-  final html.Element htmlElement = new html.DivElement()
-    ..setAttribute("data-kind", "Scene");
+  final html.Element htmlElement;
 
-  HtmlScene() : this.debugName = allocateDebugName( "Scene") {
-    logConstructor(this);
+  HtmlScene(this.htmlElement) : this.debugName = allocateDebugName("Scene") {
     final style = htmlElement.style;
     style.position = "fixed";
     style.width = "auto";
@@ -26,7 +24,27 @@ class HtmlScene extends Scene with HasDebugName {
     style.bottom = "0px";
   }
 
-  void addChild(Offset offset, html.Element element,
+  @override
+  void dispose() {}
+
+  @override
+  String toString() =>
+      "${super.toString()}[children=${htmlElement.children.length}]";
+}
+
+class HtmlSceneBuilder extends Object
+    with HasDebugName
+    implements SceneBuilder {
+  final String debugName;
+  final html.Element htmlElement = new html.DivElement()
+    ..setAttribute("class", "flutter-Scene");
+  List<SceneCommand> _commands = [];
+
+  HtmlSceneBuilder() : this.debugName = allocateDebugName("SceneBuilder") {
+    logConstructor(this);
+  }
+
+  void addHtmlElement(Offset offset, html.Element element,
       {double width, double height}) {
     if (element == null) {
       throw new ArgumentError.notNull("element");
@@ -34,6 +52,9 @@ class HtmlScene extends Scene with HasDebugName {
     if (element.parent != null) {
       throw new ArgumentError.value(
           element, "element", "Element should not have parent");
+    }
+    for (var command in _commands) {
+      command(element);
     }
     final style = element.style;
     if (width != null) {
@@ -43,22 +64,6 @@ class HtmlScene extends Scene with HasDebugName {
       style.height = "${height}px";
     }
     this.htmlElement.insertBefore(element, null);
-  }
-
-  @override
-  void dispose() {}
-
-  @override
-  String toString() => "${super.toString()}[children=${htmlElement.children.length}]";
-}
-
-class HtmlSceneBuilder extends Object with HasDebugName implements SceneBuilder {
-  final String debugName;
-  HtmlScene _scene = new HtmlScene();
-  List<SceneCommand> _commands = [];
-
-  HtmlSceneBuilder() : this.debugName = allocateDebugName( "SceneBuilder") {
-    logConstructor(this);
   }
 
   @override
@@ -79,25 +84,26 @@ class HtmlSceneBuilder extends Object with HasDebugName implements SceneBuilder 
   @override
   void addPicture(Offset offset, Picture picture,
       {bool isComplexHint: false, bool willChangeHint: false}) {
-    logMethod(this, "addPicture", arg0:offset, arg1:picture);
+    logMethod(this, "addPicture", arg0: offset, arg1: picture);
     final size = window.physicalSize;
-    final element = (picture as HtmlPicture).toHtmlElement((size.width-offset.dx).clamp(0, size.width).toInt(), (size.height-offset.dy).clamp(0, size.height).toInt());
-    _scene.addChild(offset, element);
+    final element = (picture as HtmlPicture).toHtmlElement(
+        (size.width - offset.dx).clamp(0, size.width).toInt(),
+        (size.height - offset.dy).clamp(0, size.height).toInt());
+    addHtmlElement(offset, element);
   }
 
   @override
   void addTexture(int textureId,
       {Offset offset: Offset.zero, double width: 0.0, double height: 0.0}) {
     final element = html.querySelector("#flutter-texture-${textureId}");
-    _scene.addChild(offset, element, width: width, height: height);
+    addHtmlElement(offset, element, width: width, height: height);
   }
 
   @override
   Scene build() {
-    logMethod(this, "build");
-    final scene = this._scene;
-    _scene = null;
-    return scene;
+    final result = new HtmlScene(this.htmlElement);
+    logMethod(this, "build", result: result);
+    return result;
   }
 
   @override
@@ -128,7 +134,7 @@ class HtmlSceneBuilder extends Object with HasDebugName implements SceneBuilder 
 
   @override
   void pushColorFilter(Color color, BlendMode blendMode) {
-    _push((element) {
+    _pushStyle((element) {
       element.style.backgroundColor = cssFromColor(color);
       element.style.mixBlendMode = cssFromBlendMode(blendMode);
     });
@@ -136,7 +142,7 @@ class HtmlSceneBuilder extends Object with HasDebugName implements SceneBuilder 
 
   @override
   void pushOpacity(int alpha) {
-    _push((element) {
+    _pushStyle((element) {
       element.style.opacity = "${alpha/255}";
     });
   }
@@ -171,7 +177,7 @@ class HtmlSceneBuilder extends Object with HasDebugName implements SceneBuilder 
     _unsupported("setRasterizerTracingThreshold");
   }
 
-  void _push(SceneCommand command) {
+  void _pushStyle(SceneCommand command) {
     _commands.add(command);
   }
 
