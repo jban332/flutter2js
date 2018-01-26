@@ -75,7 +75,24 @@ String cssFromColor(Color value) {
   if (value == null) {
     return null;
   }
-  return "#${value.toString()}";
+  final sb = new StringBuffer();
+  sb.write("#");
+  _writeHex2(sb, value.red);
+  _writeHex2(sb, value.green);
+  _writeHex2(sb, value.blue);
+  _writeHex2(sb, value.alpha);
+  return sb.toString();
+}
+
+void _writeHex2(StringBuffer sb, int value) {
+  if (value<16) {
+    sb.write("0");
+  } else {
+    final x = 0xF&(value>>4);
+    sb.write("0123456789abcdef".codeUnitAt(x));
+  }
+  final x = 0xF&(value);
+  sb.writeCharCode("0123456789abcdef".codeUnitAt(x));
 }
 
 /// Returns a fraction of parent box size as a CSS value.

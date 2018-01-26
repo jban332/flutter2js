@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/ui.dart';
 
 import '../logging.dart';
+import '../css_helpers.dart';
 import 'html_image.dart';
 import 'html_paragraph_builder.dart';
 import 'html_path.dart';
@@ -18,7 +19,9 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   int _saveCount = 0;
 
-  HtmlCanvas(html.CanvasElement element) : _context = element.context2D, this.debugName = allocateDebugName( "Canvas") {
+  HtmlCanvas(html.CanvasElement element)
+      : _context = element.context2D,
+        this.debugName = allocateDebugName("Canvas") {
     logConstructor(this);
   }
 
@@ -26,18 +29,23 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   @override
   void clipPath(Path path) {
-    (path as HtmlPath).draw(this);
-    context.clip();
+    if (path is HtmlPath) {
+      path.clip(context);
+    } else {
+      throw new ArgumentError.value(path);
+    }
   }
 
   @override
   void clipRect(Rect rect, {ClipOp clipOp}) {
+    context.beginPath();
     context.rect(rect.left, rect.top, rect.width, rect.height);
     context.clip();
   }
 
   @override
   void clipRRect(RRect rrect) {
+    context.beginPath();
     _rrect(rrect);
     context.clip();
   }
@@ -45,6 +53,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   @override
   void drawArc(Rect rect, double startAngle, double sweepAngle, bool useCenter,
       Paint paint) {
+    beginStrokeOrFill(paint);
     // TODO: Support ellipses
     final center = rect.center;
     final radius = (center - rect.topLeft).distance.abs();
@@ -56,20 +65,21 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
     if (useCenter) {
       _drawArcPointLine(center, radius, startAngle + sweepAngle);
     }
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
   void drawAtlas(Image atlas, List<RSTransform> transforms, List<Rect> rects,
       List<Color> colors, BlendMode blendMode, Rect cullRect, Paint paint) {
-
+    throw new UnimplementedError();
   }
 
   @override
   void drawCircle(Offset c, double radius, Paint paint) {
     assert(radius > 0, "Invalid radius ${radius}");
+    beginStrokeOrFill(paint);
     context.arc(c.dx, c.dy, radius, 0.0, 2 * math.PI);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
@@ -82,10 +92,12 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   @override
   void drawDRRect(RRect outer, RRect inner, Paint paint) {
+    beginStrokeOrFill(paint);
     _rrect(outer);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
+    beginStrokeOrFill(paint);
     _rrect(inner);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
@@ -99,30 +111,29 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   }
 
   @override
-  void drawImageRect(Image image, Rect src, Rect dst, Paint paint) {
-
-  }
+  void drawImageRect(Image image, Rect src, Rect dst, Paint paint) {}
 
   @override
   void drawLine(Offset p1, Offset p2, Paint paint) {
+    beginStrokeOrFill(paint, style:PaintingStyle.stroke);
     context.moveTo(p1.dx, p1.dy);
     context.lineTo(p2.dx, p2.dy);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint, style:PaintingStyle.stroke);
   }
 
   @override
   void drawOval(Rect rect, Paint paint) {
+    beginStrokeOrFill(paint);
     final center = rect.center;
     final rx = rect.width / 2;
     final ry = rect.height / 2;
     context.ellipse(center.dx, center.dy, rx, ry, 0, 0, 2 * math.PI, false);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
   void drawPaint(Paint paint) {
     setPaint(paint);
-    context.fill();
   }
 
   @override
@@ -132,8 +143,11 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   @override
   void drawPath(Path path, Paint paint) {
-    (path as HtmlPath).draw(this);
-    strokeOrFill(paint);
+    if (path is HtmlPath) {
+      endStrokeOrFill(paint, path: path);
+    } else {
+      throw new ArgumentError.value(path);
+    }
   }
 
   @override
@@ -159,7 +173,7 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
   @override
   void drawRawAtlas(Image atlas, Float32List rstTransforms, Float32List rects,
       Int32List colors, BlendMode blendMode, Rect cullRect, Paint paint) {
-
+    throw new UnimplementedError();
   }
 
   @override
@@ -170,27 +184,36 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
       final x = points[i];
       final y = points[i + 1];
       context.moveTo(x, y);
-      context.lineTo(x + 1, y + 1);
+      context.lineTo(x, y);
       context.stroke();
     }
   }
 
   @override
   void drawRect(Rect rect, Paint paint) {
+    beginStrokeOrFill(paint);
     context.rect(rect.left, rect.top, rect.width, rect.height);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
   void drawRRect(RRect rrect, Paint paint) {
+    beginStrokeOrFill(paint);
     _rrect(rrect);
-    strokeOrFill(paint);
+    endStrokeOrFill(paint);
   }
 
   @override
   void drawShadow(
       Path path, Color color, double elevation, bool transparentOccluder) {
-
+    if (path is HtmlPath) {
+      context.setStrokeColorRgb(color.red, color.green, color.blue);
+      context.beginPath();
+      context.lineWidth = 1;
+      path.stroke(context);
+    } else {
+      throw new ArgumentError.value(path);
+    }
   }
 
   @override
@@ -329,20 +352,49 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
 
   void setPaint(Paint paint) {
     final context = this.context;
-    final style = paint.style;
-    if (style == PaintingStyle.stroke) {
-      final color = paint.color;
-      context.setStrokeColorRgb(color.red, color.green, color.blue);
-      context.globalCompositeOperation =
-          globalCompositeOperationFrom(paint.blendMode);
-      context.lineCap = lineCapFrom(paint.strokeCap);
-      context.lineWidth = paint.strokeWidth ?? 1.0;
+
+    // Color
+    final color = paint.color ?? const Color.fromARGB(255, 0, 0, 0);
+    context.globalAlpha = color.alpha;
+    context.fillStyle = cssFromColor(color);
+    context.setFillColorRgb(color.red, color.green, color.blue);
+    context.setStrokeColorRgb(color.red, color.green, color.blue);
+    final shader = paint.shader;
+    if (shader!=null) {
+      if (shader is LinearGradient) {
+        final from = shader.from;
+        final to = shader.to;
+        final result = context.createLinearGradient(from.dx, from.dy, to.dx, to.dy);
+        final stops = shader.colorStops;
+        final colors = shader.colors;
+        for (var i=0;i<stops.length;i++) {
+          result.addColorStop(stops[i], cssFromColor(colors[i]));
+        }
+        context.fillStyle = result;
+      } else if (shader is RadialGradient) {
+        final center = shader.center;
+        final radius = shader.radius;
+        final result = context.createRadialGradient(center.dx, center.dy, center.dx-radius, center.dy-radius, radius*2, radius*2);
+        final stops = shader.colorStops;
+        final colors = shader.colors;
+        for (var i=0;i<stops.length;i++) {
+          result.addColorStop(stops[i], cssFromColor(colors[i]));
+        }
+        context.fillStyle = result;
+      }
     }
-    if (style == PaintingStyle.fill) {
-      final color = paint.color;
-      context.setStrokeColorRgb(color.red, color.green, color.blue);
-      context.globalCompositeOperation =
-          globalCompositeOperationFrom(paint.blendMode);
+
+    // Blend
+    final blendMode =
+        globalCompositeOperationFrom(paint.blendMode) ?? "srcOver";
+    context.globalCompositeOperation = blendMode;
+
+    final style = paint.style ?? PaintingStyle.fill;
+    if (style == PaintingStyle.stroke) {
+      context.lineCap = lineCapFrom(paint.strokeCap) ?? "butt";
+      context.lineWidth = paint.strokeWidth ?? 0.0;
+    } else if (style == PaintingStyle.fill) {
+      context.fillStyle = "color";
     }
   }
 
@@ -351,13 +403,37 @@ class HtmlCanvas extends Object with HasDebugName implements Canvas {
     context.transform(0.0, 0.0, sx, sy, 0.0, 0.0);
   }
 
-  void strokeOrFill(Paint paint) {
+
+  void beginStrokeOrFill(Paint paint, {PaintingStyle style}) {
+    if (style == null) {
+      style = paint.style ?? PaintingStyle.stroke;
+    }
+    if (style == PaintingStyle.fill) {
+      context.save();
+      context.beginPath();
+    }
+  }
+
+  void endStrokeOrFill(Paint paint, {PaintingStyle style, HtmlPath path}) {
     setPaint(paint);
-    final style = paint.style;
+    if (style == null) {
+      style = paint.style ?? PaintingStyle.stroke;
+    }
     if (style == PaintingStyle.stroke) {
-      context.stroke();
+      if (path == null) {
+        context.stroke();
+      } else {
+        path.stroke(context);
+      }
     } else if (style == PaintingStyle.fill) {
-      context.fill();
+      if (path == null) {
+        context.fill();
+        context.restore();
+      } else {
+        path.fill(context);
+      }
+    } else {
+      throw new ArgumentError.value(style);
     }
   }
 
