@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jban332/flutter2js.svg?branch=master)](https://travis-ci.org/jban332/flutter2js) [![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join Gitter Chat Channel -](https://badges.gitter.im/flutter/flutter.svg)](https://gitter.im/flutter/flutter?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Flutter2js
 ====
@@ -17,7 +17,7 @@ Find this useful? Become a contributor!
 * We have defines ways to insert DOM elements in the render tree, including _HtmlCanvas_ (subclass of _dart:ui_ class _Canvas_) methods, _HtmlRenderObject_, and _HtmlWidget_.
 * The aim is to optimize performance-critical widgets later (i.e. use HTML elements + CSS styling for them)
 * We use [dart2js](https://webdev.dartlang.org/tools/dart2js). Unfortunately [dartdevc](https://webdev.dartlang.org/tools/dartdevc) seems to have issues with Flutter SDK packages.
-* Patched Flutter SDK lives in a separate repository at: [github.com/jban332/flutter2js_packages](https://github.com/jban332/flutter2js_packages)
+* Patched Flutter SDK lives in a separate repository at: [github.com/flutter2js/flutter2js_packages](https://github.com/flutter2js/flutter2js_packages)
 * This repository contains everything else.
 
 ## Status
@@ -25,10 +25,6 @@ Find this useful? Become a contributor!
 * [ ] Flutter SDK examples
   * [X] Compile with dart2js
   * [ ] Work adequately
-
-## Authors
-  * jban332 <jban332@gmail.com>
-  * Contributor? Add your name/email here.
 
 # Getting started
 ## Method 1: Generate project with Dart2js
@@ -40,7 +36,7 @@ __Important__: You need the latest dev channel version of the Dart SDK (>=2.0.0-
 ### 2.Install flutter2js
 In command line:
 ```
-$ pub global activate --source git https://github.com/jban332/flutter2js
+$ pub global activate --source git https://github.com/flutter2js/flutter2js
 ```
 
 If your system doesn't find "pub" command, look at [pub configuration instructions](https://www.dartlang.org/tools/pub/installing).
@@ -66,7 +62,7 @@ $ pub serve
 Your app is now running at [http://localhost:8080](http://localhost:8080)
 
 ## Method 2: Manual pubspec configuration
-Look at [examples](https://github.com/jban332/flutter2js/tree/master/examples).
+Look at [examples](https://github.com/flutter2js/flutter2js/tree/master/examples).
 
 # Common issues
 ## Problem: App doesn't render

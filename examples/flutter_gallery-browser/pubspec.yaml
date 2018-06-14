@@ -19,15 +19,15 @@ dependency_overrides:
     path: ../../
   flutter:
     git:
-      url: https://github.com/jban332/flutter2js_packages
+      url: https://github.com/flutter2js/flutter2js_packages
       path: packages/flutter
   flutter_localizations:
     git:
-      url: https://github.com/jban332/flutter2js_packages
+      url: https://github.com/flutter2js/flutter2js_packages
       path: packages/flutter_localizations
   flutter_test:
     git:
-      url: https://github.com/jban332/flutter2js_packages
+      url: https://github.com/flutter2js/flutter2js_packages
       path: packages/flutter_test
 
 transformers:
