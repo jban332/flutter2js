@@ -3,7 +3,7 @@
 Flutter2js
 ====
 
-Flutter2js makes [Flutter](https://flutter.io) apps run in browser.
+Flutter2js is a project _attempts_ to make [Flutter](https://flutter.io) apps run in browser.
 
 Find this useful? Become a contributor!
 
@@ -22,5 +22,7 @@ Find this useful? Become a contributor!
 
 ## Status
 * [X] Contains all Flutter SDK APIs (January 2018).
+
+## Next
 * [ ] Flutter SDK examples
   * [ ] Work adequately
