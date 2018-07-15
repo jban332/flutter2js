@@ -23,47 +23,4 @@ Find this useful? Become a contributor!
 ## Status
 * [X] Contains all Flutter SDK APIs (January 2018).
 * [ ] Flutter SDK examples
-  * [X] Compile with dart2js
   * [ ] Work adequately
-
-# Getting started
-## Method 1: Generate project with Dart2js
-### 1.Install Dart SDK (dev channel)
-See [instructions at dartlang.org](https://www.dartlang.org/install).
-
-__Important__: You need the latest dev channel version of the Dart SDK (>=2.0.0-dev.19.0).
-
-### 2.Install flutter2js
-In command line:
-```
-$ pub global activate --source git https://github.com/flutter2js/flutter2js
-```
-
-If your system doesn't find "pub" command, look at [pub configuration instructions](https://www.dartlang.org/tools/pub/installing).
-
-### 3.Generate project
-In command line:
-```
-$ pub global run flutter2js create example --app-name=your_flutter_app --app-uri=path/to/flutter/app
-```
-
-### 4.Run your web app
-First, install dependencies:
-```
-$ cd example
-$ pub get
-```
-
-You can now start HTTP server:
-```
-$ pub serve
-```
-
-Your app is now running at [http://localhost:8080](http://localhost:8080)
-
-## Method 2: Manual pubspec configuration
-Look at [examples](https://github.com/flutter2js/flutter2js/tree/master/examples).
-
-# Common issues
-## Problem: App doesn't render
-Unfortunately Flutter2js is work-in-progress. You can help!
