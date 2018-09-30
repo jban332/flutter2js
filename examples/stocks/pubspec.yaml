@@ -1,19 +1,21 @@
 name: stocks
+
+environment:
+  sdk: ^2.0.0
+
 dependencies:
   flutter:
-    sdk: flutter
+    path: ../../packages/flutter
   flutter_localizations:
-    sdk: flutter
-  intl: '^0.15.2'
-  intl_translation: '^0.16.1'
-  http: '^0.11.3+14'
-  isolate: '^1.1.0'
+    path: ../../packages/flutter_localizations
+  intl: ^0.15.7
+  intl_translation: ^0.17.1
+  http: ^0.12.0
+  isolate: ^2.0.2
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
-  flutter_driver:
-    sdk: flutter
+    path: ../../packages/flutter_test
 
 flutter:
   uses-material-design: true

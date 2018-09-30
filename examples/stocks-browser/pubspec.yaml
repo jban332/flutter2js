@@ -1,35 +1,21 @@
 name: stocks_browser
 
 environment:
-  sdk: '>=2.0.0-dev.19.0'
+  sdk: ^2.0.0
 
 dependencies:
   stocks:
-    path: "../stocks"
-  flutter2js: any
+    path: ../stocks
+  flutter2js:
+    path: ../../packages/flutter2js
+  flutter:
+    path: ../../packages/flutter
+  flutter_localizations:
+    path: ../../packages/flutter_localizations
+  flutter_test:
+    path: ../../packages/flutter_test
 
 dev_dependencies:
-  browser: ^0.10.0
-  dart_to_js_script_rewriter: ^1.0.3
-
-dependency_overrides:
-  flutter2js:
-    path: ../../
-  flutter:
-    git:
-      url: https://github.com/flutter2js/flutter2js_packages
-      path: packages/flutter
-  flutter_localizations:
-    git:
-      url: https://github.com/flutter2js/flutter2js_packages
-      path: packages/flutter_localizations
-  flutter_test:
-    git:
-      url: https://github.com/flutter2js/flutter2js_packages
-      path: packages/flutter_test
-
-
-transformers:
-- dart_to_js_script_rewriter
-- $dart2js:
-    checked: true
+  build_runner: ^0.10.0
+  build_web_compilers: ^0.4.0
+  webdev: ^1.0.0

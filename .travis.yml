@@ -1,5 +1,12 @@
 language: dart
 dart:
-- dev
+- stable
 script:
-- (cd examples/hello_world-browser && pub get && pub run test)
+# Look for misconfigured dependencies
+- ./tools/pub_get.sh --no-precompile
+
+# Run tests
+- ./tools/test.sh
+
+# Build examples
+- ./tools/build_examples.sh

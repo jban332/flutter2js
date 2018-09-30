@@ -1,0 +1,14 @@
+name: flutter_localizations
+
+environment:
+  sdk: ^2.0.0
+
+dependencies:
+  flutter:
+    path: ../flutter
+  intl: 0.15.7
+
+dev_dependencies:
+  flutter_test:
+    path: ../flutter_test
+  test: ^1.3.0

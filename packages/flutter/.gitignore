@@ -1,0 +1,13 @@
+# Files and directories created by pub
+.packages
+.pub/
+build/
+pubspec.lock
+
+# Directory created by dartdoc
+doc/api/
+
+# Editors
+.idea
+.vscode
+.atom/
