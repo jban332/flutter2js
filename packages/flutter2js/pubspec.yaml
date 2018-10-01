@@ -6,7 +6,7 @@ executables:
   flutter2js: flutter2js
 
 environment:
-  sdk: ^2.0.0
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
   args: '^1.2.0'

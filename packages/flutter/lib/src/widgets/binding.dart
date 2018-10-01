@@ -626,7 +626,7 @@ abstract class WidgetsBinding extends BindingBase
     }());
     try {
       if (renderViewElement != null) buildOwner.buildScope(renderViewElement);
-      super.drawFrame();
+      // super.drawFrame();
       buildOwner.finalizeTree();
     } finally {
       assert(() {

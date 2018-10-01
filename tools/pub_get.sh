@@ -8,7 +8,10 @@ if [ -n "$ARGS" ]; then
 fi
 
 get () {
-	echo "Running 'pub get$SPACE_ARGS' for: $1"
+	echo "Running 'pub get$SPACE_ARGS' in:"
+	echo ""
+	echo "  $1"
+	echo ""
 	(cd $1 && pub get $ARGS)
 }
 

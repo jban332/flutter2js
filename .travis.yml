@@ -1,6 +1,11 @@
 language: dart
+
 dart:
-- stable
+- dev
+
+addons:
+  chrome: stable
+
 script:
 # Look for misconfigured dependencies
 - ./tools/pub_get.sh --no-precompile

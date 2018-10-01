@@ -576,13 +576,11 @@ abstract class RendererBinding extends BindingBase
     await endOfFrame;
   }
 
-  @override
   void hitTest(HitTestResult result, Offset position) {
     assert(renderView != null);
     renderView.hitTest(result, position: position);
     // This super call is safe since it will be bound to a mixed-in declaration.
-    super.hitTest(result, position); // ignore: abstract_super_member_reference
-  }
+ }
 
   Future<Null> _forceRepaint() {
     RenderObjectVisitor visitor;
